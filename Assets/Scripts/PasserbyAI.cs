@@ -11,8 +11,6 @@ public class PasserbyAI : MonoBehaviour
     private NavMeshAgent _agent;
 
     [SerializeField]
-    float fieldOfViewDegrees = 90f;
-    [SerializeField]
     float speed = 5f;
     [SerializeField]
     Transform target;
