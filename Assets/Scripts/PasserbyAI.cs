@@ -1,12 +1,17 @@
 using Assets.Classes;
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class PasserbyAI : MonoBehaviour
 {
-    Rigidbody _rb;
+    private Rigidbody _rb;
+    private NavMeshAgent _agent;
 
+    [SerializeField]
+    float fieldOfViewDegrees = 90f;
     [SerializeField]
     float speed = 5f;
     [SerializeField]
@@ -19,6 +24,7 @@ public class PasserbyAI : MonoBehaviour
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
+        _agent = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
@@ -46,7 +52,9 @@ public class PasserbyAI : MonoBehaviour
             ChooseNewTempDestination();
         }
 
-        MoveTowardsDestination(tempDestination);
+        _agent.destination = tempDestination;
+        
+        //MoveTowardsDestination(tempDestination);
     }
     private void Engage()
     {
@@ -56,11 +64,11 @@ public class PasserbyAI : MonoBehaviour
     {
         if (target == null || target.position.IsApproximately(_rb.position))
         {
-            _rb.velocity = new Vector3(0, 0, 0);
+            _agent.destination = target.position;
             return;
         }
 
-        MoveTowardsDestination(target.position);
+        //MoveTowardsDestination(target.position);
     }
 
     private void ChooseNewTempDestination()
