@@ -47,7 +47,7 @@ public class PasserbyAI : MonoBehaviour
 
     private void WanderAround()
     {
-        if (tempDestination == null || tempDestination.IsApproximately(_rb.position))
+        if (tempDestination.IsNullOrBegining() || tempDestination.IsApproximately(_rb.position))
         {
             ChooseNewTempDestination();
         }
