@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7041362428458459802}
   - component: {fileID: 7682366746156057588}
   - component: {fileID: 7560668350974551364}
+  - component: {fileID: 7814483489213475007}
   m_Layer: 8
   m_Name: Passerby
   m_TagString: Untagged
@@ -173,3 +174,24 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &7814483489213475007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6524309794129140479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d35f38027c776254e9d6d197902368e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distance: 7
+  horizontalAngle: 30
+  height: 1.5
+  meshColor: {r: 1, g: 0, b: 1, a: 1}
+  scanFrequency: 30
+  layers:
+    serializedVersion: 2
+    m_Bits: 1536
+  objects: []

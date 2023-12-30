@@ -5,8 +5,8 @@ using UnityEngine;
 public class AISensor : MonoBehaviour
 {
     public float distance = 10;
-    public float angle = 30;
-    private float height = 5f;
+    public float horizontalAngle = 30;
+    public float height = 1.5f;
     public Color meshColor = Color.magenta;
     public int scanFrequency = 30;
     public LayerMask layers;
@@ -54,7 +54,7 @@ public class AISensor : MonoBehaviour
         Vector3 origin = transform.position;
         Vector3 destination = obj.transform.position;
         Vector3 direction = destination - origin;
-        
+
         if (direction.y < -height || direction.y > height)
         {
             return false;
@@ -62,7 +62,7 @@ public class AISensor : MonoBehaviour
         
         direction.y = 0;
         float deltaAngle = Vector3.Angle(direction, transform.forward);
-        if (deltaAngle > angle)
+        if (deltaAngle > horizontalAngle)
         {
             return false;
         }
@@ -82,13 +82,13 @@ public class AISensor : MonoBehaviour
         Vector3[] vertices = new Vector3[numVertices];
         int[] triangles = new int[numVertices];
 
-        Vector3 bottomCenter = Vector3.zero;
-        Vector3 bottomLeft = Quaternion.Euler(0, -angle, 0) * Vector3.forward * distance;
-        Vector3 bottomRight = Quaternion.Euler(0, angle, 0) * Vector3.forward * distance;
+        Vector3 bottomCenter = Vector3.down * height;
+        Vector3 bottomLeft = bottomCenter + Quaternion.Euler(0, -horizontalAngle, 0) * Vector3.forward * distance;
+        Vector3 bottomRight = bottomCenter + Quaternion.Euler(0, horizontalAngle, 0) * Vector3.forward * distance;
 
-        Vector3 topCenter = bottomCenter + Vector3.up * height;
-        Vector3 topLeft = bottomLeft + Vector3.up * height;
-        Vector3 topRight = bottomRight + Vector3.up * height;
+        Vector3 topCenter = Vector3.up * height;
+        Vector3 topLeft = bottomLeft + Vector3.up * 2 * height;
+        Vector3 topRight = bottomRight + Vector3.up * 2* height;
 
         int vert = 0;
 
@@ -110,16 +110,16 @@ public class AISensor : MonoBehaviour
         vertices[vert++] = bottomRight;
         vertices[vert++] = bottomCenter;
 
-        float currentAngle = -angle;
-        float deltaAngle = (angle * 2) / segments;
+        float currentAngle = -horizontalAngle;
+        float deltaAngle = (horizontalAngle * 2) / segments;
 
         for (int i = 0; i < segments; i++)
         {
-            bottomLeft = Quaternion.Euler(0, currentAngle, 0) * Vector3.forward * distance;
-            bottomRight = Quaternion.Euler(0, currentAngle + deltaAngle, 0) * Vector3.forward * distance;
+            bottomLeft = bottomCenter + Quaternion.Euler(0, currentAngle, 0) * Vector3.forward * distance;
+            bottomRight = bottomCenter + Quaternion.Euler(0, currentAngle + deltaAngle, 0) * Vector3.forward * distance;
 
-            topLeft = bottomLeft + Vector3.up * height;
-            topRight = bottomRight + Vector3.up * height;
+            topLeft = bottomLeft + Vector3.up * 2 * height;
+            topRight = bottomRight + Vector3.up * 2 * height;
 
             // far side
             vertices[vert++] = bottomLeft;

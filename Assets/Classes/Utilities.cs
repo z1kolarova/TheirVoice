@@ -17,7 +17,7 @@ public static class Utilities
     public static string ForLogging(this Vector2 v2) => $"{v2.x}, {v2.y}";
 
     public static bool IsNullOrBegining(this Vector3 v3)
-        => v3 == null || (v3.x == 0 && v3.y == 0 && v3.z == 0);
+        => v3 == null || v3.Equals(Vector3.zero);
     public static bool IsApproximately(this Vector3 v1, Vector3 v2, float precision = 0.5f, bool ignoreY = true)
     {
         return Mathf.Abs(v1.x - v2.x) <= precision 

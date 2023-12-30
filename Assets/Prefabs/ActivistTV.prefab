@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5470493670200403135}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ActivistTV
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 8195036191789337642}
   - component: {fileID: 7140697456239129215}
   - component: {fileID: 8816668254735170029}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Activist
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,6 +199,18 @@ PrefabInstance:
     - target: {fileID: 5437354241929126305, guid: 3b80a007aeaee40488e2149510edb713, type: 3}
       propertyPath: m_Name
       value: DeviceTV
+      objectReference: {fileID: 0}
+    - target: {fileID: 5437354241929126305, guid: 3b80a007aeaee40488e2149510edb713, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5852393674159534869, guid: 3b80a007aeaee40488e2149510edb713, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7766291446154491676, guid: 3b80a007aeaee40488e2149510edb713, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
