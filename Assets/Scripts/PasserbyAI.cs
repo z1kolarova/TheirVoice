@@ -14,12 +14,11 @@ public class PasserbyAI : MonoBehaviour
     private AISensor _sensor;
 
     [SerializeField]
-    float speed = 5f;
-    [SerializeField]
     Transform target;
 
     PasserbyStates state = PasserbyStates.WanderingAround;
     Vector3 tempDestination;
+    GameObject watchedObject;
 
     // Start is called before the first frame update
     void Start()
@@ -32,13 +31,14 @@ public class PasserbyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CheckForStateChange();
+        EvaluateStateChange();
         switch (state)
         {
             case PasserbyStates.WanderingAround:
                 WanderAround();
                 break;
             case PasserbyStates.Watching:
+                ReactToSeenObject(watchedObject);
                 break;
             case PasserbyStates.Leaving:
                 Leave();
@@ -48,22 +48,14 @@ public class PasserbyAI : MonoBehaviour
         }
     }
 
-    private void CheckForStateChange()
+    private void EvaluateStateChange()
     {
         switch (state)
         {
             case PasserbyStates.WanderingAround:
                 if (_sensor.objects.Any())
                 {
-                    var lookingAt = _sensor.objects[0];
-                    if (lookingAt.layer == LayerMask.NameToLayer("Outreachers"))
-                    {
-                        Debug.Log("I see outreacher");
-                    }
-                    else if (lookingAt.layer == LayerMask.NameToLayer("Cubers"))
-                    {
-                        Debug.Log("I see cubers");
-                    }
+                    ReactToSeenObject(_sensor.objects[0]);
                 }
                 break;
             case PasserbyStates.Watching:
@@ -80,11 +72,28 @@ public class PasserbyAI : MonoBehaviour
         if (tempDestination.IsNullOrBegining() || tempDestination.IsApproximately(_rb.position))
         {
             ChooseNewTempDestination();
+            _agent.destination = tempDestination;
         }
+    }
+    private void ReactToSeenObject(GameObject gameObject)
+    {
+        var layerName = LayerMask.LayerToName(gameObject.layer);
+        switch (layerName)
+        {
+            case "Outreachers":
+                break;
 
-        _agent.destination = tempDestination;
-        
-        //MoveTowardsDestination(tempDestination);
+            case "Cubers":
+                StopAndTurnTowards(gameObject);
+
+                watchedObject = gameObject;
+                state = PasserbyStates.Watching;
+
+                break;
+
+            default:
+                break;
+        }        
     }
     private void Engage()
     {
@@ -92,7 +101,7 @@ public class PasserbyAI : MonoBehaviour
     }
     private void Leave()
     {
-        if (target == null || target.position.IsApproximately(_rb.position))
+        if (target != null && !target.position.IsApproximately(_agent.transform.position))
         {
             _agent.destination = target.position;
             return;
@@ -107,10 +116,15 @@ public class PasserbyAI : MonoBehaviour
         tempDestination = new Vector3(v2.x, _rb.position.y, v2.y);
     }
 
-    private void MoveTowardsDestination(Vector3 destination)
+    private void StopAndTurnTowards(Vector3 position)
     {
-        var vectorDistance = destination - _rb.position;
-        var vectorMovement = new Vector3(vectorDistance.x, 0, vectorDistance.z).normalized;
-        _rb.velocity = vectorMovement * speed;
+        _agent.isStopped = true;
+
+        Vector3 direction = position - _agent.transform.position;
+        direction.y = 0f;
+
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        _agent.transform.rotation = Quaternion.RotateTowards(_agent.transform.rotation, targetRotation, _agent.angularSpeed * Time.deltaTime);
     }
+    private void StopAndTurnTowards(GameObject gameObject) => StopAndTurnTowards(gameObject.transform.position);
 }
