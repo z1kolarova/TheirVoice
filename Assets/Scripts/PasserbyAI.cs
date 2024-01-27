@@ -1,6 +1,7 @@
 using Assets.Classes;
 using System;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,9 +17,14 @@ public class PasserbyAI : MonoBehaviour
     [SerializeField]
     Transform target;
 
+    public TMP_Text textMesh;
+    public Animator speechBubbleAnimator;
+
     PasserbyStates state = PasserbyStates.WanderingAround;
     Vector3 tempDestination;
     GameObject watchedObject;
+
+    bool isGettingApproached = false;
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +46,9 @@ public class PasserbyAI : MonoBehaviour
             case PasserbyStates.Watching:
                 ReactToSeenObject(watchedObject);
                 break;
+            case PasserbyStates.InConversation:
+                ReactToSeenObject(watchedObject);
+                break;
             case PasserbyStates.Leaving:
                 Leave();
                 break;
@@ -53,12 +62,14 @@ public class PasserbyAI : MonoBehaviour
         switch (state)
         {
             case PasserbyStates.WanderingAround:
-                if (_sensor.objects.Any())
+                if (!isGettingApproached && _sensor.objects.Any())
                 {
                     ReactToSeenObject(_sensor.objects[0]);
                 }
                 break;
             case PasserbyStates.Watching:
+                break;
+            case PasserbyStates.InConversation:
                 break;
             case PasserbyStates.Leaving:
                 break;
@@ -81,11 +92,11 @@ public class PasserbyAI : MonoBehaviour
         switch (layerName)
         {
             case "Outreachers":
+                StopAndTurnTowards(gameObject);
                 break;
 
             case "Cubers":
                 StopAndTurnTowards(gameObject);
-
                 watchedObject = gameObject;
                 state = PasserbyStates.Watching;
 
@@ -95,9 +106,19 @@ public class PasserbyAI : MonoBehaviour
                 break;
         }        
     }
-    private void Engage()
-    {
 
+    public void BeApproached(GameObject player)
+    {
+        isGettingApproached = true;
+        Engage(player);
+    }
+
+    private void Engage(GameObject player)
+    {
+        watchedObject = player;
+        state = PasserbyStates.InConversation;
+
+        Debug.Log("I've been approached and am now in conversation.");
     }
     private void Leave()
     {
@@ -106,8 +127,6 @@ public class PasserbyAI : MonoBehaviour
             _agent.destination = target.position;
             return;
         }
-
-        //MoveTowardsDestination(target.position);
     }
 
     private void ChooseNewTempDestination()

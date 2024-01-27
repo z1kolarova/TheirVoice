@@ -6,6 +6,7 @@ namespace Assets.Classes
     { 
         WanderingAround,
         Watching,
+        InConversation,
         Leaving
     }
 }
