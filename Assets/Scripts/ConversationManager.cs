@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
+using Assets.Classes;
 
 public class ConversationManager : MonoBehaviour
 {
@@ -19,21 +20,24 @@ public class ConversationManager : MonoBehaviour
     //[SerializeField] private Animator playerSpeechBubbleAnimator;
     private Animator npcSpeechBubbleAnimator;
 
-    //private int playerIndex;
-    private int npcIndex;
 
     private float speechBubbleAnimationDelay = 0.6f;
+    private PasserbyAI? talkingTo;
+
+    [SerializeField] private ConversationOptionsDisplay cod;
 
     private void Start()
     {
         instance = this;
     }
 
-    public void TriggerStartDialogue(PasserbyAI passerBy)
+    public void TriggerStartDialogue(PasserbyAI passerby)
     {
-        npcSpeechBubbleAnimator = passerBy.speechBubbleAnimator;
-        npcDialogueText = passerBy.textMesh;
+        talkingTo = passerby;
+        npcSpeechBubbleAnimator = talkingTo.speechBubbleAnimator;
+        npcDialogueText = talkingTo.textMesh;
         StartDialogue();
+        ShowUI(ConversationConsts.openingLines);
     }
 
     public void TriggerEndDialogue()
@@ -45,9 +49,9 @@ public class ConversationManager : MonoBehaviour
             npcSpeechBubbleAnimator = null;
 
         }
-        //talkingTo.EndConversation();
-        //talkingTo = null;
-        //HideUI();
+        talkingTo.EndConversation();
+        talkingTo = null;
+        HideUI();
 
         PlayerController.I.EndConversation();
     }
@@ -69,21 +73,21 @@ public class ConversationManager : MonoBehaviour
         //}
         //else
         //{
-        npcIndex = 0;
         StartCoroutine(OpenCleanSpeechBubble(npcSpeechBubbleAnimator, npcDialogueText));
         TypeNPCDialogue();
         //}
     }
 
-    //private void TypePlayerDialogue()
-    //{
-    //    //foreach (var letter in playerDialogueSentences[playerIndex].ToCharArray())
-    //    //{
-    //    //    playerDialogueText.text += letter;
-    //    //    yield return new WaitForSeconds(typingSpeed);
-    //    //}
-    //    StartCoroutine(TypeDialogue(playerDialogueSentences[playerIndex], playerDialogueText));
-    //}
+    private void ShowUI(List<ConversationBlock> blocksForOptions)
+    {
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        cod.PopulateOptionsAndDisplay(blocksForOptions);
+    }
+
+    private void HideUI()
+    {
+        cod.HideConversationUIAndLockMouse();
+    }
 
     private void TypeNPCDialogue()
     {

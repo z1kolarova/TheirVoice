@@ -147,13 +147,17 @@ public class PasserbyAI : MonoBehaviour
         Engage(player);
     }
 
+    public void EndConversation()
+    {
+        state = PasserbyStates.Leaving;
+        _agent.isStopped = false;
+    }
+
     private void Engage(GameObject player)
     {
         watchedObject = player;
         state = PasserbyStates.InConversation;
-        speechBubbleParent.gameObject.SetActive(true);
-
-        Debug.Log("I've been approached and am now in conversation.");
+        speechBubbleParent.gameObject.SetActive(true); //todo comment out
     }
     private void Leave()
     {
