@@ -5,6 +5,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
+enum AnimationType {
+    Idle,
+    Walk
+}
+
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(AISensor))]
@@ -36,6 +41,30 @@ public class PasserbyAI : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _agent = GetComponent<NavMeshAgent>();
         _sensor = GetComponent<AISensor>();
+        PlayAnimation(AnimationType.Idle);
+    }
+
+    void PlayAnimation(AnimationType animationType) {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        string animationName = GetAnimationName(animationType);
+
+        if (!stateInfo.IsName(animationName))
+        {
+            animator.Play(animationName);
+        }
+    }
+
+    string GetAnimationName(AnimationType animationType) {
+        switch (animationType) {
+            case AnimationType.Idle:
+                return "Neutral Idle";
+                break;
+            case AnimationType.Walk:
+                return "Standard Walk";
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(animationType), animationType, null);
+        }
     }
 
     // Update is called once per frame
@@ -84,6 +113,7 @@ public class PasserbyAI : MonoBehaviour
 
     private void WanderAround()
     {
+        PlayAnimation(AnimationType.Walk);
         if (tempDestination.IsNullOrBegining() || tempDestination.IsApproximately(_rb.position))
         {
             ChooseNewTempDestination();
@@ -143,6 +173,7 @@ public class PasserbyAI : MonoBehaviour
     private void StopAndTurnTowards(Vector3 position)
     {
         _agent.isStopped = true;
+        PlayAnimation(AnimationType.Idle);
 
         Vector3 direction = position - _agent.transform.position;
         direction.y = 0f;
