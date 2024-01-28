@@ -182,10 +182,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6378693144650762364, guid: 10402b59cff50dd43bd1946a1385f028, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10402b59cff50dd43bd1946a1385f028, type: 3}
 --- !u!1001 &50207443
 PrefabInstance:
@@ -258,9 +255,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6524309794129140479, guid: 10402b59cff50dd43bd1946a1385f028, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2090513244}
-    - targetCorrespondingSourceObject: {fileID: 6378693144650762364, guid: 10402b59cff50dd43bd1946a1385f028, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 10402b59cff50dd43bd1946a1385f028, type: 3}
 --- !u!95 &96965119 stripped
 Animator:
@@ -1175,11 +1169,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typingSpeed: 0.05
-  npcDialogueSentences:
-  - Hello.
-  - What is this about?
-  - Of course I'm against abusing animals!
-  - Uhm... Yeah, I do eat meat. But I make sure to buy only from the certified farmers.
 --- !u!4 &1162394861 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1837650014723811208, guid: 43c81a5671b71c645a3f4e8fad4ae3d7, type: 3}
@@ -1531,10 +1520,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6378693144650762364, guid: 10402b59cff50dd43bd1946a1385f028, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10402b59cff50dd43bd1946a1385f028, type: 3}
 --- !u!4 &1476430770 stripped
 Transform:
@@ -2389,10 +2375,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6378693144650762364, guid: 10402b59cff50dd43bd1946a1385f028, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10402b59cff50dd43bd1946a1385f028, type: 3}
 --- !u!1 &2114283753834967212
 GameObject:

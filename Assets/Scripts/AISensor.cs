@@ -161,24 +161,24 @@ public class AISensor : MonoBehaviour
         mesh = CreateWedgeMesh();
     }
 
-    private void OnDrawGizmos()
-    {
-        if (mesh)
-        {
-            Gizmos.color = meshColor;
-            Gizmos.DrawMesh(mesh, transform.position, transform.rotation);
-        }
-        /*
-        Gizmos.DrawWireSphere(transform.position, distance);
-        for (int i = 0; i < count; i++)
-        {
-            Gizmos.DrawSphere(colliders[i].transform.position, 1f);
-        }*/
+    //private void OnDrawGizmos()
+    //{
+    //    if (mesh)
+    //    {
+    //        Gizmos.color = meshColor;
+    //        Gizmos.DrawMesh(mesh, transform.position, transform.rotation);
+    //    }
+    //    /*
+    //    Gizmos.DrawWireSphere(transform.position, distance);
+    //    for (int i = 0; i < count; i++)
+    //    {
+    //        Gizmos.DrawSphere(colliders[i].transform.position, 1f);
+    //    }*/
 
-        Gizmos.color = Color.yellow;
-        foreach (var obj in objects)
-        {
-            Gizmos.DrawSphere(obj.transform.position, 3f);
-        }
-    }
+    //    Gizmos.color = Color.yellow;
+    //    foreach (var obj in objects)
+    //    {
+    //        Gizmos.DrawSphere(obj.transform.position, 3f);
+    //    }
+    //}
 }
