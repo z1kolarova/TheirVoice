@@ -12,14 +12,7 @@ public class Raycast : MonoBehaviour
 
     public Transform cvc;
 
-    private PlayerController playerController;
-
     RaycastHit hitInfo;
-
-    private void Start()
-    {
-        playerController = FindObjectOfType<PlayerController>();   
-    }
 
     // Update is called once per frame
     void Update()
@@ -34,7 +27,7 @@ public class Raycast : MonoBehaviour
                 {
                     if(Input.GetKeyDown(KeyCode.E))
                     {
-                        playerController.BeginConversation(hitInfo.transform.gameObject.GetComponent<PasserbyAI>());
+                        PlayerController.I.BeginConversation(hitInfo.transform.gameObject.GetComponent<PasserbyAI>());
                     }
 
                     Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * hitInfo.distance), Color.green);

@@ -6,6 +6,9 @@ using TMPro;
 
 public class ConversationManager : MonoBehaviour
 {
+    public static ConversationManager I => instance;
+    static ConversationManager instance;
+
     [SerializeField] private float typingSpeed = 0.05f;
     //[SerializeField] private bool playerSpeakingFirst;
 
@@ -23,6 +26,7 @@ public class ConversationManager : MonoBehaviour
 
     private void Start()
     {
+        instance = this;
     }
 
     public void TriggerStartDialogue(PasserbyAI passerBy)
@@ -30,6 +34,22 @@ public class ConversationManager : MonoBehaviour
         npcSpeechBubbleAnimator = passerBy.speechBubbleAnimator;
         npcDialogueText = passerBy.textMesh;
         StartDialogue();
+    }
+
+    public void TriggerEndDialogue()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            StartCoroutine(CloseSpeechBubble(npcSpeechBubbleAnimator));
+            npcDialogueText = null;
+            npcSpeechBubbleAnimator = null;
+
+        }
+        //talkingTo.EndConversation();
+        //talkingTo = null;
+        //HideUI();
+
+        PlayerController.I.EndConversation();
     }
 
     private void Update()

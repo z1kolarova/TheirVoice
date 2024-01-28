@@ -1,6 +1,4 @@
 using StarterAssets;
-using TMPro;
-using UnityEditor.PackageManager;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -11,9 +9,11 @@ using UnityEngine.InputSystem;
 #if ENABLE_INPUT_SYSTEM
 [RequireComponent(typeof(PlayerInput))]
 #endif
-[RequireComponent(typeof(ConversationManager))]
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController I => instance;
+    static PlayerController instance;
+
     [Header("Player")]
     [Tooltip("Move speed of the character in m/s")]
     public float MoveSpeed = 4.0f;
@@ -77,7 +77,6 @@ public class PlayerController : MonoBehaviour
 
     private const float _threshold = 0.01f;
 
-    private ConversationManager _conversationManager;
     private bool isInteracting = false;
 
     private bool IsCurrentDeviceMouse
@@ -103,6 +102,8 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        instance = this;
+
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM
@@ -110,8 +111,6 @@ public class PlayerController : MonoBehaviour
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
-
-        _conversationManager = GetComponent<ConversationManager>();
 
         // reset our timeouts on start
         _jumpTimeoutDelta = JumpTimeout;
@@ -142,6 +141,11 @@ public class PlayerController : MonoBehaviour
 
     private void CameraRotation()
     {
+        if (isInteracting)
+        {
+            // return;
+        }
+
         // if there is an input
         if (_input.look.sqrMagnitude >= _threshold)
         {
@@ -285,6 +289,11 @@ public class PlayerController : MonoBehaviour
     {
         SetIsInteracting(true);
         passerby.BeApproached(transform.gameObject);
-        _conversationManager.TriggerStartDialogue(passerby);
+        ConversationManager.I.TriggerStartDialogue(passerby);
+    }
+
+    public void EndConversation()
+    {
+        SetIsInteracting(false);
     }
 }
