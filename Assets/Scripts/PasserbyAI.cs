@@ -16,7 +16,11 @@ public class PasserbyAI : MonoBehaviour
 
     [SerializeField]
     Transform target;
+    
+    [SerializeField]
+    Animator animator;
 
+    [SerializeField] Transform speechBubbleParent;
     public TMP_Text textMesh;
     public Animator speechBubbleAnimator;
 
@@ -117,6 +121,7 @@ public class PasserbyAI : MonoBehaviour
     {
         watchedObject = player;
         state = PasserbyStates.InConversation;
+        speechBubbleParent.gameObject.SetActive(true);
 
         Debug.Log("I've been approached and am now in conversation.");
     }

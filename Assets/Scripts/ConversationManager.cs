@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
 
@@ -10,9 +11,6 @@ public class ConversationManager : MonoBehaviour
 
     //[SerializeField] private TextMeshProUGUI playerDialogueText;
     private TMP_Text npcDialogueText;
-
-    //[SerializeField] private string[] playerDialogueSentences;
-    [SerializeField] private string[] npcDialogueSentences;
 
     [Header("Animation Controllers")]
     //[SerializeField] private Animator playerSpeechBubbleAnimator;
@@ -52,8 +50,8 @@ public class ConversationManager : MonoBehaviour
         //else
         //{
         npcIndex = 0;
-            StartCoroutine(OpenCleanSpeechBubble(npcSpeechBubbleAnimator, npcDialogueText));
-            TypeNPCDialogue();
+        StartCoroutine(OpenCleanSpeechBubble(npcSpeechBubbleAnimator, npcDialogueText));
+        TypeNPCDialogue();
         //}
     }
 
@@ -74,15 +72,15 @@ public class ConversationManager : MonoBehaviour
         //    playerDialogueText.text += letter;
         //    yield return new WaitForSeconds(typingSpeed);
         //}
-        TypeDialogue(npcDialogueSentences[npcIndex], npcDialogueText);
+        TypeDialogue(ConversationConsts.tempDialogSentences[0], npcDialogueText);
     }
 
-    private IEnumerator TypeDialogue(string sentence, TMP_Text destination)
-    {
+    private async void TypeDialogue(string sentence, TMP_Text destination) {
+        await Task.Delay((int)(speechBubbleAnimationDelay * 1000));
         foreach (var letter in sentence.ToCharArray())
         {
             destination.text += letter;
-            yield return new WaitForSeconds(typingSpeed);
+            await Task.Delay((int)(typingSpeed * 1000));
         }
     }
 
