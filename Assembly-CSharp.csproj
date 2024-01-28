@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\Raycast.cs" />
     <Compile Include="Assets\Scripts\PasserbyAI.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\VirtualInputs\UIVirtualButton.cs" />
+    <Compile Include="Assets\Classes\ConversationBlock.cs" />
     <Compile Include="Assets\Scripts\AISensor.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\VirtualInputs\UIVirtualJoystick.cs" />
     <Compile Include="Assets\StarterAssets\FirstPersonController\Scripts\BasicRigidBodyPush.cs" />
