@@ -18,7 +18,7 @@ public static class Utilities
 
     public static bool IsNullOrBegining(this Vector3 v3)
         => v3 == null || v3.Equals(Vector3.zero);
-    public static bool IsApproximately(this Vector3 v1, Vector3 v2, float precision = 0.5f, bool ignoreY = true)
+    public static bool IsApproximately(this Vector3 v1, Vector3 v2, float precision = 2f, bool ignoreY = true)
     {
         return Mathf.Abs(v1.x - v2.x) <= precision 
             && (ignoreY || Mathf.Abs(v1.y - v2.y) <= precision) 
