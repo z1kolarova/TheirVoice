@@ -18,6 +18,8 @@ public class ConversationOptionsDisplay : MonoBehaviour
 
     [SerializeField] Animator npcSpeechBubbleAnimator;
     [SerializeField] TMP_Text npcTextMesh;
+    
+    [SerializeField] Image crossHair;
 
     [SerializeField] private float typingSpeed = 0.05f;
 
@@ -60,6 +62,7 @@ public class ConversationOptionsDisplay : MonoBehaviour
     public void DisplayUI()
     {
         transform.gameObject.SetActive(true);
+        crossHair.gameObject.SetActive(false);
         UnityEngine.Cursor.lockState = CursorLockMode.None;
     }
 
@@ -106,6 +109,7 @@ public class ConversationOptionsDisplay : MonoBehaviour
     public void HideUIAndLockMouse()
     {
         transform.gameObject.SetActive(false);
+        crossHair.gameObject.SetActive(true);
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
     }
 
