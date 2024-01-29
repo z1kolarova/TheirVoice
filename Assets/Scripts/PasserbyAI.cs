@@ -19,8 +19,7 @@ public class PasserbyAI : MonoBehaviour
     private NavMeshAgent _agent;
     private AISensor _sensor;
 
-    [SerializeField]
-    Transform target;
+    public Transform target;
     
     Animator animator;
 
@@ -149,6 +148,8 @@ public class PasserbyAI : MonoBehaviour
             _agent.destination = target.position;
             return;
         }
+
+        PasserBySpawnManager.I.Remove(this);
         Destroy(transform.gameObject);
     }
 
