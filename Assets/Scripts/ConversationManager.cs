@@ -28,7 +28,7 @@ public class ConversationManager : MonoBehaviour
 
     public string GetResponseTo(ConversationBlock conversationBlock)
     {
-        return "THIS IS A PLACEHOLDER TEXT THAT WILL BE REPLACED BY SOMETHING ELSE ENTIRELY IN THE FUTURE.";
+        return $"{conversationBlock.Text}? What's that supposed to mean?";
     }
 
     public void TriggerEndDialogue()

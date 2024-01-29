@@ -41,6 +41,7 @@ public class ConversationOptionsDisplay : MonoBehaviour
                 PopulateOptionButtons(ConversationConsts.TestingSet);
             });
         }
+
         endConversationBtn.onClick.AddListener(() =>
         {
             ConversationManager.I.TriggerEndDialogue();

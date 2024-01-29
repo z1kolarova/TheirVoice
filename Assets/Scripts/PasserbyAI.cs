@@ -41,30 +41,7 @@ public class PasserbyAI : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _agent = GetComponent<NavMeshAgent>();
         _sensor = GetComponent<AISensor>();
-        PlayAnimation(AnimationType.Idle);
-    }
-
-    void PlayAnimation(AnimationType animationType) {
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        string animationName = GetAnimationName(animationType);
-
-        if (!stateInfo.IsName(animationName))
-        {
-            animator.Play(animationName);
-        }
-    }
-
-    string GetAnimationName(AnimationType animationType) {
-        switch (animationType) {
-            case AnimationType.Idle:
-                return "Neutral Idle";
-                break;
-            case AnimationType.Walk:
-                return "Standard Walk";
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(animationType), animationType, null);
-        }
+        animator.SetTrigger("StartWalking");
     }
 
     // Update is called once per frame
@@ -113,7 +90,6 @@ public class PasserbyAI : MonoBehaviour
 
     private void WanderAround()
     {
-        PlayAnimation(AnimationType.Walk);
         if (tempDestination.IsNullOrBegining() || tempDestination.IsApproximately(_rb.position))
         {
             ChooseNewTempDestination();
@@ -126,7 +102,10 @@ public class PasserbyAI : MonoBehaviour
         switch (layerName)
         {
             case "Outreachers":
-                StopAndTurnTowards(gameObject);
+                if (isGettingApproached)
+                {
+                    StopAndTurnTowards(gameObject);
+                }
                 break;
 
             case "Cubers":
@@ -151,13 +130,14 @@ public class PasserbyAI : MonoBehaviour
     {
         state = PasserbyStates.Leaving;
         _agent.isStopped = false;
+        animator.SetTrigger("StartWalking");
     }
 
     private void Engage(GameObject player)
     {
         watchedObject = player;
         state = PasserbyStates.InConversation;
-        speechBubbleParent.gameObject.SetActive(true); //todo comment out
+        animator.SetTrigger("GoIdle");
     }
     private void Leave()
     {
@@ -177,7 +157,7 @@ public class PasserbyAI : MonoBehaviour
     private void StopAndTurnTowards(Vector3 position)
     {
         _agent.isStopped = true;
-        PlayAnimation(AnimationType.Idle);
+        animator.SetTrigger("GoIdle");
 
         Vector3 direction = position - _agent.transform.position;
         direction.y = 0f;

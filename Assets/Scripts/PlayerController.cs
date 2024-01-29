@@ -143,7 +143,7 @@ public class PlayerController : MonoBehaviour
     {
         if (isInteracting)
         {
-            // return;
+            return;
         }
 
         // if there is an input
