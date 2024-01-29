@@ -46,8 +46,7 @@ public class ConversationOptionsDisplay : MonoBehaviour
 
         endConversationBtn.onClick.AddListener(() =>
         {
-            ConversationManager.I.TriggerEndDialogue();
-            HideUIAndLockMouse();
+            StartCoroutine(EndDialogue());
         });
 
         HideUIAndLockMouse();
@@ -57,6 +56,16 @@ public class ConversationOptionsDisplay : MonoBehaviour
     {
         DisplayUI();
         PopulateOptionButtons(ConversationConsts.openingLines);
+    }
+
+    public IEnumerator EndDialogue()
+    {
+        if (speechBubbleOpen)
+        {
+            yield return StartCoroutine(CloseSpeechBubble());
+        }
+        ConversationManager.I.TriggerEndDialogue();
+        HideUIAndLockMouse();
     }
 
     public void DisplayUI()

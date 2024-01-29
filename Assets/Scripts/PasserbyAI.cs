@@ -112,7 +112,7 @@ public class PasserbyAI : MonoBehaviour
                 StopAndTurnTowards(gameObject);
                 watchedObject = gameObject;
                 state = PasserbyStates.Watching;
-
+                animator.SetTrigger("GoIdle");
                 break;
 
             default:
@@ -146,6 +146,7 @@ public class PasserbyAI : MonoBehaviour
             _agent.destination = target.position;
             return;
         }
+        Destroy(transform.gameObject);
     }
 
     private void ChooseNewTempDestination()
@@ -157,7 +158,6 @@ public class PasserbyAI : MonoBehaviour
     private void StopAndTurnTowards(Vector3 position)
     {
         _agent.isStopped = true;
-        animator.SetTrigger("GoIdle");
 
         Vector3 direction = position - _agent.transform.position;
         direction.y = 0f;
