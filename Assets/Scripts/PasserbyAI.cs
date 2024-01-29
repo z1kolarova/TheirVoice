@@ -79,7 +79,7 @@ public class PasserbyAI : MonoBehaviour
             case PasserbyStates.WanderingAround:
                 if (!isGettingApproached && _sensor.objects.Any())
                 {
-                    ReactToSeenObject(_sensor.objects[0]);
+                    StartWatchingObject(_sensor.objects[0]);
                 }
                 break;
             case PasserbyStates.Watching:
@@ -101,34 +101,27 @@ public class PasserbyAI : MonoBehaviour
             _agent.destination = tempDestination;
         }
     }
-    private void ReactToSeenObject(GameObject gameObject)
+
+    private void StartWatchingObject(GameObject gameObject)
     {
-        var layerName = LayerMask.LayerToName(gameObject.layer);
-        switch (layerName)
+        watchedObject = gameObject;
+        if (state != PasserbyStates.Watching)
         {
-            case "Outreachers":
-                if (isGettingApproached)
-                {
-                    StopAndTurnTowards(gameObject);
-                }
-                break;
+            state = PasserbyStates.Watching;
+            animator.SetTrigger("GoIdle");
+            //Debug.Log($"{nameof(StartWatchingObject)} set trigger GoIdle");
+        }
+    }
 
-            case "Cubers":
-                StopAndTurnTowards(gameObject);
-                watchedObject = gameObject;
-                state = PasserbyStates.Watching;
-                animator.SetTrigger("GoIdle");
-                break;
-
-            default:
-                break;
-        }        
+    private void ReactToSeenObject(GameObject gameObject)
+    {    
+        StopAndTurnTowards(gameObject);
     }
 
     public void BeApproached(GameObject player)
     {
         isGettingApproached = true;
-        Engage(player);
+        EngageWith(player);
     }
 
     public void EndConversation()
@@ -136,13 +129,18 @@ public class PasserbyAI : MonoBehaviour
         state = PasserbyStates.Leaving;
         _agent.isStopped = false;
         animator.SetTrigger("StartWalking");
+        //Debug.Log($"{nameof(EndConversation)} set trigger StartWalking");
     }
 
-    private void Engage(GameObject player)
+    private void EngageWith(GameObject player)
     {
         watchedObject = player;
+        if (state != PasserbyStates.Watching)
+        {
+            animator.SetTrigger("GoIdle");
+            //Debug.Log($"{nameof(EngageWith)} set trigger GoIdle");
+        }
         state = PasserbyStates.InConversation;
-        animator.SetTrigger("GoIdle");
     }
     private void Leave()
     {

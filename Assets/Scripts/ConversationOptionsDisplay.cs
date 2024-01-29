@@ -37,10 +37,12 @@ public class ConversationOptionsDisplay : MonoBehaviour
             currentOptions.Add(button, null);
             button.onClick.AddListener(() =>
             {
-                Debug.Log($"You chose {currentOptions[button].Text}");
-                var npcResponse = ConversationManager.I.GetResponseTo(currentOptions[button]);
-                DoNPCDialogue(npcResponse);
-                PopulateOptionButtons(ConversationConsts.TestingSet);
+                foreach (var b in ConversationOptionsDisplay.I.optionButtons)
+                {
+                    b.enabled = false;
+                }
+                I.endConversationBtn.enabled = false;
+                StartCoroutine(ContinueDialogue(currentOptions[button]));
             });
         }
 
@@ -56,6 +58,14 @@ public class ConversationOptionsDisplay : MonoBehaviour
     {
         DisplayUI();
         PopulateOptionButtons(ConversationConsts.openingLines);
+    }
+
+    public IEnumerator ContinueDialogue(ConversationBlock conversationBlock)
+    {
+        Debug.Log($"You chose {conversationBlock.Text}");
+        var npcResponse = ConversationManager.I.GetResponseTo(conversationBlock);
+        yield return StartCoroutine(DoNPCDialogue(npcResponse));
+        PopulateOptionButtons(ConversationConsts.TestingSet);
     }
 
     public IEnumerator EndDialogue()
@@ -75,23 +85,22 @@ public class ConversationOptionsDisplay : MonoBehaviour
         UnityEngine.Cursor.lockState = CursorLockMode.None;
     }
 
-    public void DoNPCDialogue(string text)
+    public IEnumerator DoNPCDialogue(string text)
     {
         if (speechBubbleOpen)
         {
-            StartCoroutine(CloseSpeechBubble());
+            yield return StartCoroutine(CloseSpeechBubble());
         }
-        StartCoroutine(OpenCleanSpeechBubble());
-        TypeDialogue(text);
+        yield return StartCoroutine(OpenCleanSpeechBubble());
+        yield return StartCoroutine(TypeDialogueCoroutine(text));
     }
 
-    private async void TypeDialogue(string sentence)
+    private IEnumerator TypeDialogueCoroutine(string sentence)
     {
-        await Task.Delay((int)(speechBubbleAnimationDelay * 1000));
         foreach (var letter in sentence.ToCharArray())
         {
             npcTextMesh.text += letter;
-            await Task.Delay((int)(typingSpeed * 1000));
+            yield return new WaitForSeconds(typingSpeed);
         }
     }
 
@@ -129,5 +138,10 @@ public class ConversationOptionsDisplay : MonoBehaviour
             optionTextMeshes[i].text = conversationBlocks[i].Text;
             currentOptions[optionButtons[i]] = conversationBlocks[i];
         }
+        foreach (var b in ConversationOptionsDisplay.I.optionButtons)
+        {
+            b.enabled = true;
+        }
+        I.endConversationBtn.enabled = true;
     }
 }

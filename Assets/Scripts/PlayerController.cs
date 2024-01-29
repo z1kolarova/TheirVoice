@@ -288,7 +288,6 @@ public class PlayerController : MonoBehaviour
     public void BeginConversation(PasserbyAI passerby)
     {
         SetIsInteracting(true);
-        passerby.BeApproached(transform.gameObject);
         ConversationManager.I.TriggerStartDialogue(passerby);
     }
 

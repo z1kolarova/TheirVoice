@@ -506,5 +506,5 @@ MonoBehaviour:
   scanFrequency: 30
   layers:
     serializedVersion: 2
-    m_Bits: 1536
+    m_Bits: 1024
   objects: []
