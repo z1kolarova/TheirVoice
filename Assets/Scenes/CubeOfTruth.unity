@@ -3337,6 +3337,8 @@ Transform:
   m_Children:
   - {fileID: 1476430770}
   - {fileID: 1603964947}
+  - {fileID: 864299377}
+  - {fileID: 1271350775}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &288689828 stripped
@@ -3498,7 +3500,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 313.15
+  m_fontSize: 470.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4053,6 +4055,80 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 832720767}
   m_CullTransparentMesh: 1
+--- !u!1001 &864299376
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 196587993}
+    m_Modifications:
+    - target: {fileID: 3753358893579831730, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_Name
+      value: ActivistTV (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4845208214072218487, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4845208214072218487, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6574008599058662503, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: delaySeconds
+      value: 150
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: deb87f11040048b49b721ac537602e45, type: 3}
+--- !u!4 &864299377 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+  m_PrefabInstance: {fileID: 864299376}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &874605735
 GameObject:
   m_ObjectHideFlags: 0
@@ -4629,6 +4705,80 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+--- !u!1001 &1271350774
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 196587993}
+    m_Modifications:
+    - target: {fileID: 3753358893579831730, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_Name
+      value: ActivistTV (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4845208214072218487, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4845208214072218487, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6574008599058662503, guid: deb87f11040048b49b721ac537602e45, type: 3}
+      propertyPath: delaySeconds
+      value: 250
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: deb87f11040048b49b721ac537602e45, type: 3}
+--- !u!4 &1271350775 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
+  m_PrefabInstance: {fileID: 1271350774}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1354411974
 GameObject:
   m_ObjectHideFlags: 0
@@ -6657,10 +6807,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196587993}
     m_Modifications:
-    - target: {fileID: 1479123131133485179, guid: deb87f11040048b49b721ac537602e45, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.05
-      objectReference: {fileID: 0}
     - target: {fileID: 3753358893579831730, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_Name
       value: ActivistTV (1)
@@ -6687,7 +6833,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalRotation.x
@@ -6695,11 +6841,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -6707,7 +6853,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 270
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -9093,10 +9239,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196587993}
     m_Modifications:
-    - target: {fileID: 69852425604072421, guid: deb87f11040048b49b721ac537602e45, type: 3}
-      propertyPath: m_Looping
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3753358893579831730, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_Name
       value: ActivistTV
@@ -9115,19 +9257,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -9135,7 +9277,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
