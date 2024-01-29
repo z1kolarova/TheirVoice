@@ -4085,7 +4085,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.85
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4559,7 +4559,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 420d7643089878f4db467df65e8f07c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  typingSpeed: 0.05
 --- !u!4 &887503118
 Transform:
   m_ObjectHideFlags: 0
@@ -4735,7 +4734,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.84
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6821,7 +6820,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.25
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5470493670200403135, guid: deb87f11040048b49b721ac537602e45, type: 3}
       propertyPath: m_LocalPosition.y
