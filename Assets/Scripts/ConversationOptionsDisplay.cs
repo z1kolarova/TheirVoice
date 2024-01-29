@@ -9,6 +9,9 @@ using UnityEngine.UI;
 
 public class ConversationOptionsDisplay : MonoBehaviour
 {
+    public static ConversationOptionsDisplay I => instance;
+    static ConversationOptionsDisplay instance;
+
     [SerializeField] List<Button> optionButtons;
     [SerializeField] List<TMP_Text> optionTextMeshes;
     [SerializeField] Button endConversationBtn;
@@ -21,16 +24,21 @@ public class ConversationOptionsDisplay : MonoBehaviour
     private Dictionary<Button, ConversationBlock> currentOptions = new Dictionary<Button, ConversationBlock>();
     private float speechBubbleAnimationDelay = 0.6f;
 
+    private bool speechBubbleOpen = false;
+
     public void Start()
     {
-        //currentOptions.Clear();
+        instance = this;
+
         foreach (var button in optionButtons)
         {
             currentOptions.Add(button, null);
             button.onClick.AddListener(() =>
             {
                 Debug.Log($"You chose {currentOptions[button].Text}");
-                DoNPCDialogue("Yeah, I love animals and this is terrible.");
+                var npcResponse = ConversationManager.I.GetResponseTo(currentOptions[button]);
+                DoNPCDialogue(npcResponse);
+                PopulateOptionButtons(ConversationConsts.TestingSet);
             });
         }
         endConversationBtn.onClick.AddListener(() =>
@@ -56,6 +64,10 @@ public class ConversationOptionsDisplay : MonoBehaviour
 
     public void DoNPCDialogue(string text)
     {
+        if (speechBubbleOpen)
+        {
+            StartCoroutine(CloseSpeechBubble());
+        }
         StartCoroutine(OpenCleanSpeechBubble());
         TypeDialogue(text);
     }
@@ -75,11 +87,13 @@ public class ConversationOptionsDisplay : MonoBehaviour
         npcTextMesh.text = string.Empty;
         npcSpeechBubbleAnimator.SetTrigger("Open");
         yield return new WaitForSeconds(speechBubbleAnimationDelay);
+        speechBubbleOpen = true;
     }
     private IEnumerator CloseSpeechBubble()
     {
         npcSpeechBubbleAnimator.SetTrigger("Close");
         yield return new WaitForSeconds(speechBubbleAnimationDelay);
+        speechBubbleOpen = false;
     }
 
     private void CloseOneBubbleOpenAnother()

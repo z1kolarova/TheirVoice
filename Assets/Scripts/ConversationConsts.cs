@@ -10,4 +10,11 @@ public static class ConversationConsts {
         new ConversationBlock{ Text = "Do you know what we're doing here?", ReactionValue = 1},
         new ConversationBlock{ Text = "Have you ever seen footage like this?", ReactionValue = 3},
     };
+
+    public static List<ConversationBlock> TestingSet = new List<ConversationBlock>() {
+        new ConversationBlock{ Text = "Option1", ReactionValue = 2},
+        new ConversationBlock{ Text = "Option2", ReactionValue = 0},
+        new ConversationBlock{ Text = "Option3", ReactionValue = 1},
+        new ConversationBlock{ Text = "Option4", ReactionValue = 3},
+    };
 }

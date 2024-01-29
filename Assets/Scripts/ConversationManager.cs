@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
+using Assets.Classes;
 
 public class ConversationManager : MonoBehaviour
 {
@@ -14,8 +15,6 @@ public class ConversationManager : MonoBehaviour
     private float speechBubbleAnimationDelay = 0.6f;
     private PasserbyAI? talkingTo;
 
-    [SerializeField] private ConversationOptionsDisplay cod;
-
     private void Start()
     {
         instance = this;
@@ -24,7 +23,12 @@ public class ConversationManager : MonoBehaviour
     public void TriggerStartDialogue(PasserbyAI passerby)
     {
         talkingTo = passerby;
-        cod.StartDialogue();
+        ConversationOptionsDisplay.I.StartDialogue();
+    }
+
+    public string GetResponseTo(ConversationBlock conversationBlock)
+    {
+        return "THIS IS A PLACEHOLDER TEXT THAT WILL BE REPLACED BY SOMETHING ELSE ENTIRELY IN THE FUTURE.";
     }
 
     public void TriggerEndDialogue()
