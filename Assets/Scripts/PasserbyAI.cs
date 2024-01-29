@@ -22,7 +22,6 @@ public class PasserbyAI : MonoBehaviour
     [SerializeField]
     Transform target;
     
-    [SerializeField]
     Animator animator;
 
     [SerializeField] Transform speechBubbleParent;
@@ -41,6 +40,12 @@ public class PasserbyAI : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _agent = GetComponent<NavMeshAgent>();
         _sensor = GetComponent<AISensor>();
+        
+        // load model
+        var model = GameObject.Instantiate(PasserbyModelManager.I.GetRandomModel(), this.transform);
+        model.transform.localPosition = new Vector3(0, -1, 0);
+        animator = model.GetComponent<Animator>();
+        animator.runtimeAnimatorController = PasserbyModelManager.I.animatorController;
         animator.SetTrigger("StartWalking");
     }
 
