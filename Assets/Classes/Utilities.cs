@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public static class Utilities
@@ -24,6 +27,8 @@ public static class Utilities
             && (ignoreY || Mathf.Abs(v1.y - v2.y) <= precision) 
             && Mathf.Abs(v1.z - v2.z) <= precision;
     }
+
+    public static List<TEnum> ValueList<TEnum>() => Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();
 }
 
 public struct Borders {

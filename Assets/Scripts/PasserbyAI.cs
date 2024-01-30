@@ -20,6 +20,7 @@ public class PasserbyAI : MonoBehaviour
     private AISensor _sensor;
 
     public Transform target;
+    public PersonalityCore personality;
     
     Animator animator;
 
@@ -46,6 +47,8 @@ public class PasserbyAI : MonoBehaviour
         animator = model.GetComponent<Animator>();
         animator.runtimeAnimatorController = PasserbyModelManager.I.animatorController;
         animator.SetTrigger("StartWalking");
+
+        personality = PersonalityGenerator.I.GetNewPersonality();
     }
 
     // Update is called once per frame

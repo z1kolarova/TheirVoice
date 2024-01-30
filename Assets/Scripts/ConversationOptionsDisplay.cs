@@ -57,7 +57,7 @@ public class ConversationOptionsDisplay : MonoBehaviour
     public void StartDialogue(bool playerStarts = true)
     {
         DisplayUI();
-        PopulateOptionButtons(ConversationConsts.openingLines);
+        PopulateOptionButtons(ConversationConsts.P_OpeningLines);
     }
 
     public IEnumerator ContinueDialogue(ConversationBlock conversationBlock)
@@ -65,7 +65,7 @@ public class ConversationOptionsDisplay : MonoBehaviour
         Debug.Log($"You chose {conversationBlock.Text}");
         var npcResponse = ConversationManager.I.GetResponseTo(conversationBlock);
         yield return StartCoroutine(DoNPCDialogue(npcResponse));
-        PopulateOptionButtons(ConversationConsts.TestingSet);
+        PopulateOptionButtons(ConversationConsts.P_TestingSet);
     }
 
     public IEnumerator EndDialogue()

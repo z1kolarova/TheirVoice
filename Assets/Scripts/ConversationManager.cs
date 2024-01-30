@@ -24,7 +24,8 @@ public class ConversationManager : MonoBehaviour
 
     public string GetResponseTo(ConversationBlock conversationBlock)
     {
-        return $"{conversationBlock.Text}? What's that supposed to mean?";
+        return ConversationConsts.RevealDiet(talkingTo.personality);
+        //return $"{conversationBlock.Text}? What's that supposed to mean?";
     }
 
     public void TriggerEndDialogue()

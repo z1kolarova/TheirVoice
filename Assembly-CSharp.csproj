@@ -62,6 +62,7 @@
     <Compile Include="Assets\Scripts\ConversationConsts.cs" />
     <Compile Include="Assets\Scripts\ConversationManager.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabUI.cs" />
+    <Compile Include="Assets\Classes\PersonalityCore.cs" />
     <Compile Include="Assets\StarterAssets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\VirtualInputs\UIVirtualTouchZone.cs" />
     <Compile Include="Assets\Scripts\Raycast.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Assets\Sketchfab For Unity\Scripts\AssetBrowser\SketchfabModelWindow.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabImporter.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\Utilities\MobileDisableAutoSwitchControls.cs" />
+    <Compile Include="Assets\Scripts\PersonalityGenerator.cs" />
     <Compile Include="Assets\StarterAssets\FirstPersonController\Scripts\FirstPersonController.cs" />
     <Compile Include="Assets\Classes\PasserbyStates.cs" />
     <Compile Include="Assets\StarterAssets\InputSystem\StarterAssetsInputs.cs" />

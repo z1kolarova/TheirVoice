@@ -13,14 +13,14 @@ public class PasserbyModelManager : MonoBehaviour
     public List<GameObject> models;
     public RuntimeAnimatorController animatorController;
     private static System.Random rng;
-
-
-    private void Start() {
+    private void Start()
+    {
         instance = this;
         rng = new System.Random();
     }
 
-    public GameObject GetRandomModel() {
+    public GameObject GetRandomModel()
+    {
         return models[rng.Next(models.Count)];
     }
 }
