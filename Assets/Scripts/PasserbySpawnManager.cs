@@ -1,8 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Assets.Classes;
-using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
 
 public class PasserBySpawnManager : MonoBehaviour

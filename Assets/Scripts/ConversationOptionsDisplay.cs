@@ -23,7 +23,7 @@ public class ConversationOptionsDisplay : MonoBehaviour
 
     [SerializeField] private float typingSpeed = 0.05f;
 
-    private Dictionary<Button, ConversationBlock> currentOptions = new Dictionary<Button, ConversationBlock>();
+    private Dictionary<Button, PlayerConvoBlock> currentOptions = new Dictionary<Button, PlayerConvoBlock>();
     private float speechBubbleAnimationDelay = 0.6f;
 
     private bool speechBubbleOpen = false;
@@ -57,15 +57,15 @@ public class ConversationOptionsDisplay : MonoBehaviour
     public void StartDialogue(bool playerStarts = true)
     {
         DisplayUI();
-        PopulateOptionButtons(ConversationConsts.P_OpeningLines);
+        //PopulateOptionButtons(ConversationConsts.P_OpeningLines); TODO!!!
     }
 
-    public IEnumerator ContinueDialogue(ConversationBlock conversationBlock)
+    public IEnumerator ContinueDialogue(IConversationBlock conversationBlock)
     {
         Debug.Log($"You chose {conversationBlock.Text}");
         var npcResponse = ConversationManager.I.GetResponseTo(conversationBlock);
         yield return StartCoroutine(DoNPCDialogue(npcResponse));
-        PopulateOptionButtons(ConversationConsts.P_TestingSet);
+        //PopulateOptionButtons(ConversationConsts.P_TestingSet); TODO!!!
     }
 
     public IEnumerator EndDialogue()
@@ -131,7 +131,7 @@ public class ConversationOptionsDisplay : MonoBehaviour
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
     }
 
-    private void PopulateOptionButtons(List<ConversationBlock> conversationBlocks)
+    private void PopulateOptionButtons(List<PlayerConvoBlock> conversationBlocks)
     {
         for (int i = 0; i < optionTextMeshes.Count && i < optionButtons.Count; i++)
         {

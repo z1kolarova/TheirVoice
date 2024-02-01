@@ -22,7 +22,7 @@ public class ConversationManager : MonoBehaviour
         ConversationOptionsDisplay.I.StartDialogue();
     }
 
-    public string GetResponseTo(ConversationBlock conversationBlock)
+    public string GetResponseTo(IConversationBlock conversationBlock)
     {
         return ConversationConsts.RevealDiet(talkingTo.personality);
         //return $"{conversationBlock.Text}? What's that supposed to mean?";
