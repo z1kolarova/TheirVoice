@@ -1,10 +1,8 @@
-using Assets.Classes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
-public static class ConversationConsts {
-
+public static partial class ConversationConsts 
+{
     private static System.Random rnd = new Random();
     private static string RandomLineFrom(string[] lineSet)
     {

@@ -1,16 +1,15 @@
 ﻿using Assets.Classes;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 
-public class ConversationOptionsDisplay : MonoBehaviour
+public class ConversationUI : MonoBehaviour
 {
-    public static ConversationOptionsDisplay I => instance;
-    static ConversationOptionsDisplay instance;
+    public static ConversationUI I => instance;
+    static ConversationUI instance;
 
     [SerializeField] List<Button> optionButtons;
     [SerializeField] List<TMP_Text> optionTextMeshes;
@@ -37,7 +36,7 @@ public class ConversationOptionsDisplay : MonoBehaviour
             currentOptions.Add(button, null);
             button.onClick.AddListener(() =>
             {
-                foreach (var b in ConversationOptionsDisplay.I.optionButtons)
+                foreach (var b in ConversationUI.I.optionButtons)
                 {
                     b.enabled = false;
                 }
@@ -138,7 +137,7 @@ public class ConversationOptionsDisplay : MonoBehaviour
             optionTextMeshes[i].text = conversationBlocks[i].Text;
             currentOptions[optionButtons[i]] = conversationBlocks[i];
         }
-        foreach (var b in ConversationOptionsDisplay.I.optionButtons)
+        foreach (var b in ConversationUI.I.optionButtons)
         {
             b.enabled = true;
         }

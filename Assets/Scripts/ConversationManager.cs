@@ -19,7 +19,7 @@ public class ConversationManager : MonoBehaviour
     {
         talkingTo = passerby;
         talkingTo.BeApproached(PlayerController.I.transform.gameObject);
-        ConversationOptionsDisplay.I.StartDialogue();
+        ConversationUI.I.StartDialogue();
     }
 
     public string GetResponseTo(IConversationBlock conversationBlock)
