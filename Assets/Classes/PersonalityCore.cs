@@ -20,6 +20,13 @@ public class Traits
     public int Awareness { get; set; }
     public int Compassion { get; set; }
     public double Willingness() => Awareness * Compassion;
+
+    public Traits(int patience, int awareness, int compassion)    {
+        Patience = patience;
+        Awareness = awareness;
+        Compassion = compassion;
+    }
+
 }
 
 [Flags]

@@ -46,11 +46,7 @@ public class PersonalityGenerator : MonoBehaviour
         
         var pc = new PersonalityCore()
         {
-            Traits = new Traits {
-                Patience = rng.Next(MaxPatience),
-                Awareness = rng.Next(MaxBaseAwareness),
-                Compassion = rng.Next(MaxBaseCompassion)
-            },
+            Traits = new Traits(rng.Next(MaxPatience), rng.Next(MaxBaseAwareness), rng.Next(MaxBaseCompassion)),
             Diet = diet
         };
         return pc;

@@ -1,3 +1,4 @@
+using Assets.Classes;
 using System;
 using System.Collections.Generic;
 
@@ -8,6 +9,10 @@ public static partial class ConversationConsts
     {
         return lineSet[rnd.Next(lineSet.Length)];
     }
+
+    public static IConversationBlock[] ToBeDone = new IConversationBlock[] {
+
+    };
 
     private static Dictionary<AnimalExploitationsInDiet, string> eatingAnimals
         = new Dictionary<AnimalExploitationsInDiet, string>() {
@@ -20,17 +25,6 @@ public static partial class ConversationConsts
             [AnimalExploitationsInDiet.Eggs] = "eggs",
             [AnimalExploitationsInDiet.Honey] = "honey",
         };
-    private static string[] NPC_AlreadyPlantBased = new[] {
-        "I don't eat any animal products at all.",
-        "I love animals, so I don't eat them.",
-        "I'm vegan, actually."
-    };
-    private static string[] NPC_EatsMeat = new[] {
-        "I do eat meat, yeah.",
-        "Of course I buy meat.",
-        "I've always eaten meat. Why wouldn't I?",
-        "Meat is good for you to be strong and healthy."
-    };
 
     //public static List<ConversationBlock> P_OpeningLines = new List<ConversationBlock>() {
     //    new ConversationBlock{ Text = "Are you against animal abuse?", ReactionValue = 2},
