@@ -30,7 +30,7 @@ public class ConversationManager : MonoBehaviour
     public List<PlayerConvoBlock> GetFirstPlayerOptions()
     {
         //return SelectUpToFromCollection<PlayerConvoBlock>(4, ConversationConsts.P_OpeningLines);
-        return SelectUpToFromCollection<PlayerConvoBlock>(4, ConversationConsts.Sample_P_HowDoesThisMakeYouFeel);
+        return ConversationConsts.Sample_P_HowDoesThisMakeYouFeel;
     }
 
     public NPCConvoBlock GetNPCAnswer(PlayerConvoBlock conversationBlock)
