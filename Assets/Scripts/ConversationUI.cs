@@ -59,7 +59,7 @@ public class ConversationUI : MonoBehaviour
         PopulateOptionButtons(ConversationManager.I.GetFirstPlayerOptions());
     }
 
-    public IEnumerator ContinueDialogue(IConversationBlock conversationBlock)
+    public IEnumerator ContinueDialogue(PlayerConvoBlock conversationBlock)
     {
         Debug.Log($"You chose {conversationBlock.Text}");
         var npcResponseBlock = ConversationManager.I.GetNPCAnswer(conversationBlock);
@@ -135,7 +135,7 @@ public class ConversationUI : MonoBehaviour
         for (int i = 0; i < optionTextMeshes.Count && i < optionButtons.Count && i < conversationBlocks.Count; i++)
         {
             optionTextMeshes[i].text = conversationBlocks[i].Text;
-            currentOptions[optionButtons[i]] = conversationBlocks[i];
+            currentOptions[optionButtons[i]] = (PlayerConvoBlock)conversationBlocks[i];
         }
         foreach (var b in ConversationUI.I.optionButtons)
         {

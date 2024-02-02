@@ -10,7 +10,10 @@ public static partial class ConversationConsts
         return lineSet[rnd.Next(lineSet.Length)];
     }
 
-    public static IConversationBlock[] ToBeDone = new IConversationBlock[] {
+    public static List<NPCConvoBlock> ToBeDoneNPC = new List<NPCConvoBlock> {
+
+    };
+    public static List<PlayerConvoBlock> ToBeDonePlayer = new List<PlayerConvoBlock> {
 
     };
 

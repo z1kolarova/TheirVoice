@@ -4,10 +4,10 @@ using System.Collections.Generic;
 public static partial class ConversationConsts
 {
     public static List<PlayerConvoBlock> P_toBeDone = new List<PlayerConvoBlock>() {
-        new PlayerConvoBlock("Option1", new Traits(0,0,0), ToBeDone),
-        new PlayerConvoBlock("Option2", new Traits(0,0,0), ToBeDone),
-        new PlayerConvoBlock("Option3", new Traits(0,0,0), ToBeDone),
-        new PlayerConvoBlock("Option4", new Traits(0,0,0), ToBeDone)
+        new PlayerConvoBlock("Option1", new Traits(0,0,0), ToBeDoneNPC),
+        new PlayerConvoBlock("Option2", new Traits(0,0,0), ToBeDoneNPC),
+        new PlayerConvoBlock("Option3", new Traits(0,0,0), ToBeDoneNPC),
+        new PlayerConvoBlock("Option4", new Traits(0,0,0), ToBeDoneNPC)
     };
 
     public static List<PlayerConvoBlock> P_OpeningLines = new List<PlayerConvoBlock>() {

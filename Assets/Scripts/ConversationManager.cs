@@ -29,17 +29,18 @@ public class ConversationManager : MonoBehaviour
 
     public List<PlayerConvoBlock> GetFirstPlayerOptions()
     {
-        return SelectUpToFromCollection<PlayerConvoBlock>(4, ConversationConsts.P_OpeningLines);
+        //return SelectUpToFromCollection<PlayerConvoBlock>(4, ConversationConsts.P_OpeningLines);
+        return SelectUpToFromCollection<PlayerConvoBlock>(4, ConversationConsts.Sample_P_HowDoesThisMakeYouFeel);
     }
 
-    public NPCConvoBlock GetNPCAnswer(IConversationBlock conversationBlock)
+    public NPCConvoBlock GetNPCAnswer(PlayerConvoBlock conversationBlock)
     {
-        return (NPCConvoBlock)SelectUpToFromCollection(1, conversationBlock.ResponsePool)[0];
+        return SelectUpToFromCollection(1, conversationBlock.ResponsePool)[0];
     }
 
-    public List<PlayerConvoBlock> GetPlayerOptionsAfter(IConversationBlock conversationBlock)
+    public List<PlayerConvoBlock> GetPlayerOptionsAfter(NPCConvoBlock conversationBlock)
     {
-        return SelectUpToFromCollection(4, conversationBlock.ResponsePool).Select(x => (PlayerConvoBlock)x).ToList();
+        return SelectUpToFromCollection(4, conversationBlock.ResponsePool);
     }
 
     public string GetResponseTo(IConversationBlock conversationBlock)
@@ -58,6 +59,7 @@ public class ConversationManager : MonoBehaviour
 
     private List<T> SelectUpToFromCollection<T>(int amount, List<T> collection)
     {
+        Debug.Log($"{amount} from " + collection.ToString());
         if (collection == null || collection.Count == 0) //TODO solve properly
         {
             return new List<T>();
