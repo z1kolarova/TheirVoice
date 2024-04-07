@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Assets.Classes
 {
@@ -25,13 +27,30 @@ namespace Assets.Classes
     }
     public class NPCConvoBlock : IConversationBlock
     {
+        private static JsonSerializer serializer;
         public string Text { get; set; }
         public List<PlayerConvoBlock> ResponsePool { get; set; }
         public NPCConvoBlock(string text, List<PlayerConvoBlock> responses)
         {
             Text = text;
             ResponsePool = responses;
+            serializer = new JsonSerializer();
+            Serialize();
         }
+
+        public void Serialize() {
+            using (StreamWriter sw = new StreamWriter("./Save/myJson.json"))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                serializer.Serialize(writer, this);
+            }
+        }
+        
+        // // To deserialize:
+        // using (StreamReader sr = new StreamReader(StateLoadingConst.GameStatePath))
+        //     using (JsonReader jr = new JsonTextReader(sr)) {
+        //     gameState = serializer.Deserialize<GameState>(jr);
+        // }
     }
 }
 
