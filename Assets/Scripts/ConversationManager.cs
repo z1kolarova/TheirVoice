@@ -24,20 +24,22 @@ public class ConversationManager : MonoBehaviour
         ConversationUI.I.StartDialogue();
     }
 
-    public List<PlayerConvoBlock> GetFirstPlayerOptions()
+    public List<NPCConvoBlock> GetFirstPlayerOptions()
     {
         //return SelectUpToFromCollection<PlayerConvoBlock>(4, ConversationConsts.P_OpeningLines);
-        return ConversationConsts.Sample_P_HowDoesThisMakeYouFeel;
+        return NPCConvoBlock.GetResponsePoolByName("Sample_P_HowDoesThisMakeYouFeel");
     }
 
-    public NPCConvoBlock GetNPCAnswer(PlayerConvoBlock conversationBlock)
+    public NPCConvoBlock GetNPCAnswerTo(NPCConvoBlock conversationBlock)
     {
-        return SelectUpToFromCollection(1, conversationBlock.ResponsePool)[0];
+        var responsePool = NPCConvoBlock.GetResponsePoolByName(conversationBlock.ResponsePoolName);
+        return SelectUpToFromCollection(1, responsePool)[0];
     }
 
-    public List<PlayerConvoBlock> GetPlayerOptionsAfter(NPCConvoBlock conversationBlock)
+    public List<NPCConvoBlock> GetPlayerOptionsAfter(NPCConvoBlock conversationBlock)
     {
-        return SelectUpToFromCollection(4, conversationBlock.ResponsePool);
+        var responsePool = NPCConvoBlock.GetResponsePoolByName(conversationBlock.ResponsePoolName);
+        return SelectUpToFromCollection(4, responsePool);
     }
 
     public string GetResponseTo(IConversationBlock conversationBlock)

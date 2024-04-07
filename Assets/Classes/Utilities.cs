@@ -7,6 +7,8 @@ using UnityEngine;
 
 public static class Utilities
 {
+    public static string ConvoBlocksDir = "./Assets/ConversationBlocks/";
+
     public static Borders Borders => new Borders(-25f, 25f, -25f, 25f);
     public static Vector2 ProjectInto(this Vector2 v2, Borders borders)
     {

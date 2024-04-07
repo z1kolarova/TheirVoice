@@ -8,49 +8,107 @@ namespace Assets.Classes
     public interface IConversationBlock
     {
         public string Text { get; set; }
+        public string ResponsePoolName { get; set; }
     }
 
     public class PlayerConvoBlock : IConversationBlock
     {
         public string Text { get; set; }
         public Traits Impact { get; set; }
-        public List<NPCConvoBlock> ResponsePool { get; set; }
+        public string ResponsePoolName { get; set; }
 
-        public PlayerConvoBlock(string text, Traits impact, List<NPCConvoBlock> responses)
-        {
-            Text = text;
-            Impact = impact;
-            ResponsePool = responses;
-        }
-
-        //public static PlayerConvoBlock PlaceHolder => new PlayerConvoBlock("Placeholder option", new Traits(-1, 0, 0), ConversationConsts.ToBeDone);
-    }
-    public class NPCConvoBlock : IConversationBlock
-    {
         private static JsonSerializer serializer;
-        public string Text { get; set; }
-        public List<PlayerConvoBlock> ResponsePool { get; set; }
-        public NPCConvoBlock(string text, List<PlayerConvoBlock> responses)
+        private static JsonSerializer Serializer
         {
-            Text = text;
-            ResponsePool = responses;
-            serializer = new JsonSerializer();
-            Serialize();
+            get
+            {
+                if (serializer == null)
+                {
+                    serializer = new JsonSerializer();
+                }
+                return serializer;
+            }
         }
-
-        public void Serialize() {
-            using (StreamWriter sw = new StreamWriter("./Save/myJson.json"))
+        public static void SerializeResponsePool(ICollection<PlayerConvoBlock> convoBlocks, string filePath)
+        {
+            using (StreamWriter sw = new StreamWriter(filePath))
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
-                serializer.Serialize(writer, this);
+                Serializer.Serialize(writer, convoBlocks);
+            }
+        }
+        public static void SerializeOneAsResponsePool(PlayerConvoBlock convoBlock, string filePath)
+        {
+            using (StreamWriter sw = new StreamWriter(filePath))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                Serializer.Serialize(writer, new PlayerConvoBlock[] { convoBlock });
+            }
+        }
+
+        public static List<PlayerConvoBlock> GetResponsePoolByName(string name)
+        {
+            var path = Path.Combine(Utilities.ConvoBlocksDir, $"{name}.json");
+            List<PlayerConvoBlock> result;
+
+            using (StreamReader sr = new StreamReader(path))
+            using (JsonReader jr = new JsonTextReader(sr))
+            {
+                result = Serializer.Deserialize<List<PlayerConvoBlock>>(jr);
+            }
+
+            return result;
+        }
+    }
+
+    public class NPCConvoBlock : IConversationBlock
+    {
+        public string Text { get; set; }
+        public string ResponsePoolName { get; set; }
+
+        private static JsonSerializer serializer;
+        private static JsonSerializer Serializer
+        {
+            get
+            {
+                if (serializer == null)
+                {
+                    serializer = new JsonSerializer();
+                }
+                return serializer;
             }
         }
         
-        // // To deserialize:
-        // using (StreamReader sr = new StreamReader(StateLoadingConst.GameStatePath))
-        //     using (JsonReader jr = new JsonTextReader(sr)) {
-        //     gameState = serializer.Deserialize<GameState>(jr);
-        // }
+        public static void SerializeResponsePool(ICollection<NPCConvoBlock> convoBlocks, string filePath)
+        {
+            using (StreamWriter sw = new StreamWriter(filePath))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                Serializer.Serialize(writer, convoBlocks);
+            }
+        }
+        public static void SerializeOneAsResponsePool(NPCConvoBlock convoBlock, string filePath)
+        {
+            using (StreamWriter sw = new StreamWriter(filePath))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                Serializer.Serialize(writer, new NPCConvoBlock[] { convoBlock});
+            }
+        }
+
+        public static List<NPCConvoBlock> GetResponsePoolByName(string name)
+        {
+            var path = Path.Combine(Utilities.ConvoBlocksDir, $"{name}.json");
+            List<NPCConvoBlock> result;
+
+            using (StreamReader sr = new StreamReader(path))
+            using (JsonReader jr = new JsonTextReader(sr))
+            {
+                result = Serializer.Deserialize<List<NPCConvoBlock>>(jr);
+            }
+
+            return result;
+        }
     }
 }
 

@@ -1,0 +1,56 @@
+[
+    {
+        "Text": "Are you against animal abuse?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_AreYouAgainstAnimalAbuse"
+    },
+    {
+        "Text": "Do you have time?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "NPC_DoYouHaveTime"
+    },
+    {
+        "Text": "Do you know what we're doing here?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "NPC_KnowWhatWereDoing"
+    },
+    {
+        "Text": "Have you ever seen footage like this?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_HaveYouSeenFootage"
+    },
+    {
+        "Text": "Hello. How does seeing this footage make you feel?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_HowDoesFootageMakeYouFeel"
+    },
+    {
+        "Text": "Hello. How do you feel when you see these videos?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_HowDoesFootageMakeYouFeel"
+    }
+]

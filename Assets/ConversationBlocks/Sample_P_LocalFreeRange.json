@@ -1,0 +1,38 @@
+[
+    {
+        "Text": "But free-range is barely better than others. The footage we have here includes free-range, all kinds of certified and humane. Can you think of a humane way I could kill you?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_TBD"
+    },
+    {
+        "Text": "The animals are still killed and you're paying for that to keep happening. Does your ability to eat meat have more value than their lives?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_TBD"
+    },
+    {
+        "Text": "Free-range cows still end up in a slaughterhouse with a boltgun to their head. Would you be ok with a slightly better life if you were still going to end up killed at a fraction of your lifespan?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_TBD"
+    },
+    {
+        "Text": "What is your motivation for eating meat?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_TBD"
+    }
+]

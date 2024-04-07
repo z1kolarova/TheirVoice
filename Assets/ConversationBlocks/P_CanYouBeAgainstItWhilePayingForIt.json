@@ -1,0 +1,29 @@
+[
+    {
+        "Text": "Are you against animal abuse?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_AreYouAgainstAnimalAbuse"
+    },
+    {
+        "Text": "So would you say you're against animal cruelty?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_AreYouAgainstAnimalAbuse"
+    },
+    {
+        "Text": "Do you consider yourself against animal cruelty?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_AreYouAgainstAnimalAbuse"
+    }
+]

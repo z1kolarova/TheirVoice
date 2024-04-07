@@ -1,0 +1,18 @@
+[
+    {
+        "Text": "Sorry, I'm in a rush.",
+        "ResponsePoolName":"P_TBD"
+    },
+    {
+        "Text": "No and I'm not interested.",
+        "ResponsePoolName": "P_TBD"
+    },
+    {
+        "Text": "You're protesting for animals?",
+        "ResponsePoolName": "P_TBD"
+    },
+    {
+        "Text": "No, what's going on here?",
+        "ResponsePoolName": "P_TBD"
+    }
+]

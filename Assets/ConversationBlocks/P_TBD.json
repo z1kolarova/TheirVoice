@@ -1,0 +1,38 @@
+[
+    {
+        "Text": "Option1",
+        "Impact": {
+            "Patience": 0,
+            "Awareness": 0,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "NPC_TBD"
+    },
+    {
+        "Text": "Option2",
+        "Impact": {
+            "Patience": 0,
+            "Awareness": 0,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "NPC_TBD"
+    },
+    {
+        "Text": "Option3",
+        "Impact": {
+            "Patience": 0,
+            "Awareness": 0,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "NPC_TBD"
+    },
+    {
+        "Text": "Option4",
+        "Impact": {
+            "Patience": 0,
+            "Awareness": 0,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "NPC_TBD"
+    }
+]

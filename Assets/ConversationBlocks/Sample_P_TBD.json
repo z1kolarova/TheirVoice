@@ -1,0 +1,38 @@
+[
+    {
+        "Text": "Can you just answer my question?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "Sample_NPC_TBD"
+    },
+    {
+        "Text": "Why are you avoiding answering?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "Sample_NPC_TBD"
+    },
+    {
+        "Text": "You didn't answer my question.",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "Sample_NPC_TBD"
+    },
+    {
+        "Text": "Stop dodging the question.",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "Sample_NPC_TBD"
+    }
+]

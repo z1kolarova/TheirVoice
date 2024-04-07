@@ -1,0 +1,38 @@
+[
+    {
+        "Text": "This is footage of the standard practices that happen every day all over the world in the industries that abuse animals. Would you say you're against animal abuse?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_2"
+    },
+    {
+        "Text": "We're showing what goes on  in the meat, dairy, egg, fishing and other industries that involve animals. Do you think this treatment of animals is cruel?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_2"
+    },
+    {
+        "Text": "These videos were taken in real farms, slaughterhouses and other places. All of this is legal and meets the welfare standards. Are you against animal abuse?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_2"
+    },
+    {
+        "Text": "What all the clips have in common is that they show the reality behind animal products. Meat, eggs, dairy, fur. Is animal abuse something you're against?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_2"
+    }
+]

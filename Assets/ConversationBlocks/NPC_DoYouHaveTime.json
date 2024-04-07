@@ -1,0 +1,14 @@
+[
+    {
+        "Text": "Sorry, I'm in a rush.",
+        "ResponsePoolName":"P_TBD"
+    },
+    {
+        "Text": "Uh... sure. What is this about?",
+        "ResponsePoolName": "P_TBD"
+    },
+    {
+        "Text": "Nope.",
+        "ResponsePoolName": "P_TBD"
+    }
+]

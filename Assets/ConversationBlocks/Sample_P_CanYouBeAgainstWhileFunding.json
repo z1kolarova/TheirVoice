@@ -1,0 +1,38 @@
+[
+    {
+        "Text": "Do you think it's possible to be against animal abuse while consuming animal products?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_3_1"
+    },
+    {
+        "Text": "Would you say one can be against animal cruelty while buying the products of it?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_3_1"
+    },
+    {
+        "Text": "Is it possible to be against animal abuse and still consume meat and other animal products?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_3_1"
+    },
+    {
+        "Text": "Is in your opinion paying money to buy animal products aligned with being against animal abuse?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_3_2"
+    }
+]

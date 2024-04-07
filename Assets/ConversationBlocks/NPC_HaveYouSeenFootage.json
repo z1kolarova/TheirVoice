@@ -1,0 +1,22 @@
+[
+    {
+        "Text": "I have, but I can't watch it. I hate seeing videos like that.",
+        "ResponsePoolName":"P_TBD"
+    },
+    {
+        "Text": "No. Never. It's really horrible.",
+        "ResponsePoolName": "P_TBD"
+    },
+    {
+        "Text": "Yeah. It's really important to make the standards better and make the farmers treat the animals better.",
+        "ResponsePoolName": "P_TBD"
+    },
+    {
+        "Text": "No and I don't want to. It makes me sick.",
+        "ResponsePoolName": "P_TBD"
+    },
+    {
+        "Text": "Makes me hungry.",
+        "ResponsePoolName": "P_TBD"
+    }
+]

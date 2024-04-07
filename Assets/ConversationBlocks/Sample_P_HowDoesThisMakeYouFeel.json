@@ -1,0 +1,38 @@
+[
+    {
+        "Text": "Hello. Have you ever seen footage like this?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_1"
+    },
+    {
+        "Text": "Hello. How does seeing this footage make you feel?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_1"
+    },
+    {
+        "Text": "Hello. How do you feel when you see these videos?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_1"
+    },
+    {
+        "Text": "Hello. Can you tell me what's your reaction when you these videos?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_1_1"
+    }
+]

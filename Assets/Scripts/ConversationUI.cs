@@ -22,7 +22,7 @@ public class ConversationUI : MonoBehaviour
 
     [SerializeField] private float typingSpeed = 0.05f;
 
-    private Dictionary<Button, PlayerConvoBlock> currentOptions = new Dictionary<Button, PlayerConvoBlock>();
+    private Dictionary<Button, NPCConvoBlock> currentOptions = new Dictionary<Button, NPCConvoBlock>();
     private float speechBubbleAnimationDelay = 0.6f;
 
     private bool speechBubbleOpen = false;
@@ -59,10 +59,10 @@ public class ConversationUI : MonoBehaviour
         PopulateOptionButtons(ConversationManager.I.GetFirstPlayerOptions());
     }
 
-    public IEnumerator ContinueDialogue(PlayerConvoBlock conversationBlock)
+    public IEnumerator ContinueDialogue(NPCConvoBlock conversationBlock)
     {
         Debug.Log($"You chose {conversationBlock.Text}");
-        var npcResponseBlock = ConversationManager.I.GetNPCAnswer(conversationBlock);
+        var npcResponseBlock = ConversationManager.I.GetNPCAnswerTo(conversationBlock);
         yield return StartCoroutine(DoNPCDialogue(npcResponseBlock.Text));
         PopulateOptionButtons(ConversationManager.I.GetPlayerOptionsAfter(npcResponseBlock)); //TODO!!!
     }
@@ -130,12 +130,12 @@ public class ConversationUI : MonoBehaviour
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
     }
 
-    private void PopulateOptionButtons(List<PlayerConvoBlock> conversationBlocks)
+    private void PopulateOptionButtons(List<NPCConvoBlock> conversationBlocks)
     {
         for (int i = 0; i < optionTextMeshes.Count && i < optionButtons.Count && i < conversationBlocks.Count; i++)
         {
             optionTextMeshes[i].text = conversationBlocks[i].Text;
-            currentOptions[optionButtons[i]] = (PlayerConvoBlock)conversationBlocks[i];
+            currentOptions[optionButtons[i]] = (NPCConvoBlock)conversationBlocks[i];
         }
         foreach (var b in ConversationUI.I.optionButtons)
         {
