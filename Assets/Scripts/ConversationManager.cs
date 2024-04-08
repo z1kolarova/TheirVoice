@@ -30,7 +30,7 @@ public class ConversationManager : MonoBehaviour
         //return SelectUpToFromCollection<PlayerConvoBlock>(4, ConversationConsts.P_OpeningLines);
         if (npcInterested)
             //return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("Sample_P_HowDoesThisMakeYouFeel");
-            return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("P_Opening_Lines");
+            return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("P_OpeningLines");
         else
             return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("P_DoYouHaveTime");
     }
