@@ -1,3 +1,4 @@
+using DefaultNamespace;
 using StarterAssets;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
@@ -53,6 +54,9 @@ public class PlayerController : MonoBehaviour
     public float TopClamp = 90.0f;
     [Tooltip("How far in degrees can you move the camera down")]
     public float BottomClamp = -90.0f;
+    
+    [Header("Other")]
+    [SerializeField] private GameObject pauseMenu;
 
     // cinemachine
     private float _cinemachineTargetPitch;
@@ -66,6 +70,9 @@ public class PlayerController : MonoBehaviour
     // timeout deltatime
     private float _jumpTimeoutDelta;
     private float _fallTimeoutDelta;
+    
+    // other
+    private bool isPauseMenuOpen = false;
 
 
 #if ENABLE_INPUT_SYSTEM
@@ -119,12 +126,10 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (!isInteracting)
-        {
-            JumpAndGravity();
-            GroundedCheck();
-            Move();
-        }
+        CheckPauseMenu();
+        JumpAndGravity();
+        GroundedCheck();
+        Move();
     }
 
     private void LateUpdate()
@@ -141,7 +146,7 @@ public class PlayerController : MonoBehaviour
 
     private void CameraRotation()
     {
-        if (isInteracting)
+        if (!UserInterfaceUtilities.I.IsCursorLocked())
         {
             return;
         }
@@ -175,7 +180,7 @@ public class PlayerController : MonoBehaviour
 
         // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
         // if there is no input, set the target speed to 0
-        if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+        if (_input.move == Vector2.zero || !UserInterfaceUtilities.I.IsCursorLocked()) targetSpeed = 0.0f;
 
         // a reference to the players current horizontal velocity
         float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
@@ -227,7 +232,7 @@ public class PlayerController : MonoBehaviour
             }
 
             // Jump
-            if (_input.jump && _jumpTimeoutDelta <= 0.0f)
+            if (_input.jump && _jumpTimeoutDelta <= 0.0f && UserInterfaceUtilities.I.IsCursorLocked())
             {
                 // the square root of H * -2 * G = how much velocity needed to reach desired height
                 _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
@@ -294,5 +299,15 @@ public class PlayerController : MonoBehaviour
     public void EndConversation()
     {
         SetIsInteracting(false);
+    }
+
+    private void CheckPauseMenu()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            pauseMenu.SetActive(!pauseMenu.activeSelf);
+            isPauseMenuOpen = pauseMenu.activeSelf;
+            UserInterfaceUtilities.I.SetCursorUnlockState(pauseMenu.activeSelf);
+        }
     }
 }
