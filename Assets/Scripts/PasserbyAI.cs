@@ -28,6 +28,7 @@ public class PasserbyAI : MonoBehaviour
     public Animator speechBubbleAnimator;
 
     PasserbyStates state = PasserbyStates.WanderingAround;
+    public PasserbyStates State { get { return state; } }
     Vector3 tempDestination;
     GameObject watchedObject;
 

@@ -1,0 +1,22 @@
+[
+    {
+        "Text": "Goodbye.",
+        "EndsConvo": true
+    },
+    {
+        "Text": "Thanks for the conversation and have a nice day.",
+        "EndsConvo": true
+    },
+    {
+        "Text": "I see you're not taking this seriously.",
+        "EndsConvo": true
+    },
+    {
+        "Text": "...",
+        "EndsConvo": true
+    },
+    {
+        "Text": "Think about what you would want in their position.",
+        "EndsConvo": true
+    }
+]

@@ -20,25 +20,30 @@ public class ConversationManager : MonoBehaviour
     public void TriggerStartDialogue(PasserbyAI passerby)
     {
         talkingTo = passerby;
+        var origState = passerby.State;
         talkingTo.BeApproached(PlayerController.I.transform.gameObject);
-        ConversationUI.I.StartDialogue();
+        ConversationUI.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
     }
 
-    public List<NPCConvoBlock> GetFirstPlayerOptions()
+    public List<PlayerConvoBlock> GetFirstPlayerOptions(bool npcInterested = true)
     {
         //return SelectUpToFromCollection<PlayerConvoBlock>(4, ConversationConsts.P_OpeningLines);
-        return NPCConvoBlock.GetResponsePoolByName("Sample_P_HowDoesThisMakeYouFeel");
+        if (npcInterested)
+            //return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("Sample_P_HowDoesThisMakeYouFeel");
+            return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("P_Opening_Lines");
+        else
+            return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("P_DoYouHaveTime");
     }
 
-    public NPCConvoBlock GetNPCAnswerTo(NPCConvoBlock conversationBlock)
+    public NPCConvoBlock GetNPCAnswerTo(PlayerConvoBlock conversationBlock)
     {
-        var responsePool = NPCConvoBlock.GetResponsePoolByName(conversationBlock.ResponsePoolName);
+        var responsePool = ConvoUtils.GetResponsePoolByName<NPCConvoBlock>(conversationBlock.ResponsePoolName);
         return SelectUpToFromCollection(1, responsePool)[0];
     }
 
-    public List<NPCConvoBlock> GetPlayerOptionsAfter(NPCConvoBlock conversationBlock)
+    public List<PlayerConvoBlock> GetPlayerOptionsAfter(NPCConvoBlock conversationBlock)
     {
-        var responsePool = NPCConvoBlock.GetResponsePoolByName(conversationBlock.ResponsePoolName);
+        var responsePool = ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>(conversationBlock.ResponsePoolName);
         return SelectUpToFromCollection(4, responsePool);
     }
 

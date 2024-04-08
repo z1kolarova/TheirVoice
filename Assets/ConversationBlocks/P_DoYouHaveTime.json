@@ -1,0 +1,38 @@
+[
+    {
+        "Text": "Can I have a minute of your time?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_DoYouHaveTime"
+    },
+    {
+        "Text": "Do you have time?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "NPC_DoYouHaveTime"
+    },
+    {
+        "Text": "Do you know what we're doing here?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "NPC_DoYouHaveTime"
+    },
+    {
+        "Text": "Hello.",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_DoYouHaveTime"
+    }
+]

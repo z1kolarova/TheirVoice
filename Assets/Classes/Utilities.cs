@@ -1,13 +1,23 @@
+using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 public static class Utilities
 {
-    public static string ConvoBlocksDir = "./Assets/ConversationBlocks/";
+    private static JsonSerializer serializer;
+    public static JsonSerializer Serializer
+    {
+        get
+        {
+            if (serializer == null)
+            {
+                serializer = new JsonSerializer();
+            }
+            return serializer;
+        }
+    }
 
     public static Borders Borders => new Borders(-25f, 25f, -25f, 25f);
     public static Vector2 ProjectInto(this Vector2 v2, Borders borders)

@@ -1,7 +1,7 @@
 [
     {
         "Text": "Sorry, I'm in a rush.",
-        "ResponsePoolName":"P_TBD"
+        "EndsConvo": true
     },
     {
         "Text": "Uh... sure. What is this about?",
@@ -9,6 +9,14 @@
     },
     {
         "Text": "Nope.",
-        "ResponsePoolName": "P_TBD"
+        "EndsConvo": true
+    },
+    {
+        "Text": "Not interested, mate.",
+        "EndsConvo": true
+    },
+    {
+        "Text": "Leave me alone.",
+        "EndsConvo": true
     }
 ]

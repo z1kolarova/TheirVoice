@@ -1,0 +1,14 @@
+[
+    {
+        "Text": "Thanks for the chat but I have to go now.",
+        "EndsConvo": true
+    },
+    {
+        "Text": "I really don't have time for this.",
+        "EndsConvo": true
+    },
+    {
+        "Text": "I appreciate what you're doing. Have a nice day.",
+        "EndsConvo": true
+    }
+]
