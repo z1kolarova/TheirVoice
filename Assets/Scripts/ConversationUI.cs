@@ -16,6 +16,7 @@ public class ConversationUI : MonoBehaviour
     [SerializeField] Button endConversationBtn;
 
     [SerializeField] Animator npcSpeechBubbleAnimator;
+    [SerializeField] Transform npcSpeechBubble;
     [SerializeField] TMP_Text npcTextMesh;
     
     [SerializeField] Image crossHair;
@@ -23,7 +24,7 @@ public class ConversationUI : MonoBehaviour
     [SerializeField] private float typingSpeed = 0.05f;
 
     private Dictionary<Button, PlayerConvoBlock> currentOptions = new Dictionary<Button, PlayerConvoBlock>();
-    private float speechBubbleAnimationDelay = 0.6f;
+    private const float SPEECH_BUBBLE_ANIMATION_DELAY = 0.6f;
 
     private bool speechBubbleOpen = false;
 
@@ -129,17 +130,18 @@ public class ConversationUI : MonoBehaviour
     {
         npcTextMesh.text = string.Empty;
         npcSpeechBubbleAnimator.SetTrigger("Open");
-        yield return new WaitForSeconds(speechBubbleAnimationDelay);
+        yield return new WaitForSeconds(SPEECH_BUBBLE_ANIMATION_DELAY);
         speechBubbleOpen = true;
     }
     private IEnumerator CloseSpeechBubble()
     {
         Debug.Log("4-2-1 should be open" + speechBubbleOpen);
         npcSpeechBubbleAnimator.SetTrigger("Close");
-        yield return new WaitForSeconds(speechBubbleAnimationDelay);
+        yield return new WaitForSeconds(SPEECH_BUBBLE_ANIMATION_DELAY);
 
         Debug.Log("4-2-2 should be open" + speechBubbleOpen);
         speechBubbleOpen = false;
+        npcSpeechBubble.localScale = Vector3.zero;
 
         Debug.Log("4-2-3 should be closed" + speechBubbleOpen);
     }

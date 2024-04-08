@@ -970,6 +970,7 @@ MonoBehaviour:
   - {fileID: 887292604}
   endConversationBtn: {fileID: 1397721089}
   npcSpeechBubbleAnimator: {fileID: 1846000389}
+  npcSpeechBubble: {fileID: 1846000386}
   npcTextMesh: {fileID: 572861751}
   crossHair: {fileID: 2135431363}
   typingSpeed: 0.05
