@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
     public float BottomClamp = -90.0f;
     
     [Header("Other")]
-    [SerializeField] private GameObject pauseMenu;
+    [SerializeField] private PauseMenu pauseMenu;
 
     // cinemachine
     private float _cinemachineTargetPitch;
@@ -70,9 +70,6 @@ public class PlayerController : MonoBehaviour
     // timeout deltatime
     private float _jumpTimeoutDelta;
     private float _fallTimeoutDelta;
-    
-    // other
-    private bool isPauseMenuOpen = false;
 
 
 #if ENABLE_INPUT_SYSTEM
@@ -305,9 +302,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            pauseMenu.SetActive(!pauseMenu.activeSelf);
-            isPauseMenuOpen = pauseMenu.activeSelf;
-            UserInterfaceUtilities.I.SetCursorUnlockState(pauseMenu.activeSelf);
+            pauseMenu.TogglePauseMenu();
         }
     }
 }
