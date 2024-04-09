@@ -22,7 +22,14 @@ public class ConversationManager : MonoBehaviour
         talkingTo = passerby;
         var origState = passerby.State;
         talkingTo.BeApproached(PlayerController.I.transform.gameObject);
-        ConversationUI.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
+        if (ConvoUtils.Mode == ConversationModes.Premade)
+        {
+            ConversationUI.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
+        }
+        else
+        {
+            ConversationUIChatGPT.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
+        }
     }
 
     public List<PlayerConvoBlock> GetFirstPlayerOptions(bool npcInterested = true)

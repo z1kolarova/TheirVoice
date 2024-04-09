@@ -7,6 +7,7 @@ namespace Assets.Classes
     public static class ConvoUtils
     {
         public static string ConvoBlocksDir = "./Assets/ConversationBlocks/";
+        public static ConversationModes Mode = ConversationModes.DevGPT;
 
         public static List<T> GetResponsePoolByName<T>(string name) where T : IConversationBlock
         {
@@ -37,5 +38,11 @@ namespace Assets.Classes
                 Utilities.Serializer.Serialize(writer, new T[] { convoBlock });
             }
         }
+    }
+    public enum ConversationModes
+    {
+        Premade,
+        RealGPT,
+        DevGPT
     }
 }
