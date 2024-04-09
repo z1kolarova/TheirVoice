@@ -1,3 +1,4 @@
+using DefaultNamespace;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -58,7 +59,8 @@ namespace StarterAssets
 
 		public void JumpInput(bool newJumpState)
 		{
-			jump = newJumpState;
+			if (UserInterfaceUtilities.I.IsCursorLocked())
+				jump = newJumpState;
 		}
 
 		public void SprintInput(bool newSprintState)

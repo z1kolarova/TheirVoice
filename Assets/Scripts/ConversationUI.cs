@@ -1,6 +1,7 @@
 ﻿using Assets.Classes;
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,16 +17,16 @@ public class ConversationUI : MonoBehaviour
     [SerializeField] Button endConversationBtn;
 
     [SerializeField] Animator npcSpeechBubbleAnimator;
+    [SerializeField] Transform npcSpeechBubble;
     [SerializeField] TMP_Text npcTextMesh;
     
-    [SerializeField] Image crossHair;
-
     [SerializeField] private float typingSpeed = 0.05f;
 
     private Dictionary<Button, PlayerConvoBlock> currentOptions = new Dictionary<Button, PlayerConvoBlock>();
-    private float speechBubbleAnimationDelay = 0.6f;
+    private const float SPEECH_BUBBLE_ANIMATION_DELAY = 0.6f;
 
     private bool speechBubbleOpen = false;
+    [HideInInspector] public bool InDialog = false;
 
     public void Start()
     {
@@ -54,8 +55,8 @@ public class ConversationUI : MonoBehaviour
         HideUIAndLockMouse();
     }
 
-    public void StartDialogue(bool npcInterested = true, bool playerStarts = true)
-    {
+    public void StartDialogue(bool npcInterested = true, bool playerStarts = true) {
+        InDialog = true;
         DisplayUI();
         PopulateOptionButtons(ConversationManager.I.GetFirstPlayerOptions(npcInterested));
     }
@@ -76,25 +77,19 @@ public class ConversationUI : MonoBehaviour
 
     public IEnumerator EndDialogue()
     {
-        Debug.Log("4-1) doesn't matter" + speechBubbleOpen);
         if (speechBubbleOpen)
         {
-            Debug.Log("4-2) should be open" + speechBubbleOpen);
             yield return StartCoroutine(CloseSpeechBubble());
-            Debug.Log("4-3) should be closed" + speechBubbleOpen);
         }
-        Debug.Log("4-4");
         ConversationManager.I.TriggerEndDialogue();
-        Debug.Log("4-5");
         HideUIAndLockMouse();
-        Debug.Log("4-6");
+        InDialog = false;
     }
 
     public void DisplayUI()
     {
         transform.gameObject.SetActive(true);
-        crossHair.gameObject.SetActive(false);
-        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UserInterfaceUtilities.I.SetCursorUnlockState(true);
     }
 
     public IEnumerator DoNPCDialogue(string text, bool willEndConvo)
@@ -102,17 +97,12 @@ public class ConversationUI : MonoBehaviour
         if (speechBubbleOpen)
         {
             yield return StartCoroutine(CloseSpeechBubble());
-            Debug.Log("1) should be closed" + speechBubbleOpen);
         }
-        Debug.Log("2) should be closed" + speechBubbleOpen);
         yield return StartCoroutine(OpenCleanSpeechBubble());
-        Debug.Log("3) should be open" + speechBubbleOpen);
         yield return StartCoroutine(TypeDialogueCoroutine(text));
         if (willEndConvo)
         {
-            Debug.Log("4) should be open" + speechBubbleOpen);
             yield return StartCoroutine(EndDialogue());
-            Debug.Log("5) should be closed" + speechBubbleOpen);
         }
     }
 
@@ -129,17 +119,18 @@ public class ConversationUI : MonoBehaviour
     {
         npcTextMesh.text = string.Empty;
         npcSpeechBubbleAnimator.SetTrigger("Open");
-        yield return new WaitForSeconds(speechBubbleAnimationDelay);
+        yield return new WaitForSeconds(SPEECH_BUBBLE_ANIMATION_DELAY);
         speechBubbleOpen = true;
     }
     private IEnumerator CloseSpeechBubble()
     {
         Debug.Log("4-2-1 should be open" + speechBubbleOpen);
         npcSpeechBubbleAnimator.SetTrigger("Close");
-        yield return new WaitForSeconds(speechBubbleAnimationDelay);
+        yield return new WaitForSeconds(SPEECH_BUBBLE_ANIMATION_DELAY);
 
         Debug.Log("4-2-2 should be open" + speechBubbleOpen);
         speechBubbleOpen = false;
+        npcSpeechBubble.localScale = Vector3.zero;
 
         Debug.Log("4-2-3 should be closed" + speechBubbleOpen);
     }
@@ -153,8 +144,7 @@ public class ConversationUI : MonoBehaviour
     public void HideUIAndLockMouse()
     {
         transform.gameObject.SetActive(false);
-        crossHair.gameObject.SetActive(true);
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UserInterfaceUtilities.I.SetCursorUnlockState(false);
     }
 
     private void PopulateOptionButtons(List<PlayerConvoBlock> conversationBlocks)
