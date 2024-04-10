@@ -1,7 +1,3 @@
-using Cinemachine;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Raycast : MonoBehaviour
@@ -17,6 +13,9 @@ public class Raycast : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (ConversationManager.I.InDialog)
+            return;
+
         Ray ray = new Ray(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward));
 
         if (Physics.Raycast(ray, out hitInfo, promptDistance, layerMask))

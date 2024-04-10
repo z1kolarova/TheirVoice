@@ -1,4 +1,4 @@
-using DefaultNamespace;
+using Assets.Scripts;
 using StarterAssets;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM

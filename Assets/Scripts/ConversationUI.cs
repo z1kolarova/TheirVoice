@@ -1,32 +1,23 @@
 ﻿using Assets.Classes;
+using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
-using DefaultNamespace;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
 
 public class ConversationUI : MonoBehaviour
 {
     public static ConversationUI I => instance;
     static ConversationUI instance;
 
+    [SerializeField] SpeechBubble npcSpeechBubble;
+
     [SerializeField] List<Button> optionButtons;
     [SerializeField] List<TMP_Text> optionTextMeshes;
-    [SerializeField] Button endConversationBtn;
-
-    [SerializeField] Animator npcSpeechBubbleAnimator;
-    [SerializeField] Transform npcSpeechBubble;
-    [SerializeField] TMP_Text npcTextMesh;
-    
-    [SerializeField] private float typingSpeed = 0.05f;
-
     private Dictionary<Button, PlayerConvoBlock> currentOptions = new Dictionary<Button, PlayerConvoBlock>();
-    private const float SPEECH_BUBBLE_ANIMATION_DELAY = 0.6f;
 
-    private bool speechBubbleOpen = false;
-    [HideInInspector] public bool InDialog = false;
+    [SerializeField] Button endConversationBtn;
 
     public void Start()
     {
@@ -38,12 +29,6 @@ public class ConversationUI : MonoBehaviour
             button.onClick.AddListener(() =>
             {
                 HandleOptionButtonClick(button);
-                //foreach (var b in ConversationUI.I.optionButtons)
-                //{
-                //    b.enabled = false;
-                //}
-                //I.endConversationBtn.enabled = false;
-                //StartCoroutine(ContinueDialogue(currentOptions[button]));
             });
         }
 
@@ -56,89 +41,36 @@ public class ConversationUI : MonoBehaviour
     }
 
     public void StartDialogue(bool npcInterested = true, bool playerStarts = true) {
-        InDialog = true;
+        SpeechBubbleManager.I.SetUsedSpeechBubble(npcSpeechBubble);
         DisplayUI();
         PopulateOptionButtons(ConversationManager.I.GetFirstPlayerOptions(npcInterested));
     }
 
-    public IEnumerator ContinueDialogue(PlayerConvoBlock conversationBlock)
+    public IEnumerator ContinueDialogue(NPCConvoBlock npcConvoBlock)
     {
-        Debug.Log($"You chose {conversationBlock.Text}");
-        var npcResponseBlock = ConversationManager.I.GetNPCAnswerTo(conversationBlock);
-        yield return StartCoroutine(DoNPCDialogue(npcResponseBlock.Text, npcResponseBlock.EndsConvo));
-        if (npcResponseBlock.EndsConvo)
+        yield return StartCoroutine(SpeechBubbleManager.I.DoNPCDialogue(npcConvoBlock.Text));
+        if (npcConvoBlock.EndsConvo)
         {
+            //TODO! NPC "ends" the conversation, maybe this is enough?
+            yield return StartCoroutine(EndDialogue());
         }
         else
         { 
-            PopulateOptionButtons(ConversationManager.I.GetPlayerOptionsAfter(npcResponseBlock)); //TODO!!!
+            PopulateOptionButtons(ConversationManager.I.GetPlayerOptionsAfter(npcConvoBlock)); //TODO!!!
         }
     }
 
     public IEnumerator EndDialogue()
     {
-        if (speechBubbleOpen)
-        {
-            yield return StartCoroutine(CloseSpeechBubble());
-        }
+        yield return StartCoroutine(SpeechBubbleManager.I.EndOfDialogue());
         ConversationManager.I.TriggerEndDialogue();
         HideUIAndLockMouse();
-        InDialog = false;
     }
 
     public void DisplayUI()
     {
         transform.gameObject.SetActive(true);
         UserInterfaceUtilities.I.SetCursorUnlockState(true);
-    }
-
-    public IEnumerator DoNPCDialogue(string text, bool willEndConvo)
-    {
-        if (speechBubbleOpen)
-        {
-            yield return StartCoroutine(CloseSpeechBubble());
-        }
-        yield return StartCoroutine(OpenCleanSpeechBubble());
-        yield return StartCoroutine(TypeDialogueCoroutine(text));
-        if (willEndConvo)
-        {
-            yield return StartCoroutine(EndDialogue());
-        }
-    }
-
-    private IEnumerator TypeDialogueCoroutine(string sentence)
-    {
-        foreach (var letter in sentence.ToCharArray())
-        {
-            npcTextMesh.text += letter;
-            yield return new WaitForSeconds(typingSpeed);
-        }
-    }
-
-    private IEnumerator OpenCleanSpeechBubble()
-    {
-        npcTextMesh.text = string.Empty;
-        npcSpeechBubbleAnimator.SetTrigger("Open");
-        yield return new WaitForSeconds(SPEECH_BUBBLE_ANIMATION_DELAY);
-        speechBubbleOpen = true;
-    }
-    private IEnumerator CloseSpeechBubble()
-    {
-        Debug.Log("4-2-1 should be open" + speechBubbleOpen);
-        npcSpeechBubbleAnimator.SetTrigger("Close");
-        yield return new WaitForSeconds(SPEECH_BUBBLE_ANIMATION_DELAY);
-
-        Debug.Log("4-2-2 should be open" + speechBubbleOpen);
-        speechBubbleOpen = false;
-        npcSpeechBubble.localScale = Vector3.zero;
-
-        Debug.Log("4-2-3 should be closed" + speechBubbleOpen);
-    }
-
-    private void CloseOneBubbleOpenAnother()
-    {
-        StartCoroutine(CloseSpeechBubble());
-        StartCoroutine(OpenCleanSpeechBubble());
     }
 
     public void HideUIAndLockMouse()
@@ -174,7 +106,8 @@ public class ConversationUI : MonoBehaviour
                 b.enabled = false;
             }
             I.endConversationBtn.enabled = false;
-            StartCoroutine(ContinueDialogue(currentOptions[button]));
+            var npcResponseBlock = ConversationManager.I.GetNPCAnswerTo(currentOptions[button]);
+            StartCoroutine(ContinueDialogue(npcResponseBlock));
         }
     }
 }

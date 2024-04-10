@@ -1,3 +1,4 @@
+using Assets.Classes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,8 @@ using UnityEngine;
 
 public static class Utilities
 {
+    public static ConversationModes ConversationMode = ConversationModes.DevGPT;
+
     private static JsonSerializer serializer;
     public static JsonSerializer Serializer
     {

@@ -24,7 +24,7 @@
             "Awareness": 1,
             "Compassion": 0
         },
-        "ResponsePoolName": "NPC_KnowWhatWereDoing"
+        "ResponsePoolName": "NPC_KnowWhatWereDoingHere"
     },
     {
         "Text": "Have you ever seen footage like this?",

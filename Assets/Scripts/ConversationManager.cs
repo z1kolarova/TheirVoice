@@ -7,6 +7,8 @@ public class ConversationManager : MonoBehaviour
 {
     public static ConversationManager I => instance;
     static ConversationManager instance;
+    
+    [HideInInspector] public bool InDialog = false;
 
     private static System.Random rng;
     private PasserbyAI talkingTo;
@@ -19,16 +21,19 @@ public class ConversationManager : MonoBehaviour
 
     public void TriggerStartDialogue(PasserbyAI passerby)
     {
+        InDialog = true;
         talkingTo = passerby;
         var origState = passerby.State;
         talkingTo.BeApproached(PlayerController.I.transform.gameObject);
-        if (ConvoUtils.Mode == ConversationModes.Premade)
+        if (Utilities.ConversationMode == ConversationModes.Premade)
         {
             ConversationUI.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
         }
         else
         {
+            ConvoUtilsGPT.InitNewConvoWithPrompt("");
             ConversationUIChatGPT.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
+            Debug.Log("dokonèil zahajování");
         }
     }
 
@@ -64,6 +69,7 @@ public class ConversationManager : MonoBehaviour
     {
         talkingTo.EndConversation();
         talkingTo = null;
+        InDialog = false;
 
         PlayerController.I.EndConversation();
     }
