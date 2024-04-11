@@ -36,7 +36,7 @@
         "ResponsePoolName": "NPC_HaveYouSeenFootage"
     },
     {
-        "Text": "Hello. How does seeing this footage make you feel?",
+        "Text": "How does seeing this footage make you feel?",
         "Impact": {
             "Patience": -1,
             "Awareness": 1,
@@ -45,7 +45,7 @@
         "ResponsePoolName": "NPC_HowDoesFootageMakeYouFeel"
     },
     {
-        "Text": "Hello. How do you feel when you see these videos?",
+        "Text": "How do you feel when you see these videos?",
         "Impact": {
             "Patience": -1,
             "Awareness": 1,

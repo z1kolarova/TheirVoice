@@ -111,7 +111,6 @@ public class PasserbyAI : MonoBehaviour
         {
             state = PasserbyStates.Watching;
             animator.SetTrigger("GoIdle");
-            //Debug.Log($"{nameof(StartWatchingObject)} set trigger GoIdle");
         }
     }
 
@@ -131,7 +130,6 @@ public class PasserbyAI : MonoBehaviour
         state = PasserbyStates.Leaving;
         _agent.isStopped = false;
         animator.SetTrigger("StartWalking");
-        //Debug.Log($"{nameof(EndConversation)} set trigger StartWalking");
     }
 
     private void EngageWith(GameObject player)
@@ -140,7 +138,6 @@ public class PasserbyAI : MonoBehaviour
         if (state != PasserbyStates.Watching)
         {
             animator.SetTrigger("GoIdle");
-            //Debug.Log($"{nameof(EngageWith)} set trigger GoIdle");
         }
         state = PasserbyStates.InConversation;
     }

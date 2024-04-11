@@ -34,7 +34,6 @@ public class Raycast : MonoBehaviour
             }
             else
             {
-                Debug.Log("That's not a passerby.");
                 Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * hitInfo.distance), Color.red);
             }
         }

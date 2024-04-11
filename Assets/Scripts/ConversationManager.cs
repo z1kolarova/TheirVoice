@@ -31,9 +31,8 @@ public class ConversationManager : MonoBehaviour
         }
         else
         {
-            ConvoUtilsGPT.InitNewConvoWithPrompt("");
+            ConvoUtilsGPT.InitNewConvoWithPrompt(talkingTo.personality.PersonalityPrompt);
             ConversationUIChatGPT.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
-            Debug.Log("dokonèil zahajování");
         }
     }
 
@@ -41,8 +40,8 @@ public class ConversationManager : MonoBehaviour
     {
         //return SelectUpToFromCollection<PlayerConvoBlock>(4, ConversationConsts.P_OpeningLines);
         if (npcInterested)
-            //return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("Sample_P_HowDoesThisMakeYouFeel");
-            return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("P_OpeningLines");
+            //return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("P_OpeningLines");
+            return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("Sample_P_OpeningLines");
         else
             return ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>("P_DoYouHaveTime");
     }
@@ -76,7 +75,6 @@ public class ConversationManager : MonoBehaviour
 
     private List<T> SelectUpToFromCollection<T>(int amount, List<T> collection)
     {
-        Debug.Log($"{amount} from " + collection.ToString());
         if (collection == null || collection.Count == 0) //TODO solve properly
         {
             return new List<T>();

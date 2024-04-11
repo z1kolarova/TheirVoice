@@ -2,6 +2,7 @@ using System;
 
 public class PersonalityCore
 {
+    public string PersonalityPrompt;
     public Traits Traits;
     public AnimalExploitationsInDiet Diet;
 

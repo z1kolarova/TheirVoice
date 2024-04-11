@@ -32,12 +32,11 @@ public class SpeechBubbleManager : MonoBehaviour
 
     public IEnumerator DoNPCDialogue(string text)
     {
-        Debug.Log("DoNPCDialogue1" + speechBubbleOpen);
         if (speechBubbleOpen)
         {
             yield return StartCoroutine(CloseSpeechBubble());
         }
-        Debug.Log("DoNPCDialogue2" + speechBubbleOpen);
+
         yield return StartCoroutine(OpenCleanSpeechBubble());
         yield return StartCoroutine(TypeDialogueCoroutine(text));
     }
@@ -53,29 +52,23 @@ public class SpeechBubbleManager : MonoBehaviour
 
     private IEnumerator OpenCleanSpeechBubble()
     {
-        Debug.Log("starting to open");
         npcTextMesh.text = string.Empty;
         npcSpeechBubbleAnimator.SetTrigger("Open");
-        Debug.Log("za triggerem");
         yield return new WaitForSeconds(SPEECH_BUBBLE_ANIMATION_DELAY);
         speechBubbleOpen = true;
     }
     private IEnumerator CloseSpeechBubble()
     {
-        Debug.Log(npcSpeechBubble != null ? npcSpeechBubble?.localScale.ToString() : "je null");
         npcSpeechBubbleAnimator.SetTrigger("Close");
         yield return new WaitForSeconds(SPEECH_BUBBLE_ANIMATION_DELAY);
 
         speechBubbleOpen = false;
-        Debug.Log(npcSpeechBubble != null ? npcSpeechBubble?.localScale.ToString() : "je null");
     }
     public IEnumerator EndOfDialogue()
     {
-        Debug.Log("EndOfDialogue1: " + speechBubbleOpen);
         if (speechBubbleOpen)
         {
             yield return StartCoroutine(CloseSpeechBubble());
         }
-        Debug.Log("EndOfDialogue2: " + speechBubbleOpen);
     }
 }

@@ -18,8 +18,6 @@ public class ConversationUIChatGPT : MonoBehaviour
 
     [SerializeField] Button endConversationBtn;
 
-    private string prompt = "You are a very friendly 86 years old grandma to 8 grandkids. You love baking cookies and other sweets for them. You were on your way to the shop to buy more baking ingredients when you noticed people with TV screens that play video footage of animals in slaughterhouses. You stopped to watch for a bit and one of them approached you.\r\nTry to mimic a spoken conversation.\r\nKeep your responses short and to the point but also bring up your grandchildren and how much you love them. Don't assume the gender of the person you're responding to.";
-
     public void Start()
     {
         instance = this;
