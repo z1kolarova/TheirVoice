@@ -31,7 +31,7 @@ public class ConversationManager : MonoBehaviour
         }
         else
         {
-            ConvoUtilsGPT.InitNewConvoWithPrompt(talkingTo.personality.PersonalityPrompt);
+            ConvoUtilsGPT.InitNewConvoWithPrompt(talkingTo.personality.Prompt.Text);
             ConversationUIChatGPT.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
         }
     }

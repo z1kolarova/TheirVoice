@@ -99,8 +99,8 @@ public class ConversationUIChatGPT : MonoBehaviour
 
     public IEnumerator ContinueDialogue(string npcResponseText)
     {
-        var endsConvo = ConvoUtilsGPT.WillEndConvo(npcResponseText);
-        yield return StartCoroutine(SpeechBubbleManager.I.DoNPCDialogue(npcResponseText));
+        var endsConvo = ConvoUtilsGPT.WillEndConvo(npcResponseText, out string npcTextToUse);
+        yield return StartCoroutine(SpeechBubbleManager.I.DoNPCDialogue(npcTextToUse));
         if (endsConvo)
         {
             yield return StartCoroutine(EndDialogue());

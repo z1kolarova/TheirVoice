@@ -15,10 +15,13 @@ public static class ConvoUtilsGPT
     public static string PromptBankFileName = "_PromptBank";
     private static int USER_MSG_CHAR_LIMIT = 500;
     private static string CONVO_END_STRING = "#END_OF_CONVO#";
+    private static string CONVO_END_INSTRUCTION = $"\r\nYou can choose to end the conversation whenever you decide (to end the conversation, append \"{CONVO_END_STRING}\" to the last message).";
 
     private static Model _model = Model.ChatGPTTurbo;   //originally was ChatGPTTurbo
     private static double _temperature = 0.5;           //originally was 0.1
     private static int _maxTokens = 50;                 //originally was 50
+    private static double _frequencyPenalty = 0.4;      //originally was 0
+    private static double _presencePenalty = 0.4;       //originally was 0
 
     private static OpenAIAPI api;
     public static OpenAIAPI API
@@ -44,6 +47,30 @@ public static class ConvoUtilsGPT
             }
             return messages;
         }
+    }
+
+    public static Prompt ResolveConvoEndingAbility(this Prompt prompt, int chanceIfSometimes)
+    {
+        switch (prompt.EndConvoAbility)
+        {
+            case EndConvoAbility.Never:
+                break;
+            case EndConvoAbility.Sometimes:
+                if (RngUtils.RollWithinLimitCheck(chanceIfSometimes))
+                {
+                    prompt.Text += CONVO_END_INSTRUCTION;
+                }
+                break;
+            case EndConvoAbility.Always:
+                prompt.Text += CONVO_END_INSTRUCTION;
+                break;
+        }
+        return prompt;
+    }
+    public static Prompt AddAbilityToEndConvo(this Prompt originalPrompt)
+    { 
+        originalPrompt.Text += CONVO_END_INSTRUCTION;
+        return originalPrompt;
     }
 
     public static void InitNewConvoWithPrompt(string prompt)
@@ -78,7 +105,9 @@ public static class ConvoUtilsGPT
             Model = _model,
             Temperature = _temperature,
             MaxTokens = _maxTokens,
-            Messages = messages
+            Messages = messages,
+            FrequencyPenalty = _frequencyPenalty,
+            PresencePenalty = _presencePenalty
         });
 
         if (chatResult == null || chatResult.Choices.Count == 0)
@@ -115,52 +144,60 @@ public static class ConvoUtilsGPT
 
         messages.Add(userMessage);
 
-        var responseMessage = new ChatMessage(ChatMessageRole.Assistant, "This is a very profound (but fake) answer to what you just said.");
-
+        var responseText = RngUtils.CoinFlip()
+            ? "This is a very profound (but fake) answer to what you just said." 
+            : $"I'm gonna go now.{CONVO_END_STRING}";
+        
+        var responseMessage = new ChatMessage(ChatMessageRole.Assistant, responseText);
         messages.Add(responseMessage);
 
         Debug.Log("A fake response was obtained");
         return responseMessage.Content;
     }
 
-    public static bool WillEndConvo(this string msgText) => msgText.EndsWith(CONVO_END_STRING);
+    public static bool WillEndConvo(this string msgText, out string msgToUse)
+    {
+        var result = msgText.EndsWith(CONVO_END_STRING);
+        msgToUse = msgText.Replace(CONVO_END_STRING, "");
+        return result;
+    }
 
-    public static List<string> GetPromptBank()
+    public static List<PromptLabel> GetPromptBank()
     {
         var path = Path.Combine(PromptsDir, $"{PromptBankFileName}.json");
-        List<string> result = new List<string>();
+        List<PromptLabel> result = new List<PromptLabel>();
 
         using (StreamReader sr = new StreamReader(path))
         using (JsonReader jr = new JsonTextReader(sr))
         {
-            result = Utilities.Serializer.Deserialize<List<string>>(jr);
+            result = Utilities.Serializer.Deserialize<List<PromptLabel>>(jr);
         }
 
         return result;
     }
 
-    public static string GetPromptByFileName(string name)
+    public static Prompt GetPromptByFileName(string name)
     {
         var path = Path.Combine(PromptsDir, $"{name}.json");
-        string result;
+        Prompt result;
 
         using (StreamReader sr = new StreamReader(path))
         using (JsonReader jr = new JsonTextReader(sr))
         {
-            result = Utilities.Serializer.Deserialize<string>(jr);
+            result = Utilities.Serializer.Deserialize<Prompt>(jr);
         }
 
         return result;
     }
 
-    public static void SerializePromptBank(List<string> promptFileNames)
+    public static void SerializePromptBank(List<PromptLabel> promptLabels)
     {
         var filePath = Path.Combine(PromptsDir, $"{PromptBankFileName}.json");
         
         using (StreamWriter sw = new StreamWriter(filePath))
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            Utilities.Serializer.Serialize(writer, promptFileNames);
+            Utilities.Serializer.Serialize(writer, promptLabels);
         }
     }
     public static void SerializePrompt<T>(T prompt, string fileName)

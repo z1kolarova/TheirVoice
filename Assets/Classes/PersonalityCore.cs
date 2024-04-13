@@ -1,8 +1,9 @@
+using Assets.Classes;
 using System;
 
 public class PersonalityCore
 {
-    public string PersonalityPrompt;
+    public Prompt Prompt;
     public Traits Traits;
     public AnimalExploitationsInDiet Diet;
 

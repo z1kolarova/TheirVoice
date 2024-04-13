@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0687ea963bbdb524098e7b4212f24968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EndingConversationAbilityChance: 0
   MaxPatience: 10
   MaxBaseAwareness: 100
   MaxBaseCompassion: 100
