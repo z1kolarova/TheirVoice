@@ -67,11 +67,11 @@ public static class ConvoUtilsGPT
         }
         return prompt;
     }
-    public static Prompt AddAbilityToEndConvo(this Prompt originalPrompt)
-    { 
-        originalPrompt.Text += CONVO_END_INSTRUCTION;
-        return originalPrompt;
-    }
+    //public static Prompt AddAbilityToEndConvo(this Prompt originalPrompt)
+    //{ 
+    //    originalPrompt.Text += CONVO_END_INSTRUCTION;
+    //    return originalPrompt;
+    //}
 
     public static void InitNewConvoWithPrompt(string prompt)
     {
