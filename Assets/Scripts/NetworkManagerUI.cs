@@ -63,12 +63,4 @@ public class NetworkManagerUI : MonoBehaviour
     {
         outputTMP.text += text + "\n";
     }
-
-
-    private void ClientStart()
-    {
-        outputTMP.text += "Server button was clicked\n";
-        NetworkManager.Singleton.StartServer();
-        outputTMP.text += "NetworkManager.Singleton.StartServer happened\n";
-    }
 }

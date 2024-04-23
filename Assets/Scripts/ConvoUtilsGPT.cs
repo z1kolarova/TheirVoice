@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Unity.Collections;
 using UnityEngine;
 
 public static class ConvoUtilsGPT
@@ -97,7 +98,7 @@ public static class ConvoUtilsGPT
 
         Debug.Log(string.Format("{0}: {1}", userMessage.rawRole, userMessage.Content));
 
-        messages.Add(userMessage);
+        Messages.Add(userMessage);
 
 
         var chatResult = await API.Chat.CreateChatCompletionAsync(new ChatRequest()
@@ -122,6 +123,106 @@ public static class ConvoUtilsGPT
 
         Debug.Log(responseMessage.Content);
         return responseMessage.Content;
+    }
+
+
+    public static ChatRequest GetChatRequest(string msgText)
+    {
+        Debug.Log($"checking msgText {msgText}");
+        if (TryAddUserResponse(msgText))
+        {
+            Debug.Log($"msgText is ok");
+            return ProduceChatRequest();
+        }
+        Debug.Log($"msgText is NOT ok");
+        return null;
+    }
+
+    public static FixedString4096Bytes? GetSerialisedChatRequest(string msgText)
+    {
+        Debug.Log($"checking msgText {msgText}");
+        if (TryAddUserResponse(msgText))
+        {
+            Debug.Log($"msgText is ok");
+            return ProduceSerialisedChatRequest();
+        }
+        Debug.Log($"msgText is NOT ok");
+        return null;
+    }
+
+    public static bool TryAddUserResponse(string msgText)
+    {
+        if (string.IsNullOrWhiteSpace(msgText))
+        {
+            return false;
+        }
+
+        ChatMessage userMessage = new ChatMessage();
+        userMessage.Role = ChatMessageRole.User;
+        userMessage.Content = msgText.Trim();
+
+        if (userMessage.Content.Length > USER_MSG_CHAR_LIMIT)
+        {
+            userMessage.Content = userMessage.Content.Substring(0, USER_MSG_CHAR_LIMIT);
+        }
+
+        Debug.Log(string.Format("{0}: {1}", userMessage.rawRole, userMessage.Content));
+
+        messages.Add(userMessage);
+
+        return true;
+    }
+
+    public static ChatRequest ProduceChatRequest() =>
+        new ChatRequest()
+        {
+            Model = _model,
+            Temperature = _temperature,
+            MaxTokens = _maxTokens,
+            Messages = messages,
+            FrequencyPenalty = _frequencyPenalty,
+            PresencePenalty = _presencePenalty
+        };
+
+    public static string ProduceSerialisedChatRequest()
+    {
+        var chatRequest = new ChatRequest()
+        {
+            Model = _model,
+            Temperature = _temperature,
+            MaxTokens = _maxTokens,
+            Messages = messages,
+            FrequencyPenalty = _frequencyPenalty,
+            PresencePenalty = _presencePenalty
+        };
+        return JsonConvert.SerializeObject(chatRequest);
+    }
+
+    public static async Task<string> GetResponseAsServer(string serialisedChatRequest)
+    {
+        var chatRequest = JsonConvert.DeserializeObject<ChatRequest>(serialisedChatRequest.ToString());
+        var chatResult = await API.Chat.CreateChatCompletionAsync(chatRequest);
+        
+        ChatMessage responseMessage = new ChatMessage();
+        responseMessage.Role = chatResult.Choices[0].Message.Role;
+        responseMessage.Content = chatResult.Choices[0].Message.Content;
+
+        var serialisedChatMessage = JsonConvert.SerializeObject(responseMessage);
+
+        return serialisedChatMessage;
+    }
+
+    public static void ProcessResponseMessage(string serialisedResponseMessage)
+    {
+        NetworkManagerUI.I.WriteLineToOutput("I am in ProcessChatResult.");
+        NetworkManagerUI.I.WriteLineToOutput(serialisedResponseMessage.ToString());
+        ChatMessage responseMessage = JsonConvert.DeserializeObject<ChatMessage>(serialisedResponseMessage.ToString());
+
+        NetworkManagerUI.I.WriteLineToOutput("responseMessage.Content:");
+        NetworkManagerUI.I.WriteLineToOutput(responseMessage.Content);
+        messages.Add(responseMessage);
+
+        Debug.Log(responseMessage.Content);
     }
 
     public static async Task<string> FakeGettingResponseTo(string msgText)

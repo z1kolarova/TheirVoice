@@ -1,82 +1,107 @@
+using OpenAI_API.Chat;
 using System;
+using System.Threading.Tasks;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
 public class GPTManagerClient : NetworkBehaviour
 {
-    private NetworkVariable<int> testingValue = new NetworkVariable<int>(-1);
+    //private NetworkVariable<FixedString4096Bytes> serialisedChatRequest = new NetworkVariable<FixedString4096Bytes>("", readPerm: NetworkVariableReadPermission.Owner, writePerm: NetworkVariableWritePermission.Owner);
+    //private NetworkVariable<FixedString4096Bytes> responseAsSerialisedChatMessage = new NetworkVariable<FixedString4096Bytes>("", readPerm: NetworkVariableReadPermission.Owner, writePerm: NetworkVariableWritePermission.Owner);
+    //private NetworkVariable<bool> chatRequestToProcess = new NetworkVariable<bool>(false, readPerm: NetworkVariableReadPermission.Owner, writePerm: NetworkVariableWritePermission.Owner);
+    //private NetworkVariable<bool> responseToProcess = new NetworkVariable<bool>(false, readPerm: NetworkVariableReadPermission.Owner, writePerm: NetworkVariableWritePermission.Owner);
 
     public override void OnNetworkSpawn()
     {
-        testingValue.OnValueChanged += ReactToValueChange;
-        TestValueChangeLogic();
+        //chatRequestToProcess.OnValueChanged += ChatRequestProcessing;
+        //responseToProcess.OnValueChanged += ResponseChatMessageProcessing;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        NetworkManagerUI.I.WriteLineToOutput("initial testing value is: " + testingValue.Value);
+        if (IsOwner || IsServer)
+        {
+            //NetworkManagerUI.I.WriteLineToOutput($"clientId {OwnerClientId}: connected with initial string: " + serialisedChatRequest.Value);
+        }
     }
 
-    private void ReactToValueChange(int previousValue, int newValue)
+    private void ChatRequestProcessing(bool previousValue, bool newValue)
     {
-        NetworkManagerUI.I.WriteLineToOutput($"The value changed from {previousValue} to {newValue} on the server.");
+        if (IsOwner || IsServer)
+        {
+            NetworkManagerUI.I.WriteLineToOutput($"clientId {OwnerClientId}: chatRequestToProcess changed from {previousValue} to {newValue}.");
+        }
+
+        if (newValue && IsOwner)
+        {
+            //NetworkManagerUI.I.WriteLineToOutput($"I am server, I know I'm being waited for and I'll do things.");
+            //NetworkManagerUI.I.WriteLineToOutput($"Text I'll respond to is \"{testingString.Value}\"");
+            //TryGetGPTResponseServerRpc(OwnerClientId, serialisedChatRequest.Value);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        //if (Input.GetKeyDown(KeyCode.W))
+        //{
+        //    chatRequestToProcess.Value = !chatRequestToProcess.Value;
+        //}
+
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            TestValueChangeLogic();
+            if (IsClient)
+            {
+                ConvoUtilsGPT.InitNewConvoWithPrompt("You're a vegan actvist. Convince the person you're talking to to go vegan.");
+                var request = ConvoUtilsGPT.GetSerialisedChatRequest("Hello.");
+              
+            
+                NetworkManagerUI.I.WriteLineToOutput($"My request is: \"{request.Value}\"");
+                TryGetGPTResponseServerRpc(OwnerClientId, request.Value.ToString());
+                TryGetGPTResponseServerRpc(OwnerClientId, request.ToString());
+
+            }
         }
-        //else if (Input.GetKeyDown(KeyCode.R))
-        //{
-        //    ChangeAndPrintNetworkValue();
-        //}
-        //else if (Input.GetKeyDown(KeyCode.J))
-        //{
-        //    JustPrintNetworkValue();
-        //}
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            if (IsClient)
+            {
+                var request = ConvoUtilsGPT.GetSerialisedChatRequest("I'm listening. Continue.");
+                NetworkManagerUI.I.WriteLineToOutput($"My request is: \"{request.Value}\"");
+                TryGetGPTResponseServerRpc(OwnerClientId, request.Value.ToString());
+            }
+        }
     }
 
-    public void TestValueChangeLogic()
+    private ClientRpcParams SingleTarget(ulong clientId)
+        => new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new ulong[] { clientId } } };
+
+
+    [ServerRpc]
+    private void TryGetGPTResponseServerRpc(ulong clientId, string chatRequestFromClient)
+    {
+        HandleGettingResponse(clientId, chatRequestFromClient);
+    }
+
+    private async void HandleGettingResponse(ulong clientId,string chatRequestFromClient)
     {
         if (IsServer)
         {
-            //testingValue.Value = UnityEngine.Random.Range(0, 100);
-            //NetworkManagerUI.I.WriteLineToOutput("T pressed on server");
-            //NetworkManagerUI.I.WriteLineToOutput("random value changed to: " + testingValue.Value);
-            //TestServerRpc();
-
-            NetworkManagerUI.I.WriteLineToOutput($"I'll just change the value myself. Now it's: {testingValue.Value}");
-            testingValue.Value = UnityEngine.Random.Range(0, 100);
-            NetworkManagerUI.I.WriteLineToOutput($"And I changed it to: {testingValue.Value}");
-        }
-        else if (IsClient)
-        {
-            //NetworkManagerUI.I.WriteLineToOutput("T pressed on client");
-            TestServerRpc();
+            NetworkManagerUI.I.WriteLineToOutput($"I'm a server asking API for response to {chatRequestFromClient}.");
+            var res = await ConvoUtilsGPT.GetResponseAsServer(chatRequestFromClient);
+            NetworkManagerUI.I.WriteLineToOutput($"I brought \"{res}\" as response.");
+            ReceiveResponseClientRpc(res, SingleTarget(OwnerClientId));
         }
     }
 
-    [ServerRpc]
-    private void TestServerRpc()
+    [ClientRpc]
+    private void ReceiveResponseClientRpc(string chatMessageResponse, ClientRpcParams clientRpcParams = default)
     {
-        var msg = "sentFromClient!" + OwnerClientId.ToString();
-        Debug.Log(msg);
-        NetworkManagerUI.I.WriteLineToOutput(msg);
-        testingValue.Value = UnityEngine.Random.Range(0, 100);
+        NetworkManagerUI.I.WriteLineToOutput("I am in the ClientRpc.");
+        NetworkManagerUI.I.WriteLineToOutput("param is: " + chatMessageResponse.ToString());
+        ConvoUtilsGPT.ProcessResponseMessage(chatMessageResponse);
     }
-
-    //private void ChangeAndPrintNetworkValue()
-    //{
-    //    NetworkManagerUI.I.WriteLineToOutput("The value currently is: " + testingValue.Value + "and I am " + OwnerClientId);
-    //    testingValue.Value = UnityEngine.Random.Range(0, 100);
-    //    NetworkManagerUI.I.WriteLineToOutput("random value changed to: " + testingValue.Value + "because of " + OwnerClientId);
-    //}
-    //private void JustPrintNetworkValue()
-    //{
-    //    NetworkManagerUI.I.WriteLineToOutput("The value is: " + testingValue.Value + "and I am " + OwnerClientId);
-    //}
 }
