@@ -22,6 +22,7 @@ public class ServerSideManager : MonoBehaviour
 
     public const string RELAY_KEY = "RelayKey";
 
+    public event EventHandler<LobbyEventArgs> OnLobbyUpdate;
     public event EventHandler<LobbyEventArgs> OnCreatedLobby;
     public event EventHandler<LobbyEventArgs> OnPlayerJoinedLobby;
     public event EventHandler<LobbyEventArgs> OnPlayerLeftLobby;
@@ -73,6 +74,21 @@ public class ServerSideManager : MonoBehaviour
     public void StopLobbyHeartBeat()
     {
         hostLobby = null;
+    }
+
+    private async void HandleLobbyPolling()
+    {
+        if (hostLobby != null)
+        {
+            lobbyPollTimer -= Time.deltaTime;
+            if (lobbyPollTimer < 0f)
+            {
+                lobbyPollTimer = lobbyPollTimerMax;
+
+                hostLobby = await LobbyService.Instance.GetLobbyAsync(hostLobby.Id);
+                OnLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = hostLobby });
+            }
+        }
     }
 
     public async void CreateLobby(string lobbyName, int maxPlayers)

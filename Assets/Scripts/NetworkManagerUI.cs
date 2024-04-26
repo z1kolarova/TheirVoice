@@ -72,9 +72,9 @@ public class NetworkManagerUI : MonoBehaviour
         outputTMP.text += TestLobby.I != null;
     }
 
-    public void WriteLineToOutput(string text)
+    public void WriteLineToOutput(string text, bool timestamp = true)
     {
-        outputTMP.text += text + "\n";
+        outputTMP.text += $"{DateTime.Now.ToString("HH:mm:ss")}: {text}\n";
     }
 
 
@@ -87,7 +87,9 @@ public class NetworkManagerUI : MonoBehaviour
 
     private async void ClientStartProcess()
     {
+        outputTMP.text += "Inside ClientStartProcess\n";
         var authenticated = await TestLobby.I.AuthenticateClient();
+        NetworkManagerUI.I.WriteLineToOutput("authenticated " + authenticated);
         if (authenticated)
         {
             await TestLobby.I.CheckForLobbies();

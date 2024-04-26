@@ -12,8 +12,11 @@ public class GPTManagerClient : NetworkBehaviour
     //private NetworkVariable<bool> chatRequestToProcess = new NetworkVariable<bool>(false, readPerm: NetworkVariableReadPermission.Owner, writePerm: NetworkVariableWritePermission.Owner);
     //private NetworkVariable<bool> responseToProcess = new NetworkVariable<bool>(false, readPerm: NetworkVariableReadPermission.Owner, writePerm: NetworkVariableWritePermission.Owner);
 
+    private bool sayHello = true;
+
     public override void OnNetworkSpawn()
     {
+        NetworkManagerUI.I.WriteLineToOutput($"NetworkSpawn");
         //chatRequestToProcess.OnValueChanged += ChatRequestProcessing;
         //responseToProcess.OnValueChanged += ResponseChatMessageProcessing;
     }
@@ -21,6 +24,7 @@ public class GPTManagerClient : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        NetworkManagerUI.I.WriteLineToOutput($"GPTManagerClient starts. IsOwner {IsOwner}, IsServer {IsServer}, IsClient {IsClient}");
         if (IsOwner || IsServer)
         {
             //NetworkManagerUI.I.WriteLineToOutput($"clientId {OwnerClientId}: connected with initial string: " + serialisedChatRequest.Value);
@@ -45,6 +49,11 @@ public class GPTManagerClient : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (sayHello)
+        {
+            NetworkManagerUI.I.WriteLineToOutput($"Hello");
+            sayHello = false;
+        }
         //if (Input.GetKeyDown(KeyCode.W))
         //{
         //    chatRequestToProcess.Value = !chatRequestToProcess.Value;
@@ -52,8 +61,10 @@ public class GPTManagerClient : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.E))
         {
+            NetworkManagerUI.I.WriteLineToOutput($"Registered key press of E");
             if (IsClient)
             {
+                NetworkManagerUI.I.WriteLineToOutput($"Passed IsClient");
                 ConvoUtilsGPT.InitNewConvoWithPrompt("You're a vegan actvist. Convince the person you're talking to to go vegan.");
                 var request = ConvoUtilsGPT.GetSerialisedChatRequest("Hello.");
               
@@ -67,8 +78,10 @@ public class GPTManagerClient : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.C))
         {
+            NetworkManagerUI.I.WriteLineToOutput($"Registered key press of C");
             if (IsClient)
             {
+                NetworkManagerUI.I.WriteLineToOutput($"Passed IsClient");
                 var request = ConvoUtilsGPT.GetSerialisedChatRequest("I'm listening. Continue.");
                 NetworkManagerUI.I.WriteLineToOutput($"My request is: \"{request.Value}\"");
                 TryGetGPTResponseServerRpc(OwnerClientId, request.Value.ToString());

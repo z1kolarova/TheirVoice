@@ -35,13 +35,15 @@ public class TestLobby : MonoBehaviour
         options.SetProfile(profile);
 
         await UnityServices.InitializeAsync(options);
-
-        AuthenticationService.Instance.SignedIn += () =>
+        if (!AuthenticationService.Instance.IsSignedIn)
         {
-            NetworkManagerUI.I.WriteLineToOutput("Signed in " + AuthenticationService.Instance.PlayerId);
-        };
+            AuthenticationService.Instance.SignedIn += () =>
+            {
+                NetworkManagerUI.I.WriteLineToOutput("Signed in " + AuthenticationService.Instance.PlayerId);
+            };
 
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        }
 
         return true;
     }
@@ -99,7 +101,8 @@ public class TestLobby : MonoBehaviour
             if (joinedLobby.Data[ServerSideManager.RELAY_KEY].Value != null)
             {
                 NetworkManagerUI.I.WriteLineToOutput(joinedLobby.Data[ServerSideManager.RELAY_KEY].Value);
-                TestRelay.I.JoinRelayNewWay(joinedLobby.Data[ServerSideManager.RELAY_KEY].Value);
+                var result = await TestRelay.I.JoinRelayNewWay(joinedLobby.Data[ServerSideManager.RELAY_KEY].Value);
+                NetworkManagerUI.I.WriteLineToOutput(result.ToString());
             }
         }
         catch (LobbyServiceException e)

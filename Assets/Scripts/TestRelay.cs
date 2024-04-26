@@ -60,7 +60,7 @@ public class TestRelay : MonoBehaviour
         }
     }
 
-    public async void JoinRelayNewWay(string joinCode)
+    public async Task<bool> JoinRelayNewWay(string joinCode)
     {
         try
         {
@@ -68,13 +68,15 @@ public class TestRelay : MonoBehaviour
 
             RelayServerData rsd = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(rsd);
-            NetworkManager.Singleton.StartClient();
 
-            NetworkManagerUI.I.WriteLineToOutput("Joined relay.");
+            NetworkManagerUI.I.WriteLineToOutput("After joining relay, about to start client.");
+
+            return NetworkManager.Singleton.StartClient();
         }
         catch (RelayServiceException e)
         {
             NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            return false;
         }
     }
 

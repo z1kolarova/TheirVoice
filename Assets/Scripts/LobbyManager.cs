@@ -82,7 +82,6 @@ public class LobbyManager : MonoBehaviour
                 joinedLobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
                 OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
             }
-
         }
     }
 
