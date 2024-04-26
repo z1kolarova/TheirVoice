@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
@@ -14,14 +15,23 @@ public class NetworkManagerUI : MonoBehaviour
     [SerializeField] private Button clientBtn;
     [SerializeField] private Button shutdownBtn;
     [SerializeField] private TMP_Text outputTMP;
+    [SerializeField] private TMP_Text currentPlayersTMP;
+
+    private bool actsAsARunningServer = false;
 
     private void Awake()
     {
         instance = this;
+        outputTMP.text = "";
+        outputTMP.text += "I am awake\n";
+    }
 
-        serverBtn.onClick.AddListener(() => { 
+    public void Start()
+    {
+        serverBtn.onClick.AddListener(() => {
             outputTMP.text += "Server button was clicked\n";
-            NetworkManager.Singleton.StartServer();
+            ServerStartProcess();
+            actsAsARunningServer = true;
             outputTMP.text += "NetworkManager.Singleton.StartServer happened\n";
             serverBtn.enabled = false;
             serverBtn.gameObject.SetActive(false);
@@ -32,7 +42,7 @@ public class NetworkManagerUI : MonoBehaviour
 
         clientBtn.onClick.AddListener(() => {
             outputTMP.text += "Client button was clicked\n";
-            NetworkManager.Singleton.StartClient();
+            ClientStartProcess();
             outputTMP.text += "NetworkManager.Singleton.StartClient happened\n";
             serverBtn.enabled = false;
             clientBtn.enabled = false;
@@ -49,18 +59,43 @@ public class NetworkManagerUI : MonoBehaviour
             clientBtn.gameObject.SetActive(true);
             clientBtn.enabled = true;
             shutdownBtn.enabled = false;
+
+            if (actsAsARunningServer)
+            {
+                TestLobby.I.StopLobbyHeartBeat();
+                ServerSideManager.I.StopLobbyHeartBeat();
+                actsAsARunningServer = false;
+            }
         });
 
-        outputTMP.text = "";
-        outputTMP.text += "I am awake\n";
-    }
-
-    public void Start()
-    {
+        outputTMP.text += "I started\n";
+        outputTMP.text += TestLobby.I != null;
     }
 
     public void WriteLineToOutput(string text)
     {
         outputTMP.text += text + "\n";
+    }
+
+
+    private async void ServerStartProcess()
+    {
+        await ServerSideManager.I.AuthenticateServer();
+        ServerSideManager.I.CreateLobby("testingLobby", 5);
+        //TestLobby.I.CreateLobby();
+    }
+
+    private async void ClientStartProcess()
+    {
+        var authenticated = await TestLobby.I.AuthenticateClient();
+        if (authenticated)
+        {
+            await TestLobby.I.CheckForLobbies();
+            await TestLobby.I.QuickJoinLobby();
+        }
+        else
+        {
+            NetworkManagerUI.I.WriteLineToOutput("Authentication failed miserably and we have a problem...");
+        }
     }
 }

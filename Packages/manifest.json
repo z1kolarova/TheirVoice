@@ -10,6 +10,8 @@
     "com.unity.netcode.gameobjects": "1.5.2",
     "com.unity.postprocessing": "3.2.2",
     "com.unity.render-pipelines.universal": "14.0.8",
+    "com.unity.services.lobby": "1.2.0",
+    "com.unity.services.relay": "1.0.5",
     "com.unity.textmeshpro": "3.0.7",
     "com.unity.timeline": "1.7.6",
     "com.unity.ugui": "1.0.0",

@@ -74,6 +74,19 @@ public class GPTManagerClient : NetworkBehaviour
                 TryGetGPTResponseServerRpc(OwnerClientId, request.Value.ToString());
             }
         }
+
+        //if (Input.GetKeyDown(KeyCode.L))
+        //{
+        //    NetworkManagerUI.I.WriteLineToOutput($"I recognise L press.");
+        //    TestLobby.I.CheckForLobbies();
+        //    NetworkManagerUI.I.WriteLineToOutput($"Check for lobbies should have happened.");
+        //}
+
+        //if (Input.GetKeyDown(KeyCode.Q))
+        //{
+        //    TestLobby.I.QuickJoinLobby();
+        //    NetworkManagerUI.I.WriteLineToOutput($"Quickjoin should have happened.");
+        //}
     }
 
     private ClientRpcParams SingleTarget(ulong clientId)
