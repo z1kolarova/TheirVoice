@@ -1,8 +1,7 @@
+using Assets.Classes;
 using System;
-using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -62,9 +61,13 @@ public class NetworkManagerUI : MonoBehaviour
 
             if (actsAsARunningServer)
             {
-                TestLobby.I.StopLobbyHeartBeat();
+                //TestLobby.I.StopLobbyHeartBeat();
                 ServerSideManager.I.StopLobbyHeartBeat();
                 actsAsARunningServer = false;
+            }
+            else {
+                TestLobby.I.StopAllActivity();
+                TestLobby.I.LeaveLobby();
             }
         });
 
@@ -75,6 +78,15 @@ public class NetworkManagerUI : MonoBehaviour
     public void WriteLineToOutput(string text, bool timestamp = true)
     {
         outputTMP.text += $"{DateTime.Now.ToString("HH:mm:ss")}: {text}\n";
+    }
+
+    public void UpdatePlayerCounter(PlayerCountEventArgs e) 
+    {
+        WriteLineToOutput($"Changing player counter from {e.originalCount} to {e.newTotalCount}");
+        if (e == null)
+            return;
+
+        currentPlayersTMP.text = e.newTotalCount.ToString();
     }
 
 
@@ -92,8 +104,11 @@ public class NetworkManagerUI : MonoBehaviour
         NetworkManagerUI.I.WriteLineToOutput("authenticated " + authenticated);
         if (authenticated)
         {
-            await TestLobby.I.CheckForLobbies();
-            await TestLobby.I.QuickJoinLobby();
+            await TestLobby.I.JoinLobbyAndRelay();
+            //await TestLobby.I.CheckForLobbies();
+            //await TestLobby.I.TryQuickJoinLobby();
+            //NetworkManagerUI.I.WriteLineToOutput("Calling WaitForRelayJoin the first time");
+            //await TestLobby.I.WaitForRelayJoin();
         }
         else
         {

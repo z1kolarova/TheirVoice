@@ -65,6 +65,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Moderation\IModerationEndpoint.cs" />
     <Compile Include="Assets\Scripts\TestRelay.cs" />
     <Compile Include="Assets\Scripts\ConversationConsts.cs" />
+    <Compile Include="Assets\Classes\EventArgs.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Embedding\EmbeddingEndpoint.cs" />
     <Compile Include="Assets\Scripts\ConversationManager.cs" />

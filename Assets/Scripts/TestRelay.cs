@@ -40,6 +40,11 @@ public class TestRelay : MonoBehaviour
     {
         try
         {
+            if (NetworkManager.Singleton.IsServer && !NetworkManager.Singleton.ShutdownInProgress)
+            {
+                NetworkManager.Singleton.Shutdown();
+            }
+
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(99); // 1 server + 99 clients = 100 => the max capacity
 
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
@@ -75,59 +80,15 @@ public class TestRelay : MonoBehaviour
         }
         catch (RelayServiceException e)
         {
+            NetworkManagerUI.I.WriteLineToOutput(e.Reason.ToString());
             NetworkManagerUI.I.WriteLineToOutput(e.ToString());
             return false;
         }
     }
 
-    private async void CreateRelayOldWay()
+    public void CloseRelay() //hopefully closes the relay?
     {
-        try
-        {
-            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(99);
-
-            string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-
-            NetworkManagerUI.I.WriteLineToOutput("Created relay allocation: " + joinCode);
-
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetHostRelayData(
-                allocation.RelayServer.IpV4,
-                (ushort)allocation.RelayServer.Port,
-                allocation.AllocationIdBytes,
-                allocation.Key,
-                allocation.ConnectionData
-            );
-
-            NetworkManager.Singleton.StartHost();
-        }
-        catch (RelayServiceException e)
-        {
-            NetworkManagerUI.I.WriteLineToOutput(e.ToString());
-        }
+        NetworkManager.Singleton.GetComponent<UnityTransport>().DisconnectLocalClient();
     }
 
-    private async void JoinRelayOldWay(string joinCode)
-    {
-        try
-        {
-            JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
-
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(
-                allocation. RelayServer.IpV4,
-                (ushort)allocation.RelayServer.Port,
-                allocation.AllocationIdBytes,
-                allocation.Key,
-                allocation.ConnectionData,
-                allocation.HostConnectionData
-            );
-
-            NetworkManager.Singleton.StartClient();
-
-            NetworkManagerUI.I.WriteLineToOutput("Joined relay.");
-        }
-        catch (RelayServiceException e)
-        {
-            NetworkManagerUI.I.WriteLineToOutput(e.ToString());
-        }
-    }
 }
