@@ -106,6 +106,7 @@
     <Compile Include="Assets\StarterAssets\FirstPersonController\Scripts\BasicRigidBodyPush.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\ImageResponseFormat.cs" />
+    <Compile Include="Assets\Scripts\PersonalityInfoUI.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatRequest.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\IFilesEndpoint.cs" />
     <Compile Include="Assets\Scripts\PasserbySpawnManager.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Assets\Sketchfab For Unity\Scripts\AssetBrowser\SketchfabModelWindow.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionResult.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Usage.cs" />
+    <Compile Include="Assets\Scripts\InitialLoadManager.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabImporter.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatResult.cs" />
     <Compile Include="Assets\Scripts\RngUtils.cs" />

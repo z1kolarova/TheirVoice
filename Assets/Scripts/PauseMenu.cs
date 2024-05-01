@@ -1,24 +1,27 @@
 using Assets.Scripts;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour {
 
-    [SerializeField] private Button exitGameBtn;
     [SerializeField] private Button backToGameBtn;
+    [SerializeField] private Button backToMainMenuBtn;
+    [SerializeField] private Button exitGameBtn;
     
     void Start()
     {
-        exitGameBtn.onClick.AddListener(() => {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-			Application.Quit();
-#endif
-        });
-        
         backToGameBtn.onClick.AddListener(() => {
-	        TogglePauseMenu();
+            TogglePauseMenu();
+        });
+
+        backToMainMenuBtn.onClick.AddListener(() =>
+        {
+            DisconnectEverythingAndReturnToMainMenu();
+        });
+
+        exitGameBtn.onClick.AddListener(() => {
+            DisconnectAndCloseApp();
         });
     }
 
@@ -26,5 +29,19 @@ public class PauseMenu : MonoBehaviour {
     {
 	    gameObject.SetActive(!gameObject.activeSelf);
 	    UserInterfaceUtilities.I.SetCursorUnlockState(gameObject.activeSelf);
+    }
+    public async void DisconnectEverythingAndReturnToMainMenu()
+    {
+        await TestLobby.I.DisconectFromEverything();
+        SceneManager.LoadScene(sceneName: "Scenes/MainMenu");
+    }
+
+    public async void DisconnectAndCloseApp() {
+        await TestLobby.I.DisconectFromEverything();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+			Application.Quit();
+#endif
     }
 }

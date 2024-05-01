@@ -76,6 +76,7 @@ public class PersonalityGenerator : MonoBehaviour
         {
             Traits = new Traits(RngUtils.Rng.Next(MaxPatience), RngUtils.Rng.Next(MaxBaseAwareness), RngUtils.Rng.Next(MaxBaseCompassion)),
             Diet = diet,
+            PromptLabel = promptLabel,
             Prompt = prompt.ResolveConvoEndingAbility(EndingConversationAbilityChance)
         };
 

@@ -17,9 +17,19 @@ public class TestRelay : MonoBehaviour
     public static TestRelay I => instance;
     static TestRelay instance;
 
+    private Allocation currentAllocation;
+
     private void Awake()
     {
-        instance = this;
+        if (I == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Start()
@@ -40,18 +50,30 @@ public class TestRelay : MonoBehaviour
     {
         try
         {
+            if (currentAllocation != null) {
+                try
+                {
+                    var oldJoinCode = await RelayService.Instance.GetJoinCodeAsync(currentAllocation.AllocationId);
+                    return oldJoinCode;
+                }
+                catch (System.Exception)
+                {
+                    NetworkManagerUI.I.WriteLineToOutput("Tried to get code from old allocation, didn't work");
+                }
+            }
+
             if (NetworkManager.Singleton.IsServer && !NetworkManager.Singleton.ShutdownInProgress)
             {
                 NetworkManager.Singleton.Shutdown();
             }
 
-            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(99); // 1 server + 99 clients = 100 => the max capacity
+            currentAllocation = await RelayService.Instance.CreateAllocationAsync(99); // 1 server + 99 clients = 100 => the max capacity
 
-            string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+            string joinCode = await RelayService.Instance.GetJoinCodeAsync(currentAllocation.AllocationId);
 
             NetworkManagerUI.I.WriteLineToOutput("Created relay allocation: " + joinCode);
 
-            RelayServerData rsd = new RelayServerData(allocation, "dtls");
+            RelayServerData rsd = new RelayServerData(currentAllocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(rsd);
 
             NetworkManager.Singleton.StartServer();
@@ -74,21 +96,18 @@ public class TestRelay : MonoBehaviour
             RelayServerData rsd = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(rsd);
 
-            NetworkManagerUI.I.WriteLineToOutput("After joining relay, about to start client.");
+            //NetworkManagerUI.I.WriteLineToOutput("After joining relay, about to start client.");
+            Debug.Log("After joining relay, about to start client.");
 
             return NetworkManager.Singleton.StartClient();
         }
         catch (RelayServiceException e)
         {
-            NetworkManagerUI.I.WriteLineToOutput(e.Reason.ToString());
-            NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            //NetworkManagerUI.I.WriteLineToOutput(e.Reason.ToString());
+            Debug.Log(e.Reason.ToString());
+            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            Debug.Log(e.ToString());
             return false;
         }
     }
-
-    public void CloseRelay() //hopefully closes the relay?
-    {
-        NetworkManager.Singleton.GetComponent<UnityTransport>().DisconnectLocalClient();
-    }
-
 }

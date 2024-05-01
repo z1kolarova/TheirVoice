@@ -7,7 +7,7 @@ using UnityEngine;
 
 public static class Utilities
 {
-    public static ConversationModes ConversationMode = ConversationModes.DevGPT;
+    public static ConversationModes ConversationMode = ConversationModes.RealGPT;
 
     private static JsonSerializer serializer;
     public static JsonSerializer Serializer

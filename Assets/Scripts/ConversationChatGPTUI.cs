@@ -2,6 +2,7 @@
 using Assets.Scripts;
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +18,8 @@ public class ConversationUIChatGPT : MonoBehaviour
     [SerializeField] Button sendBtn;
 
     [SerializeField] Button endConversationBtn;
+
+    private string newDialogueToDisplay;
 
     public void Start()
     {
@@ -45,6 +48,12 @@ public class ConversationUIChatGPT : MonoBehaviour
         DisplayUI();
     }
 
+    public void SetNewDialogueToDisplay(string text)
+    {
+        Debug.Log("set new Dialogue to display " + text);
+        newDialogueToDisplay = text;
+    }
+
     private IEnumerator GetAndDisplayResponse(bool realGPT)
     {
         if (string.IsNullOrWhiteSpace(inputField.text))
@@ -56,11 +65,24 @@ public class ConversationUIChatGPT : MonoBehaviour
         sendBtn.enabled = false;
         inputField.text = "";
 
-        var response = realGPT ? ConvoUtilsGPT.GetResponseTo(msgText) : ConvoUtilsGPT.FakeGettingResponseTo(msgText);
-        yield return new WaitUntil(() => response.IsCompleted);
-        yield return StartCoroutine(ContinueDialogue(response.Result));
+        //var response = realGPT ? ConvoUtilsGPT.GetResponseTo(msgText) : ConvoUtilsGPT.FakeGettingResponseTo(msgText);
+        //yield return new WaitUntil(() => response.IsCompleted);
+        //yield return StartCoroutine(ContinueDialogue(response.Result));
 
-        sendBtn.enabled = true;
+        if (realGPT)
+        {
+            ConvoUtilsGPT.GetServerResponseTo(msgText);
+            yield return new WaitWhile(ConvoUtilsGPT.IsWaitingForResponse);
+            yield return StartCoroutine(ContinueDialogue(newDialogueToDisplay));
+            sendBtn.enabled = true;
+
+        }
+        else
+        {
+            yield return StartCoroutine(ContinueDialogue("Here's a fake response for you."));
+            sendBtn.enabled = true;
+        }
+
     }
 
     //private async void GetResponse()

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
@@ -22,10 +23,10 @@ public class TestLobby : MonoBehaviour
     private float lobbyPollTimerMax = 1.1f;
     private float lobbyPollTimer;
 
-    private float quickjoinRetryTimerMax = 2.5f;
+    private float quickjoinRetryTimerMax = 5f;
     private float quickjoinRetryTimer;
 
-    private float relayRetryTimerMax = 2.5f;
+    private float relayRetryTimerMax = 5f;
     private float relayRetryTimer;
 
     private ILobbyEvents lobbyEvents;
@@ -34,14 +35,24 @@ public class TestLobby : MonoBehaviour
     private bool originalKeyWasNull = false;
 
     public event EventHandler<LobbyEventArgs> OnLobbyUpdate;
+    public event EventHandler OnFinishedConnecting;
 
     private void Awake()
     {
-        instance = this;
+        if (I == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Start()
     {
+        quickjoinRetryTimer = quickjoinRetryTimerMax;
         relayRetryTimer = relayRetryTimerMax;
     }
 
@@ -56,7 +67,8 @@ public class TestLobby : MonoBehaviour
         {
             AuthenticationService.Instance.SignedIn += () =>
             {
-                NetworkManagerUI.I.WriteLineToOutput("Signed in " + AuthenticationService.Instance.PlayerId);
+                //NetworkManagerUI.I.WriteLineToOutput("Signed in " + AuthenticationService.Instance.PlayerId);
+                Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
             };
 
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
@@ -116,10 +128,12 @@ public class TestLobby : MonoBehaviour
                 relayRetryTimer -= Time.deltaTime;
                 if (relayRetryTimer < 0f)
                 {
-                    NetworkManagerUI.I.WriteLineToOutput($"handle lobby polling: waitingForRelay {waitingForRelayKey} originalKeyWasNull {originalKeyWasNull}");
+                    //NetworkManagerUI.I.WriteLineToOutput($"handle lobby polling: waitingForRelay {waitingForRelayKey} originalKeyWasNull {originalKeyWasNull}");
+                    Debug.Log($"handle lobby polling: waitingForRelay {waitingForRelayKey} originalKeyWasNull {originalKeyWasNull}");
                     relayRetryTimer = relayRetryTimerMax;
 
-                    NetworkManagerUI.I.WriteLineToOutput("Gonna retry");
+                    //NetworkManagerUI.I.WriteLineToOutput("Gonna retry");
+                    Debug.Log("Gonna retry");
                     await WaitForRelayJoin();
                 }
             }
@@ -128,10 +142,12 @@ public class TestLobby : MonoBehaviour
 
     private async void OnLobbyChanged(ILobbyChanges changes)
     {
-        NetworkManagerUI.I.WriteLineToOutput("I'm in OnLobbyChanged on Client");
+        //NetworkManagerUI.I.WriteLineToOutput("I'm in OnLobbyChanged on Client");
+        Debug.Log("I'm in OnLobbyChanged on Client");
         if (changes.LobbyDeleted)
         {
-            NetworkManagerUI.I.WriteLineToOutput("Lobby was deleted");
+            //NetworkManagerUI.I.WriteLineToOutput("Lobby was deleted");
+            Debug.Log("Lobby was deleted");
             // we have a problem
         }
         else 
@@ -140,7 +156,8 @@ public class TestLobby : MonoBehaviour
             {
                 if (changes.Data.Changed && changes.Data.Value.ContainsKey(ServerSideManager.RELAY_KEY))
                 {
-                    NetworkManagerUI.I.WriteLineToOutput("Calling WaitForRelayJoin another time");
+                    //NetworkManagerUI.I.WriteLineToOutput("Calling WaitForRelayJoin another time");
+                    Debug.Log("Calling WaitForRelayJoin another time");
                     await WaitForRelayJoin();
                 }
             }
@@ -172,17 +189,20 @@ public class TestLobby : MonoBehaviour
 
     public async Task JoinLobbyAndRelay()
     {
-        NetworkManagerUI.I.WriteLineToOutput("inside JoinLobbyAndRelay");
+        //NetworkManagerUI.I.WriteLineToOutput("inside JoinLobbyAndRelay");
+        Debug.Log("inside JoinLobbyAndRelay");
         var lobbyJoined = await TryQuickJoinLobby();
         if (lobbyJoined)
         {
-            NetworkManagerUI.I.WriteLineToOutput("lobbyJoinded was true");
+            Debug.Log("lobbyJoined was true");
+            //NetworkManagerUI.I.WriteLineToOutput("lobbyJoinded was true");
             retryLobbyQuickJoin = false;
             await WaitForRelayJoin();
         }
         else
         {
-            NetworkManagerUI.I.WriteLineToOutput("lobbyJoinded was false");
+            //NetworkManagerUI.I.WriteLineToOutput("lobbyJoinded was false");
+            Debug.Log("lobbyJoined was false");
             retryLobbyQuickJoin = true;
         }
     }
@@ -191,25 +211,29 @@ public class TestLobby : MonoBehaviour
     {
         try
         {
-            NetworkManagerUI.I.WriteLineToOutput("Attempting to quick join.");
+            //NetworkManagerUI.I.WriteLineToOutput("Attempting to quick join.");
+            Debug.Log("Attempting to quick join.");
             joinedLobby = await LobbyService.Instance.QuickJoinLobbyAsync();
             if (joinedLobby == null)
             {
                 return false;
             }
-            NetworkManagerUI.I.WriteLineToOutput(joinedLobby.Id);
+            //NetworkManagerUI.I.WriteLineToOutput(joinedLobby.Id);
+            Debug.Log(joinedLobby.Id);
 
             var callbacks = new LobbyEventCallbacks();
             callbacks.LobbyChanged += OnLobbyChanged;
             try
             {
                 lobbyEvents = await Lobbies.Instance.SubscribeToLobbyEventsAsync(joinedLobby.Id, callbacks);
-                NetworkManagerUI.I.WriteLineToOutput("lobby events should be subscribed " + lobbyEvents.ToString());
+                //NetworkManagerUI.I.WriteLineToOutput("lobby events should be subscribed " + lobbyEvents.ToString());
+                Debug.Log("lobby events should be subscribed " + lobbyEvents.ToString());
                 return true;
             }
             catch (LobbyServiceException ex)
             {
-                NetworkManagerUI.I.WriteLineToOutput(ex.ToString());
+                //NetworkManagerUI.I.WriteLineToOutput(ex.ToString());
+                Debug.Log(ex.ToString());
                 switch (ex.Reason)
                 {
                     case LobbyExceptionReason.AlreadySubscribedToLobby: Debug.LogWarning($"Already subscribed to lobby[{joinedLobby.Id}]. We did not need to try and subscribe again. Exception Message: {ex.Message}"); break;
@@ -222,12 +246,15 @@ public class TestLobby : MonoBehaviour
         }
         catch (LobbyServiceException e)
         {
-            NetworkManagerUI.I.WriteLineToOutput(e.Reason.ToString());
+            //NetworkManagerUI.I.WriteLineToOutput(e.Reason.ToString());
+            Debug.Log(e.Reason.ToString());
             if (e.Reason == LobbyExceptionReason.NoOpenLobbies)
             {
-                NetworkManagerUI.I.WriteLineToOutput("The server must be offline.");
+                //NetworkManagerUI.I.WriteLineToOutput("The server must be offline.");
+                Debug.Log("The server must be offline.");
             }
-            NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            Debug.Log(e.ToString());
             return false;
         }
     }
@@ -241,16 +268,20 @@ public class TestLobby : MonoBehaviour
             {
                 originalKeyWasNull = !(dataDic.TryGetValue(ServerSideManager.RELAY_KEY, out var originalRelayKey)
                     && originalRelayKey?.Value != null);
-                NetworkManagerUI.I.WriteLineToOutput("originalRelayKey: " + originalRelayKey?.Value);
+                //NetworkManagerUI.I.WriteLineToOutput("originalRelayKey: " + originalRelayKey?.Value);
+                Debug.Log("originalRelayKey: " + originalRelayKey?.Value);
 
                 if (!originalKeyWasNull)
                 {
-                    NetworkManagerUI.I.WriteLineToOutput(originalRelayKey?.Value);
+                    //NetworkManagerUI.I.WriteLineToOutput(originalRelayKey?.Value);
+                    Debug.Log(originalRelayKey?.Value);
                     var result = await TestRelay.I.JoinRelayNewWay(originalRelayKey?.Value);
-                    NetworkManagerUI.I.WriteLineToOutput(result.ToString());
+                    //NetworkManagerUI.I.WriteLineToOutput(result.ToString());
+                    Debug.Log(result.ToString());
                     if (result)
                     {
                         waitingForRelayKey = false;
+                        ConversationManager.I.HasAllNeededConnections = true;
                         return;
                     }
                 }
@@ -274,7 +305,8 @@ public class TestLobby : MonoBehaviour
         }
         catch (Exception e)
         {
-            NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            Debug.Log(e.ToString());
         }
     }
 
@@ -284,31 +316,38 @@ public class TestLobby : MonoBehaviour
         {
             QueryResponse queryResponse = await Lobbies.Instance.QueryLobbiesAsync();
 
-            NetworkManagerUI.I.WriteLineToOutput("Found: " + queryResponse.Results.Count);
+            Debug.Log("Found: " + queryResponse.Results.Count);
+            //NetworkManagerUI.I.WriteLineToOutput("Found: " + queryResponse.Results.Count);
 
             foreach (var result in queryResponse.Results)
             {
-                NetworkManagerUI.I.WriteLineToOutput("Result: " + result.Name + " " + result.MaxPlayers);
+                //NetworkManagerUI.I.WriteLineToOutput("Result: " + result.Name + " " + result.MaxPlayers);
+                Debug.Log("Result: " + result.Name + " " + result.MaxPlayers);
             }
 
             return queryResponse.Results.Count > 0;
         }
         catch (LobbyServiceException e)
         {
-            NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            Debug.Log(e.ToString());
             return false;
         }
     }
 
-    public async void LeaveLobby() 
+    public async Task LeaveLobby() 
     {
         try
         {
-            await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId);
+            if (joinedLobby != null)
+            {
+                await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId);
+            }
         }
         catch (LobbyServiceException e)
         {
-            NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            Debug.Log(e.ToString());
         }
     }
 
@@ -316,5 +355,12 @@ public class TestLobby : MonoBehaviour
     {
         retryLobbyQuickJoin = false;
         waitingForRelayKey = false;
+    }
+
+    public async Task DisconectFromEverything()
+    {
+        StopAllActivity();
+        await LeaveLobby();
+        NetworkManager.Singleton.Shutdown();
     }
 }

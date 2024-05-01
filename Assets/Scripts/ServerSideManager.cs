@@ -1,7 +1,9 @@
 using Assets.Classes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
@@ -29,34 +31,24 @@ public class ServerSideManager : MonoBehaviour
 
     private int playersInLobbyCount = 0;
 
-    private void Start()
+    private bool lobbyFreshlyCreated = false;
+    private bool lobbyPlayerCountChanged = false;
+
+    private void Awake()
     {
         instance = this;
-        OnPlayerCountChanged += (object o, PlayerCountEventArgs e) =>
-        {
-            playersInLobbyCount = e.newTotalCount;
-            NetworkManagerUI.I.UpdatePlayerCounter(e);
-        };
-        OnLobbyCreated += (object o, LobbyEventArgs e) =>
-        {
-            if (e.lobby.Players.Count > 0 && !(e.lobby.Data != null && e.lobby.Data.TryGetValue(RELAY_KEY, out var relKey) && relKey != null))
-            {
-                NetworkManagerUI.I.WriteLineToOutput($"very special condition was met");
-                NetworkManagerUI.I.WriteLineToOutput(e.lobby.Data.ToString());
-                StartRelayAndUpdateLobby();
-            }
-        };
+    }
+
+    private void Start()
+    {
+
     }
 
     private void Update()
     {
         HandleLobbyHeartBeat();
         HandleLobbyPolling();
-    }
-
-    private void ReactToValueChange(int previousValue, int newValue)
-    {
-        NetworkManagerUI.I.WriteLineToOutput($"The value changed from {previousValue} to {newValue} on the server.");
+        HandlePseudoEvents();
     }
 
     public async Task AuthenticateServer()
@@ -66,13 +58,15 @@ public class ServerSideManager : MonoBehaviour
         options.SetProfile(profile);
 
         await UnityServices.InitializeAsync(options);
-
-        AuthenticationService.Instance.SignedIn += () =>
+        if (!AuthenticationService.Instance.IsSignedIn)
         {
-            NetworkManagerUI.I.WriteLineToOutput("Server has signed in as" + AuthenticationService.Instance.PlayerId);
-        };
+            AuthenticationService.Instance.SignedIn += () =>
+            {
+                NetworkManagerUI.I.WriteLineToOutput("Server has signed in as" + AuthenticationService.Instance.PlayerId);
+            };
 
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        }
     }
 
     private async void HandleLobbyHeartBeat()
@@ -98,7 +92,6 @@ public class ServerSideManager : MonoBehaviour
     {
         if (hostLobby != null)
         {
-            var originalPlayerCount = playersInLobbyCount;
             lobbyPollTimer -= Time.deltaTime;
             if (lobbyPollTimer < 0f)
             {
@@ -106,15 +99,39 @@ public class ServerSideManager : MonoBehaviour
 
                 hostLobby = await LobbyService.Instance.GetLobbyAsync(hostLobby.Id);
 
+                
                 if (playersInLobbyCount != hostLobby.MaxPlayers - hostLobby.AvailableSlots - 1)
                 {
-                    OnPlayerCountChanged?.Invoke(this, new PlayerCountEventArgs
-                    {
-                        originalCount = playersInLobbyCount,
-                        newTotalCount = hostLobby.MaxPlayers - hostLobby.AvailableSlots - 1
-                    });
+                    lobbyPlayerCountChanged = true;
                 }
             }
+        }
+    }
+
+    private void HandlePseudoEvents()
+    {
+        if (lobbyFreshlyCreated)
+        {
+            lobbyFreshlyCreated = false;
+            if (hostLobby.Players.Count > 0 && !(hostLobby.Data != null && hostLobby.Data.TryGetValue(RELAY_KEY, out var relKey) && relKey != null))
+            {
+                NetworkManagerUI.I.WriteLineToOutput($"very special condition was met");
+                NetworkManagerUI.I.WriteLineToOutput(hostLobby.Data.ToString());
+                StartRelayAndUpdateLobby();
+            }
+        }
+        if (lobbyPlayerCountChanged)
+        {
+            NetworkManagerUI.I.WriteLineToOutput($"playercountchanged");
+            lobbyPlayerCountChanged = false;
+
+            var pcea = new PlayerCountEventArgs { 
+                originalCount = playersInLobbyCount,
+                newTotalCount = hostLobby.MaxPlayers - hostLobby.AvailableSlots - 1
+            };
+
+            playersInLobbyCount = pcea.newTotalCount;
+            NetworkManagerUI.I.UpdatePlayerCounter(pcea);
         }
     }
 
@@ -133,13 +150,17 @@ public class ServerSideManager : MonoBehaviour
 
         if (changes.PlayerData.Added || changes.PlayerData.Changed)
         {
-            foreach (var item in changes.PlayerData.Value)
+            if (changes.PlayerData.Value.Any(
+                item => item.Value.ChangedData.Value.ContainsKey(TRIGGER_CREATE_RELAY_KEY)
+                    && item.Value.ChangedData.Value[TRIGGER_CREATE_RELAY_KEY].Value.Value == "true"))
             {
-                if (item.Value.ChangedData.Value.ContainsKey(TRIGGER_CREATE_RELAY_KEY) 
-                    && item.Value.ChangedData.Value[TRIGGER_CREATE_RELAY_KEY].Value.Value == "true")
+                foreach (var dat in changes.PlayerData.Value.FirstOrDefault().Value.ChangedData.Value)
                 {
-                    StartRelayAndUpdateLobby();
+                    NetworkManagerUI.I.WriteLineToOutput($"key: {dat.Key}, value: {dat.Value.Value.Value}");
                 }
+                
+                //NetworkManagerUI.I.WriteLineToOutput(changes.PlayerData.Value.FirstOrDefault().Value.LastUpdatedChanged.Value.ToString());
+                StartRelayAndUpdateLobby();
             }
         }
     }
@@ -148,6 +169,7 @@ public class ServerSideManager : MonoBehaviour
     {
         try
         {
+            NetworkManagerUI.I.WriteLineToOutput("In CreateLobby");
             Player player = new Player(AuthenticationService.Instance.PlayerId);
 
             CreateLobbyOptions options = new CreateLobbyOptions
@@ -177,9 +199,9 @@ public class ServerSideManager : MonoBehaviour
                 }
             }
 
+            lobbyFreshlyCreated = true;
             hostLobby = lobby;
-
-            OnLobbyCreated?.Invoke(this, new LobbyEventArgs { lobby = lobby });
+            NetworkManagerUI.I.WriteLineToOutput("End of CreateLobby " + (hostLobby != null).ToString());
         }
         catch (LobbyServiceException e)
         {

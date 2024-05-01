@@ -24,6 +24,18 @@ public static class ConvoUtilsGPT
     private static double _frequencyPenalty = 0.4;      //originally was 0
     private static double _presencePenalty = 0.4;       //originally was 0
 
+    private static FixedString4096Bytes chatRequestToProcess = "";
+    public static FixedString4096Bytes GetChatRequestToProcess() => chatRequestToProcess;
+
+    private static bool currentlyWaitingForServerResponse = false;
+    public static bool IsWaitingForResponse() => currentlyWaitingForServerResponse;
+
+    private static bool hasNewChatRequestToProcess = false;
+    public static bool HasNewChatRequestToProcess() => hasNewChatRequestToProcess;
+    public static void UpdateChatRequestBeganProcessing() { hasNewChatRequestToProcess = false; }
+
+    //public static event EventHandler<FixedString4096Bytes> OnNewChatRequestToProcess;
+
     private static OpenAIAPI api;
     public static OpenAIAPI API
     {
@@ -76,7 +88,7 @@ public static class ConvoUtilsGPT
 
     public static void InitNewConvoWithPrompt(string prompt)
     {
-        Messages.Clear(); //does this work?
+        Messages.Clear();
         Messages.Add(new ChatMessage(ChatMessageRole.System, prompt));
     }
 
@@ -125,6 +137,21 @@ public static class ConvoUtilsGPT
         return responseMessage.Content;
     }
 
+    public static void GetServerResponseTo(string msgText)
+    {
+        Debug.Log(msgText);
+        var request = ConvoUtilsGPT.GetSerialisedChatRequest(msgText);
+        if (request.HasValue)
+        {
+            Debug.Log("request has value");
+            chatRequestToProcess = request.Value;
+            //OnNewChatRequestToProcess?.Invoke(null, request.Value);
+            hasNewChatRequestToProcess = true;
+            currentlyWaitingForServerResponse = true;
+
+            Debug.Log($"things should be true {hasNewChatRequestToProcess} {currentlyWaitingForServerResponse}");
+        }
+    }
 
     public static ChatRequest GetChatRequest(string msgText)
     {
@@ -214,15 +241,20 @@ public static class ConvoUtilsGPT
 
     public static void ProcessResponseMessage(string serialisedResponseMessage)
     {
-        NetworkManagerUI.I.WriteLineToOutput("I am in ProcessChatResult.");
-        NetworkManagerUI.I.WriteLineToOutput(serialisedResponseMessage.ToString());
+        //NetworkManagerUI.I.WriteLineToOutput("I am in ProcessChatResult.");
+        Debug.Log("I am in ProcessChatResult.");
+        //NetworkManagerUI.I.WriteLineToOutput(serialisedResponseMessage.ToString());
+        Debug.Log(serialisedResponseMessage.ToString());
         ChatMessage responseMessage = JsonConvert.DeserializeObject<ChatMessage>(serialisedResponseMessage.ToString());
 
-        NetworkManagerUI.I.WriteLineToOutput("responseMessage.Content:");
-        NetworkManagerUI.I.WriteLineToOutput(responseMessage.Content);
+        //NetworkManagerUI.I.WriteLineToOutput("responseMessage.Content:");
+        Debug.Log("responseMessage.Content:");
+        //NetworkManagerUI.I.WriteLineToOutput(responseMessage.Content);
+        Debug.Log(responseMessage.Content);
         messages.Add(responseMessage);
 
-        Debug.Log(responseMessage.Content);
+        ConversationUIChatGPT.I.SetNewDialogueToDisplay(responseMessage.Content);
+        currentlyWaitingForServerResponse = false;
     }
 
     public static async Task<string> FakeGettingResponseTo(string msgText)

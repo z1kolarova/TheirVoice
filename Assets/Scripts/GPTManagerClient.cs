@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using OpenAI_API.Chat;
 using System;
 using System.Threading.Tasks;
@@ -16,7 +17,8 @@ public class GPTManagerClient : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        NetworkManagerUI.I.WriteLineToOutput($"NetworkSpawn");
+        //NetworkManagerUI.I.WriteLineToOutput($"NetworkSpawn");
+        Debug.Log($"NetworkSpawn");
         //chatRequestToProcess.OnValueChanged += ChatRequestProcessing;
         //responseToProcess.OnValueChanged += ResponseChatMessageProcessing;
     }
@@ -24,18 +26,18 @@ public class GPTManagerClient : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        NetworkManagerUI.I.WriteLineToOutput($"GPTManagerClient starts. IsOwner {IsOwner}, IsServer {IsServer}, IsClient {IsClient}");
-        if (IsOwner || IsServer)
-        {
-            //NetworkManagerUI.I.WriteLineToOutput($"clientId {OwnerClientId}: connected with initial string: " + serialisedChatRequest.Value);
-        }
+        //ConvoUtilsGPT.OnNewChatRequestToProcess += (object o, FixedString4096Bytes request) => {
+        //    Debug.Log($"I'll try to get response to {request.Value}");
+        //    TryGetGPTResponseServerRpc(OwnerClientId, request.Value.ToString());
+        //    Debug.Log($"After the try...");
+        //};
     }
 
     private void ChatRequestProcessing(bool previousValue, bool newValue)
     {
         if (IsOwner || IsServer)
         {
-            NetworkManagerUI.I.WriteLineToOutput($"clientId {OwnerClientId}: chatRequestToProcess changed from {previousValue} to {newValue}.");
+            //NetworkManagerUI.I.WriteLineToOutput($"clientId {OwnerClientId}: chatRequestToProcess changed from {previousValue} to {newValue}.");
         }
 
         if (newValue && IsOwner)
@@ -49,57 +51,21 @@ public class GPTManagerClient : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (ConvoUtilsGPT.HasNewChatRequestToProcess())
+        {
+            ConvoUtilsGPT.UpdateChatRequestBeganProcessing();
+            Debug.Log($"HasNewChatRequestToProcess");
+            var request = ConvoUtilsGPT.GetChatRequestToProcess();
+            Debug.Log($"{request.Value}");
+
+            TryGetGPTResponseServerRpc(OwnerClientId, request.Value.ToString());
+        }
         if (sayHello)
         {
-            NetworkManagerUI.I.WriteLineToOutput($"Hello");
+            //NetworkManagerUI.I.WriteLineToOutput($"Hello");
+            Debug.Log($"Hello");
             sayHello = false;
         }
-        //if (Input.GetKeyDown(KeyCode.W))
-        //{
-        //    chatRequestToProcess.Value = !chatRequestToProcess.Value;
-        //}
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            NetworkManagerUI.I.WriteLineToOutput($"Registered key press of E");
-            if (IsClient)
-            {
-                NetworkManagerUI.I.WriteLineToOutput($"Passed IsClient");
-                ConvoUtilsGPT.InitNewConvoWithPrompt("You're a vegan actvist. Convince the person you're talking to to go vegan.");
-                var request = ConvoUtilsGPT.GetSerialisedChatRequest("Hello.");
-              
-            
-                NetworkManagerUI.I.WriteLineToOutput($"My request is: \"{request.Value}\"");
-                TryGetGPTResponseServerRpc(OwnerClientId, request.Value.ToString());
-                TryGetGPTResponseServerRpc(OwnerClientId, request.ToString());
-
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            NetworkManagerUI.I.WriteLineToOutput($"Registered key press of C");
-            if (IsClient)
-            {
-                NetworkManagerUI.I.WriteLineToOutput($"Passed IsClient");
-                var request = ConvoUtilsGPT.GetSerialisedChatRequest("I'm listening. Continue.");
-                NetworkManagerUI.I.WriteLineToOutput($"My request is: \"{request.Value}\"");
-                TryGetGPTResponseServerRpc(OwnerClientId, request.Value.ToString());
-            }
-        }
-
-        //if (Input.GetKeyDown(KeyCode.L))
-        //{
-        //    NetworkManagerUI.I.WriteLineToOutput($"I recognise L press.");
-        //    TestLobby.I.CheckForLobbies();
-        //    NetworkManagerUI.I.WriteLineToOutput($"Check for lobbies should have happened.");
-        //}
-
-        //if (Input.GetKeyDown(KeyCode.Q))
-        //{
-        //    TestLobby.I.QuickJoinLobby();
-        //    NetworkManagerUI.I.WriteLineToOutput($"Quickjoin should have happened.");
-        //}
     }
 
     private ClientRpcParams SingleTarget(ulong clientId)
@@ -116,18 +82,20 @@ public class GPTManagerClient : NetworkBehaviour
     {
         if (IsServer)
         {
-            NetworkManagerUI.I.WriteLineToOutput($"I'm a server asking API for response to {chatRequestFromClient}.");
+            //NetworkManagerUI.I.WriteLineToOutput($"I'm a server asking API for response to {chatRequestFromClient}.");
             var res = await ConvoUtilsGPT.GetResponseAsServer(chatRequestFromClient);
-            NetworkManagerUI.I.WriteLineToOutput($"I brought \"{res}\" as response.");
-            ReceiveResponseClientRpc(res, SingleTarget(OwnerClientId));
+            //NetworkManagerUI.I.WriteLineToOutput($"I brought \"{res}\" as response.");
+            ReceiveResponseClientRpc(res, SingleTarget(clientId));
         }
     }
 
     [ClientRpc]
     private void ReceiveResponseClientRpc(string chatMessageResponse, ClientRpcParams clientRpcParams = default)
     {
-        NetworkManagerUI.I.WriteLineToOutput("I am in the ClientRpc.");
-        NetworkManagerUI.I.WriteLineToOutput("param is: " + chatMessageResponse.ToString());
+        //NetworkManagerUI.I.WriteLineToOutput("I am in the ClientRpc.");
+        Debug.Log("I am in the ClientRpc.");
+        //NetworkManagerUI.I.WriteLineToOutput("param is: " + chatMessageResponse.ToString());
+        Debug.Log("param is: " + chatMessageResponse.ToString());
         ConvoUtilsGPT.ProcessResponseMessage(chatMessageResponse);
     }
 }

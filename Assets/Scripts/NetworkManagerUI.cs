@@ -21,8 +21,6 @@ public class NetworkManagerUI : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        outputTMP.text = "";
-        outputTMP.text += "I am awake\n";
     }
 
     public void Start()
@@ -51,13 +49,6 @@ public class NetworkManagerUI : MonoBehaviour
 
         shutdownBtn.onClick.AddListener(() => {
             outputTMP.text += "Shutdown button was clicked\n";
-            NetworkManager.Singleton.Shutdown();
-            outputTMP.text += "NetworkManager.Singleton.Shutdown happened\n";
-            serverBtn.gameObject.SetActive(true);
-            serverBtn.enabled = true;
-            clientBtn.gameObject.SetActive(true);
-            clientBtn.enabled = true;
-            shutdownBtn.enabled = false;
 
             if (actsAsARunningServer)
             {
@@ -69,10 +60,15 @@ public class NetworkManagerUI : MonoBehaviour
                 TestLobby.I.StopAllActivity();
                 TestLobby.I.LeaveLobby();
             }
-        });
 
-        outputTMP.text += "I started\n";
-        outputTMP.text += TestLobby.I != null;
+            NetworkManager.Singleton.Shutdown();
+            outputTMP.text += "NetworkManager.Singleton.Shutdown happened\n";
+            serverBtn.gameObject.SetActive(true);
+            serverBtn.enabled = true;
+            clientBtn.gameObject.SetActive(true);
+            clientBtn.enabled = true;
+            shutdownBtn.enabled = false;
+        });
     }
 
     public void WriteLineToOutput(string text, bool timestamp = true)
@@ -92,6 +88,7 @@ public class NetworkManagerUI : MonoBehaviour
 
     private async void ServerStartProcess()
     {
+        NetworkManagerUI.I.WriteLineToOutput("In ServerStartProcess");
         await ServerSideManager.I.AuthenticateServer();
         ServerSideManager.I.CreateLobby("testingLobby", 5);
         //TestLobby.I.CreateLobby();

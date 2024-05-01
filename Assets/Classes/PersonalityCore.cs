@@ -3,6 +3,7 @@ using System;
 
 public class PersonalityCore
 {
+    public PromptLabel PromptLabel;
     public Prompt Prompt;
     public Traits Traits;
     public AnimalExploitationsInDiet Diet;

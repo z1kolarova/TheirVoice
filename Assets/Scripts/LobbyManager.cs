@@ -52,7 +52,8 @@ public class LobbyManager : MonoBehaviour
 
         AuthenticationService.Instance.SignedIn += () =>
         {
-            NetworkManagerUI.I.WriteLineToOutput("Signed in " + AuthenticationService.Instance.PlayerId);
+            //NetworkManagerUI.I.WriteLineToOutput("Signed in " + AuthenticationService.Instance.PlayerId);
+            Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
             //quick join?
         };
 
@@ -65,7 +66,8 @@ public class LobbyManager : MonoBehaviour
             if (heartbeatTimer < 0f)
             {
                 heartbeatTimer = heartbeatTimerMax;
-                NetworkManagerUI.I.WriteLineToOutput("I wanna send heartbeat for lobby " + joinedLobby.Id);
+                //NetworkManagerUI.I.WriteLineToOutput("I wanna send heartbeat for lobby " + joinedLobby.Id);
+                Debug.Log("I wanna send heartbeat for lobby " + joinedLobby.Id);
                 await LobbyService.Instance.SendHeartbeatPingAsync(joinedLobby.Id);
             }
         }
@@ -107,7 +109,8 @@ public class LobbyManager : MonoBehaviour
         }
         catch (LobbyServiceException e)
         {
-            NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            Debug.Log(e.ToString());
             return false;
         }
     }
