@@ -13,24 +13,33 @@ public class PersonalityInfoUI : MonoBehaviour
 
     [SerializeField] Button revealPersonalityBtn;
     [SerializeField] TMP_Text personalityDesc;
+    [SerializeField] TMP_Text endConvoAbilityDesc;
 
     void Start()
     {
         instance = this;
         revealPersonalityBtn.onClick.AddListener(() => { 
             personalityDesc.gameObject.SetActive(true);
+            endConvoAbilityDesc.gameObject.SetActive(true);
         });
         transform.gameObject.SetActive(false);
     }
 
-    public void DisplayAsPersonalityDesc(string desc)
+    public void GetAttributesForDisplay(string name, EndConvoAbility endConvoDesc)
     {
-        personalityDesc.text = desc;
+        personalityDesc.text = name;
+        endConvoAbilityDesc.text = endConvoDesc switch {
+            EndConvoAbility.Never => "can never end convo",
+            EndConvoAbility.Sometimes => "can sometimes end convo",
+            EndConvoAbility.Always => "can always end convo",
+            _ => "unknown - please report seeing this"
+        };
     }
 
     public void SetActive(bool value)
     {
         personalityDesc.gameObject.SetActive(false);
+        endConvoAbilityDesc.gameObject.SetActive(false);
         transform.gameObject.SetActive(value);
     }
 }

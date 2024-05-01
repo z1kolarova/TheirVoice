@@ -3,16 +3,25 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PauseMenu : MonoBehaviour {
-
+public class PauseMenu : MonoBehaviour 
+{
+    [Header("Buttons")]
     [SerializeField] private Button backToGameBtn;
+    [SerializeField] private Button howToBtn;
     [SerializeField] private Button backToMainMenuBtn;
     [SerializeField] private Button exitGameBtn;
-    
+
+    [Header("Panels")]
+    [SerializeField] private HowItWorksPanel howToPanel;
+
     void Start()
     {
         backToGameBtn.onClick.AddListener(() => {
             TogglePauseMenu();
+        });
+
+        howToBtn.onClick.AddListener(() => {
+            howToPanel.SetActive(true);
         });
 
         backToMainMenuBtn.onClick.AddListener(() =>
@@ -27,6 +36,7 @@ public class PauseMenu : MonoBehaviour {
 
     public void TogglePauseMenu()
     {
+        howToPanel.SetActive(false);
 	    gameObject.SetActive(!gameObject.activeSelf);
 	    UserInterfaceUtilities.I.SetCursorUnlockState(gameObject.activeSelf);
     }

@@ -42,7 +42,7 @@ public class ConversationManager : MonoBehaviour
         var origState = passerby.State;
         talkingTo.BeApproached(PlayerController.I.transform.gameObject);
         PersonalityInfoUI.I.SetActive(true);
-        PersonalityInfoUI.I.DisplayAsPersonalityDesc(talkingTo.personality.PromptLabel.Name);
+        PersonalityInfoUI.I.GetAttributesForDisplay(talkingTo.personality.PromptLabel.Name, talkingTo.personality.Prompt.EndConvoAbility);
         if (!HasAllNeededConnections || Utilities.ConversationMode == ConversationModes.Premade)
         {
             ConversationUI.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
@@ -88,6 +88,7 @@ public class ConversationManager : MonoBehaviour
         talkingTo = null;
         InDialog = false;
 
+        PersonalityInfoUI.I.SetActive(false);
         PlayerController.I.EndConversation();
     }
 

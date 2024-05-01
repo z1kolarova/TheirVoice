@@ -9,18 +9,24 @@ using UnityEngine.UI;
 
 public class MainMenuManager : MonoBehaviour
 {
+    [Header("Buttons")]
     [SerializeField] Button startButton;
-    [SerializeField] Button settingsButton;
+    [SerializeField] Button howItWorksButton;
     [SerializeField] Button exitButton;
+
+    [Header("Panels")]
+    [SerializeField] HowItWorksPanel howItWorksPanel;
 
     void Start()
     {
         startButton.onClick.AddListener(() => {
             LoadCubeOfTruth();
         });
-        settingsButton.onClick.AddListener(() => {
-            // todo open settings
+
+        howItWorksButton.onClick.AddListener(() => {
+            howItWorksPanel.SetActive(true);
         });
+
         exitButton.onClick.AddListener(() => {
             ExitSimulator();
         });

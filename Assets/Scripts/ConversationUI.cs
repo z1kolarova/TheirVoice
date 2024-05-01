@@ -65,7 +65,6 @@ public class ConversationUI : MonoBehaviour
         yield return StartCoroutine(SpeechBubbleManager.I.EndOfDialogue());
         ConversationManager.I.TriggerEndDialogue();
 
-        PersonalityInfoUI.I.SetActive(false);
         HideUIAndLockMouse();
     }
 
