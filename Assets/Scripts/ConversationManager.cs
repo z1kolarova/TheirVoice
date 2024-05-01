@@ -9,6 +9,7 @@ public class ConversationManager : MonoBehaviour
     static ConversationManager instance;
     
     [HideInInspector] public bool InDialog = false;
+    [HideInInspector] public bool HasAllNeededConnections = false;
 
     private static System.Random rng;
     private PasserbyAI talkingTo;
@@ -17,6 +18,21 @@ public class ConversationManager : MonoBehaviour
     {
         instance = this;
         rng = new System.Random();
+        EstablishNeededConnections();
+    }
+
+    private async void EstablishNeededConnections()
+    {
+        var authenticated = await TestLobby.I.AuthenticateClient();
+        if (authenticated)
+        {
+            await TestLobby.I.JoinLobbyAndRelay();
+        }
+        else
+        {
+            Debug.Log("Authentication failed miserably and we have a problem...");
+            //NetworkManagerUI.I.WriteLineToOutput("Authentication failed miserably and we have a problem...");
+        }
     }
 
     public void TriggerStartDialogue(PasserbyAI passerby)
@@ -25,7 +41,9 @@ public class ConversationManager : MonoBehaviour
         talkingTo = passerby;
         var origState = passerby.State;
         talkingTo.BeApproached(PlayerController.I.transform.gameObject);
-        if (Utilities.ConversationMode == ConversationModes.Premade)
+        PersonalityInfoUI.I.SetActive(true);
+        PersonalityInfoUI.I.GetAttributesForDisplay(talkingTo.personality.PromptLabel.Name, talkingTo.personality.Prompt.EndConvoAbility);
+        if (!HasAllNeededConnections || Utilities.ConversationMode == ConversationModes.Premade)
         {
             ConversationUI.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
         }
@@ -70,6 +88,7 @@ public class ConversationManager : MonoBehaviour
         talkingTo = null;
         InDialog = false;
 
+        PersonalityInfoUI.I.SetActive(false);
         PlayerController.I.EndConversation();
     }
 
