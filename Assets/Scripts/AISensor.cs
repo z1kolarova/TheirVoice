@@ -4,7 +4,9 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class AISensor : MonoBehaviour
 {
-    public float distance = 10;
+    const float MIN_DISTANCE = 4f;
+    const float MAX_DISTANCE = 9f;
+    public float distance;
     public float horizontalAngle = 30;
     public float height = 1.5f;
     public Color meshColor = Color.magenta;
@@ -21,7 +23,8 @@ public class AISensor : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        scanInterval = 1.0f / scanFrequency;   
+        scanInterval = 1.0f / scanFrequency;
+        distance = MIN_DISTANCE + (float)RngUtils.Rng.NextDouble() * (MAX_DISTANCE - MIN_DISTANCE);
     }
 
     // Update is called once per frame
