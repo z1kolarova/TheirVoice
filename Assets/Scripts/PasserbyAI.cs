@@ -43,7 +43,7 @@ public class PasserbyAI : MonoBehaviour
         
         // load model
         var model = GameObject.Instantiate(PasserbyModelManager.I.GetRandomModel(), this.transform);
-        model.transform.localPosition = new Vector3(0, -1, 0);
+        model.transform.localPosition = new Vector3(0, -1.1f, 0);
         animator = model.GetComponent<Animator>();
         animator.runtimeAnimatorController = PasserbyModelManager.I.animatorController;
         animator.SetTrigger("StartWalking");
