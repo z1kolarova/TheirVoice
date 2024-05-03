@@ -58,7 +58,7 @@ public class TestRelay : MonoBehaviour
                 }
                 catch (System.Exception)
                 {
-                    NetworkManagerUI.I.WriteLineToOutput("Tried to get code from old allocation, didn't work");
+                    NetworkManagerUI.I.WriteBadLineToOutput("Tried to get code from old allocation, didn't work");
                 }
             }
 
@@ -82,7 +82,7 @@ public class TestRelay : MonoBehaviour
         }
         catch (RelayServiceException e)
         {
-            NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            NetworkManagerUI.I.WriteBadLineToOutput(e.ToString());
             return null;
         }
     }

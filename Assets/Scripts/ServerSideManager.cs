@@ -200,7 +200,7 @@ public class ServerSideManager : MonoBehaviour
             }
             catch (LobbyServiceException ex)
             {
-                NetworkManagerUI.I.WriteLineToOutput(ex.ToString());
+                NetworkManagerUI.I.WriteBadLineToOutput(ex.ToString());
                 switch (ex.Reason)
                 {
                     case LobbyExceptionReason.AlreadySubscribedToLobby: Debug.LogWarning($"Already subscribed to lobby[{lobby.Id}]. We did not need to try and subscribe again. Exception Message: {ex.Message}"); break;
@@ -216,7 +216,7 @@ public class ServerSideManager : MonoBehaviour
         }
         catch (LobbyServiceException e)
         {
-            NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            NetworkManagerUI.I.WriteBadLineToOutput(e.ToString());
         }
     }
 

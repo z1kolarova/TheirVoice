@@ -75,6 +75,11 @@ public class NetworkManagerUI : MonoBehaviour
     {
         outputTMP.text += $"{DateTime.Now.ToString("HH:mm:ss")}: {text}\n";
     }
+    
+    public void WriteBadLineToOutput(string text, bool timestamp = true)
+    {
+        outputTMP.text += $"<color=#FF0000>{DateTime.Now.ToString("HH:mm:ss")}: {text}\n</color>";
+    }
 
     public void UpdatePlayerCounter(PlayerCountEventArgs e) 
     {
@@ -109,7 +114,7 @@ public class NetworkManagerUI : MonoBehaviour
         }
         else
         {
-            NetworkManagerUI.I.WriteLineToOutput("Authentication failed miserably and we have a problem...");
+            NetworkManagerUI.I.WriteBadLineToOutput("Authentication failed miserably and we have a problem...");
         }
     }
 }
