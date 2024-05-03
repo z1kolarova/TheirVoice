@@ -43,8 +43,8 @@ public class ConversationManager : MonoBehaviour
         talkingTo.BeApproached(PlayerController.I.transform.gameObject);
         PersonalityInfoUI.I.SetActive(true);
         PersonalityInfoUI.I.GetAttributesForDisplay(talkingTo.personality.PromptLabel.Name,
-            talkingTo.personality.Prompt.EndConvoAbility,
-            talkingTo.personality.CanEndConvoThisTime);
+            talkingTo.personality.Prompt.GeneralConvoEndingAbility,
+            talkingTo.personality.Prompt.CanEndConvoThisTime);
         if (!HasAllNeededConnections || Utilities.ConversationMode == ConversationModes.Premade)
         {
             ConversationUI.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);

@@ -5,7 +5,6 @@ public class PersonalityCore
 {
     public PromptLabel PromptLabel;
     public Prompt Prompt;
-    public bool CanEndConvoThisTime;
     public Traits Traits;
     public AnimalExploitationsInDiet Diet;
 

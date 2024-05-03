@@ -1,6 +1,1 @@
-[
-    {"Name": "compassionate_grandparent", "Tags": 580},
-    {"Name": "guiltfree_meat_is_healthy_and_it_is_what_it_is", "Tags": 12},
-    {"Name": "meateater_with_vegetarian_girlfriend", "Tags": 128},
-    {"Name": "troll_too_cool_for_this", "Tags": 1}
-]
+[{"Name":"angry_religious_carnist","EndConvoAbility":0,"Tags":1032},{"Name":"athlete_eats_fish_but_vegetarian_label","EndConvoAbility":1,"Tags":2},{"Name":"baking_grandparent","EndConvoAbility":1,"Tags":68},{"Name":"convenient_vegetarian","EndConvoAbility":1,"Tags":514},{"Name":"endless_stream_of_questions","EndConvoAbility":1,"Tags":0},{"Name":"guiltfree_meat_is_healthy_and_it_is_what_it_is","EndConvoAbility":2,"Tags":16},{"Name":"meateater_with_vegetarian_girlfriend","EndConvoAbility":1,"Tags":2056},{"Name":"sad_single_parent","EndConvoAbility":1,"Tags":512},{"Name":"teen_troll_with_pet_bunny","EndConvoAbility":0,"Tags":1},{"Name":"troll_too_cool_for_this","EndConvoAbility":0,"Tags":1},{"Name":"vegetarian_is_enough_loves_cheese","EndConvoAbility":1,"Tags":258},{"Name":"wellfarist","EndConvoAbility":1,"Tags":64}]

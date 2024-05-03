@@ -2,9 +2,9 @@
 {
     public class Prompt
     {
+        public EndConvoAbility GeneralConvoEndingAbility { get; set; }
+        public bool CanEndConvoThisTime { get; set; }
         public string Text { get; set; }
-        public EndConvoAbility EndConvoAbility { get; set; }
-        public ArgumentationTag Excuses { get; set; } = ArgumentationTag.None;
     }
 }
 

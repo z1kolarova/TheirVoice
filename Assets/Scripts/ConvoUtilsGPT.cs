@@ -20,7 +20,7 @@ public static class ConvoUtilsGPT
 
     private static Model _model = Model.ChatGPTTurbo;   //originally was ChatGPTTurbo
     private static double _temperature = 0.5;           //originally was 0.1
-    private static int _maxTokens = 50;                 //originally was 50
+    private static int _maxTokens = 256;                //originally was 50
     private static double _frequencyPenalty = 0.4;      //originally was 0
     private static double _presencePenalty = 0.4;       //originally was 0
 
@@ -62,26 +62,31 @@ public static class ConvoUtilsGPT
         }
     }
 
-    public static Prompt ResolveConvoEndingAbility(this Prompt prompt, int chanceIfSometimes, out bool canThisTime)
+    public static Prompt CreatePrompt(string promptText, EndConvoAbility endConvoAbility, int chanceIfSometimes)
     {
-        canThisTime = false;
-        switch (prompt.EndConvoAbility)
+        bool willBeAbleToEndConvo = false;
+        switch (endConvoAbility)
         {
             case EndConvoAbility.Never:
                 break;
             case EndConvoAbility.Sometimes:
                 if (RngUtils.RollWithinLimitCheck(chanceIfSometimes))
                 {
-                    canThisTime = true;
-                    prompt.Text += CONVO_END_INSTRUCTION;
+                    willBeAbleToEndConvo = true;
+                    promptText += CONVO_END_INSTRUCTION;
                 }
                 break;
             case EndConvoAbility.Always:
-                canThisTime = true;
-                prompt.Text += CONVO_END_INSTRUCTION;
+                willBeAbleToEndConvo = true;
+                promptText += CONVO_END_INSTRUCTION;
                 break;
         }
-        return prompt;
+
+        return new Prompt { 
+            GeneralConvoEndingAbility = endConvoAbility,
+            CanEndConvoThisTime = willBeAbleToEndConvo,
+            Text = promptText
+        };
     }
     //public static Prompt AddAbilityToEndConvo(this Prompt originalPrompt)
     //{ 
@@ -312,18 +317,17 @@ public static class ConvoUtilsGPT
         return result;
     }
 
-    public static Prompt GetPromptByFileName(string name)
+    public static string GetPromptTextByLabel(PromptLabel label)
     {
-        var path = Path.Combine(PromptsDir, $"{name}.json");
-        Prompt result;
+        var path = Path.Combine(PromptsDir, $"{label.Name}.txt");
 
-        using (StreamReader sr = new StreamReader(path))
-        using (JsonReader jr = new JsonTextReader(sr))
+        if (!File.Exists(path))
         {
-            result = Utilities.Serializer.Deserialize<Prompt>(jr);
+            return null;
         }
 
-        return result;
+        string text = File.ReadAllText(path);
+        return text;
     }
 
     public static void SerializePromptBank(List<PromptLabel> promptLabels)

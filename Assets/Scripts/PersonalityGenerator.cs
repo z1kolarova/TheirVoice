@@ -30,7 +30,7 @@ public class PersonalityGenerator : MonoBehaviour
 
     private int rangeMax = 100;
     private List<(AnimalExploitationsInDiet, int)> _tupleList;
-    private List<PromptLabel> promptFileNames;
+    private List<PromptLabel> promptBank;
 
     private void Start()
     {
@@ -63,21 +63,21 @@ public class PersonalityGenerator : MonoBehaviour
         //var prompt2 = new Prompt { Text = text2, EndConvoAbility = atec2, Excuses = tags2 };
         //ConvoUtilsGPT.SerializePrompt(prompt2, "meateater_with_vegetarian_girlfriend");
 
-        promptFileNames = ConvoUtilsGPT.GetPromptBank();
+        promptBank = ConvoUtilsGPT.GetPromptBank();
     }
 
     public PersonalityCore GetNewPersonality()
     {
         var diet = AddFlagsIfOdds(AnimalExploitationsInDiet.None);
-        var promptLabel = promptFileNames[RngUtils.Rng.Next(promptFileNames.Count)];
-        var prompt = ConvoUtilsGPT.GetPromptByFileName(promptLabel.Name)
-            .ResolveConvoEndingAbility(EndingConversationAbilityChance, out var canEndConvoThisTime);
+        var promptLabel = promptBank[RngUtils.Rng.Next(promptBank.Count)];
+        var promptText = ConvoUtilsGPT.GetPromptTextByLabel(promptLabel);
+
+        var prompt = ConvoUtilsGPT.CreatePrompt(promptText, promptLabel.EndConvoAbility, EndingConversationAbilityChance);
         
         var pc = new PersonalityCore()
         {
             PromptLabel = promptLabel,
             Prompt = prompt,
-            CanEndConvoThisTime = canEndConvoThisTime,
             Traits = new Traits(RngUtils.Rng.Next(MaxPatience), RngUtils.Rng.Next(MaxBaseAwareness), RngUtils.Rng.Next(MaxBaseCompassion)),
             Diet = diet,
         };
