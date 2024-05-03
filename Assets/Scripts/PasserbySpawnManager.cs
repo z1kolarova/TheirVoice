@@ -8,7 +8,7 @@ public class PasserBySpawnManager : MonoBehaviour
 
     private List<PasserbyAI> passerbyList;
 
-    private const int PASSERBY_AMOUNT = 8;
+    private const int PASSERBY_AMOUNT = 12;
     private const float SPAWN_DELAY = 1f;
     
     [SerializeField]
