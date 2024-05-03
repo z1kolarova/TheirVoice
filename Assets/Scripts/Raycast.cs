@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class Raycast : MonoBehaviour
@@ -5,6 +6,7 @@ public class Raycast : MonoBehaviour
     [SerializeField] float promptDistance = 20f;
     [SerializeField] float interractDistance = 3f;
     [SerializeField] LayerMask layerMask;
+    [SerializeField] TMP_Text interactText;
 
     public Transform cvc;
 
@@ -24,6 +26,7 @@ public class Raycast : MonoBehaviour
             {
                 if (hitInfo.distance <= interractDistance)
                 {
+                    interactText.gameObject.SetActive(true);
                     if(Input.GetKeyDown(KeyCode.E))
                     {
                         PlayerController.I.BeginConversation(hitInfo.transform.gameObject.GetComponent<PasserbyAI>());
@@ -31,14 +34,19 @@ public class Raycast : MonoBehaviour
 
                     Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * hitInfo.distance), Color.green);
                 }
+                else {
+                    interactText.gameObject.SetActive(false);
+                }
             }
             else
             {
+                interactText.gameObject.SetActive(false);
                 Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * hitInfo.distance), Color.red);
             }
         }
         else
         {
+            interactText.gameObject.SetActive(false);
             Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * promptDistance), Color.yellow);
         }
     }
