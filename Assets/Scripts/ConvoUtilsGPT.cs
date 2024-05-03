@@ -62,8 +62,9 @@ public static class ConvoUtilsGPT
         }
     }
 
-    public static Prompt ResolveConvoEndingAbility(this Prompt prompt, int chanceIfSometimes)
+    public static Prompt ResolveConvoEndingAbility(this Prompt prompt, int chanceIfSometimes, out bool canThisTime)
     {
+        canThisTime = false;
         switch (prompt.EndConvoAbility)
         {
             case EndConvoAbility.Never:
@@ -71,10 +72,12 @@ public static class ConvoUtilsGPT
             case EndConvoAbility.Sometimes:
                 if (RngUtils.RollWithinLimitCheck(chanceIfSometimes))
                 {
+                    canThisTime = true;
                     prompt.Text += CONVO_END_INSTRUCTION;
                 }
                 break;
             case EndConvoAbility.Always:
+                canThisTime = true;
                 prompt.Text += CONVO_END_INSTRUCTION;
                 break;
         }

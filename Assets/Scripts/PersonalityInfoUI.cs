@@ -25,13 +25,13 @@ public class PersonalityInfoUI : MonoBehaviour
         transform.gameObject.SetActive(false);
     }
 
-    public void GetAttributesForDisplay(string name, EndConvoAbility endConvoDesc)
+    public void GetAttributesForDisplay(string name, EndConvoAbility endConvoDesc, bool canEndConvo)
     {
         personalityDesc.text = name;
         endConvoAbilityDesc.text = endConvoDesc switch {
-            EndConvoAbility.Never => "can never end convo",
-            EndConvoAbility.Sometimes => "can sometimes end convo",
-            EndConvoAbility.Always => "can always end convo",
+            EndConvoAbility.Never => "can never end conversation",
+            EndConvoAbility.Sometimes => "can sometimes end conversation\n" + (canEndConvo ? "(can this time)" : "(not this time)"),
+            EndConvoAbility.Always => "can always end conversations",
             _ => "unknown - please report seeing this"
         };
     }

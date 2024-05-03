@@ -78,7 +78,18 @@ public class ServerSideManager : MonoBehaviour
             {
                 heartbeatTimer = heartbeatTimerMax;
                 NetworkManagerUI.I.WriteLineToOutput("heartbeat for lobby " + hostLobby.Id);
-                await LobbyService.Instance.SendHeartbeatPingAsync(hostLobby.Id);
+                try
+                {
+                    await LobbyService.Instance.SendHeartbeatPingAsync(hostLobby.Id);
+                }
+                catch (LobbyServiceException e)
+                {
+                    NetworkManagerUI.I.WriteLineToOutput($"{e.Reason}: {e.Message}");
+                }
+                catch (Exception e)
+                {
+                    NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+                }
             }
         }
     }

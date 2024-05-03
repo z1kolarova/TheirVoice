@@ -70,14 +70,16 @@ public class PersonalityGenerator : MonoBehaviour
     {
         var diet = AddFlagsIfOdds(AnimalExploitationsInDiet.None);
         var promptLabel = promptFileNames[RngUtils.Rng.Next(promptFileNames.Count)];
-        var prompt = ConvoUtilsGPT.GetPromptByFileName(promptLabel.Name);
+        var prompt = ConvoUtilsGPT.GetPromptByFileName(promptLabel.Name)
+            .ResolveConvoEndingAbility(EndingConversationAbilityChance, out var canEndConvoThisTime);
         
         var pc = new PersonalityCore()
         {
+            PromptLabel = promptLabel,
+            Prompt = prompt,
+            CanEndConvoThisTime = canEndConvoThisTime,
             Traits = new Traits(RngUtils.Rng.Next(MaxPatience), RngUtils.Rng.Next(MaxBaseAwareness), RngUtils.Rng.Next(MaxBaseCompassion)),
             Diet = diet,
-            PromptLabel = promptLabel,
-            Prompt = prompt.ResolveConvoEndingAbility(EndingConversationAbilityChance)
         };
 
         return pc;
