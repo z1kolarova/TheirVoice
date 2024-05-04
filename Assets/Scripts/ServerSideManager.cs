@@ -154,8 +154,7 @@ public class ServerSideManager : MonoBehaviour
         if (changes.LobbyDeleted)
         {
             NetworkManagerUI.I.WriteBadLineToOutput($"lobby got deleted");
-            hostLobby = null;
-            CreateLobby("re-created lobby", 100);
+            ReplaceNonfunctionalLobby("re-created lobby", 100);
         }
         else
         {
@@ -195,6 +194,13 @@ public class ServerSideManager : MonoBehaviour
     private void OnKickedFromLobby()
     {
         NetworkManagerUI.I.WriteBadLineToOutput("somehow the server got kicked from lobby");
+        ReplaceNonfunctionalLobby("got kicked so new lobby", 100);
+    }
+
+    private void ReplaceNonfunctionalLobby(string newLobbyName, int newMaxPlayers)
+    {
+        StopLobbyHeartBeat();
+        CreateLobby(newLobbyName, newMaxPlayers);
     }
 
     public async void CreateLobby(string lobbyName, int maxPlayers)

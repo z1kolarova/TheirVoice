@@ -29,6 +29,7 @@ public class Raycast : MonoBehaviour
                     interactText.gameObject.SetActive(true);
                     if(Input.GetKeyDown(KeyCode.E))
                     {
+                        interactText.gameObject.SetActive(false);
                         PlayerController.I.BeginConversation(hitInfo.transform.gameObject.GetComponent<PasserbyAI>());
                     }
 
