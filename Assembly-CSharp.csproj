@@ -69,6 +69,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Embedding\EmbeddingEndpoint.cs" />
     <Compile Include="Assets\Scripts\ConversationManager.cs" />
+    <Compile Include="Assets\Scripts\LoggingManager.cs" />
     <Compile Include="Assets\Scripts\ConvoUtils.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabUI.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\IChatEndpoint.cs" />

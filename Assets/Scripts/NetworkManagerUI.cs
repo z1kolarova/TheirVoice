@@ -73,12 +73,16 @@ public class NetworkManagerUI : MonoBehaviour
 
     public void WriteLineToOutput(string text, bool timestamp = true)
     {
-        outputTMP.text += $"{DateTime.Now.ToString("HH:mm:ss")}: {text}\n";
+        var lineContent = $"{DateTime.Now.ToString("HH:mm:ss")}: {text}";
+        LoggingManager.I.WriteLineToLog(lineContent);
+        outputTMP.text += $"{lineContent}\n";
     }
     
     public void WriteBadLineToOutput(string text, bool timestamp = true)
     {
-        outputTMP.text += $"<color=#FF0000>{DateTime.Now.ToString("HH:mm:ss")}: {text}\n</color>";
+        var lineContent = $"{DateTime.Now.ToString("HH:mm:ss")} ERROR: {text}";
+        LoggingManager.I.WriteLineToLog(lineContent);
+        outputTMP.text += $"<color=#FF0000>{lineContent}\n</color>";
     }
 
     public void UpdatePlayerCounter(PlayerCountEventArgs e) 

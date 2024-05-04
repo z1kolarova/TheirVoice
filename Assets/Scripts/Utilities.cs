@@ -2,6 +2,7 @@ using Assets.Classes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -19,6 +20,28 @@ public static class Utilities
                 serializer = new JsonSerializer();
             }
             return serializer;
+        }
+    }
+
+    public static bool MakeSureFileExists(string dirPath, string fileName)
+    {
+        var filePath = Path.Combine(dirPath, fileName);
+        try
+        {
+            if (!File.Exists(filePath))
+            {
+                if (!Directory.Exists(dirPath))
+                {
+                    Directory.CreateDirectory(dirPath);
+                }
+                File.Create(filePath);
+            }
+            return File.Exists(filePath);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.ToString());
+            return false;
         }
     }
 
