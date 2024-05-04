@@ -26,7 +26,7 @@ public class NetworkManagerUI : MonoBehaviour
     public void Start()
     {
         serverBtn.onClick.AddListener(() => {
-            outputTMP.text += "Server button was clicked\n";
+            outputTMP.text = "Server button was clicked\n";
             ServerStartProcess();
             actsAsARunningServer = true;
             outputTMP.text += "NetworkManager.Singleton.StartServer happened\n";
@@ -95,7 +95,7 @@ public class NetworkManagerUI : MonoBehaviour
     {
         NetworkManagerUI.I.WriteLineToOutput("In ServerStartProcess");
         await ServerSideManager.I.AuthenticateServer();
-        ServerSideManager.I.CreateLobby("testingLobby", 5);
+        ServerSideManager.I.CreateLobby("testingLobby", 100);
         //TestLobby.I.CreateLobby();
     }
 

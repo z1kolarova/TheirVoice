@@ -149,31 +149,52 @@ public class ServerSideManager : MonoBehaviour
     private void OnLobbyChanged(ILobbyChanges changes)
     {
         NetworkManagerUI.I.WriteLineToOutput("I'm in OnLobbyChanged on Server");
-        if (changes.PlayerJoined.Value?.Count > 0)
-        {
-            NetworkManagerUI.I.WriteLineToOutput($"players joined: {changes.PlayerJoined.Value?.Count}");
-        }
 
-        if (changes.PlayerLeft.Value?.Count > 0)
+        Debug.Log("I'm in OnLobbyChanged on Client");
+        if (changes.LobbyDeleted)
         {
-            NetworkManagerUI.I.WriteLineToOutput($"players left: {changes.PlayerLeft.Value?.Count}");
+            NetworkManagerUI.I.WriteBadLineToOutput($"lobby got deleted");
+            hostLobby = null;
+            CreateLobby("re-created lobby", 100);
         }
-
-        if (changes.PlayerData.Added || changes.PlayerData.Changed)
+        else
         {
-            if (changes.PlayerData.Value.Any(
-                item => item.Value.ChangedData.Value.ContainsKey(TRIGGER_CREATE_RELAY_KEY)
-                    && item.Value.ChangedData.Value[TRIGGER_CREATE_RELAY_KEY].Value.Value == "true"))
+
+            if (changes.PlayerJoined.Value?.Count > 0)
             {
-                foreach (var dat in changes.PlayerData.Value.FirstOrDefault().Value.ChangedData.Value)
+                NetworkManagerUI.I.WriteLineToOutput($"players joined: {changes.PlayerJoined.Value?.Count}");
+            }
+
+            if (changes.PlayerLeft.Value?.Count > 0)
+            {
+                NetworkManagerUI.I.WriteLineToOutput($"players left: {changes.PlayerLeft.Value?.Count}");
+            }
+
+            if (changes.PlayerData.Added || changes.PlayerData.Changed)
+            {
+                if (changes.PlayerData.Value.Any(
+                    item => item.Value.ChangedData.Value.ContainsKey(TRIGGER_CREATE_RELAY_KEY)
+                        && item.Value.ChangedData.Value[TRIGGER_CREATE_RELAY_KEY].Value.Value == "true"))
                 {
-                    NetworkManagerUI.I.WriteLineToOutput($"key: {dat.Key}, value: {dat.Value.Value.Value}");
+                    foreach (var dat in changes.PlayerData.Value.FirstOrDefault().Value.ChangedData.Value)
+                    {
+                        NetworkManagerUI.I.WriteLineToOutput($"key: {dat.Key}, value: {dat.Value.Value.Value}");
+                    }
+
+                    //NetworkManagerUI.I.WriteLineToOutput(changes.PlayerData.Value.FirstOrDefault().Value.LastUpdatedChanged.Value.ToString());
+                    StartRelayAndUpdateLobby();
                 }
-                
-                //NetworkManagerUI.I.WriteLineToOutput(changes.PlayerData.Value.FirstOrDefault().Value.LastUpdatedChanged.Value.ToString());
-                StartRelayAndUpdateLobby();
             }
         }
+    }
+
+    private void OnConnectionStateChanged(LobbyEventConnectionState state)
+    {
+        NetworkManagerUI.I.WriteLineToOutput("lobby connection state changed to: " + state.ToString());
+    }
+    private void OnKickedFromLobby()
+    {
+        NetworkManagerUI.I.WriteBadLineToOutput("somehow the server got kicked from lobby");
     }
 
     public async void CreateLobby(string lobbyName, int maxPlayers)
@@ -194,6 +215,8 @@ public class ServerSideManager : MonoBehaviour
             Lobby lobby = await Lobbies.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
             var callbacks = new LobbyEventCallbacks();
             callbacks.LobbyChanged += OnLobbyChanged;
+            callbacks.LobbyEventConnectionStateChanged += OnConnectionStateChanged;
+            callbacks.KickedFromLobby += OnKickedFromLobby;
             try
             {
                 lobbyEvents = await Lobbies.Instance.SubscribeToLobbyEventsAsync(lobby.Id, callbacks);
