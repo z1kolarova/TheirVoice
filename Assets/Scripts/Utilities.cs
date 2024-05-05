@@ -34,9 +34,8 @@ public static class Utilities
                 {
                     Directory.CreateDirectory(dirPath);
                 }
-                File.Create(filePath);
             }
-            return File.Exists(filePath);
+            return true;
         }
         catch (Exception e)
         {

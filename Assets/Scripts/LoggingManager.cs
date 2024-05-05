@@ -14,6 +14,9 @@ public class LoggingManager : MonoBehaviour
     private string currentLogFileName;
     private string currentLogFilePath;
 
+    private const float LOG_SAVE_INTERVAL = 5f;
+    private float timeSinceLastSave = 0f;
+
     private string CreateLogName() => "log" + DateTime.Now.ToString("yyyy-MM-dd-HHmmss") + ".txt";
 
     private void Awake()
@@ -35,14 +38,19 @@ public class LoggingManager : MonoBehaviour
         currentLogFilePath = Path.Combine(logDirPath, currentLogFileName);
     }
 
-    public void WriteLineToLog(string lineContent)
+    private void Update() {
+        timeSinceLastSave += Time.deltaTime;
+        if (timeSinceLastSave > LOG_SAVE_INTERVAL) {
+            timeSinceLastSave = 0f;
+            WriteLogFile();
+        }
+    }
+
+    public void WriteLogFile()
     {
         if (Utilities.MakeSureFileExists(logDirPath, currentLogFileName))
         {
-            using (StreamWriter sw = File.AppendText(currentLogFilePath))
-            {
-                sw.WriteLine(lineContent);
-            }
+            File.WriteAllText(currentLogFilePath, NetworkManagerUI.I.logText);
         }
     }
 
