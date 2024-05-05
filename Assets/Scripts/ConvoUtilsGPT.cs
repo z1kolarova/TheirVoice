@@ -18,9 +18,14 @@ public static class ConvoUtilsGPT
     private static string CONVO_END_STRING = "#END_OF_CONVO#";
     private static string CONVO_END_INSTRUCTION = $"\r\nYou can choose to end the conversation whenever you decide (to end the conversation, append \"{CONVO_END_STRING}\" to the last message).";
 
+    private static ChatMessage safetyNetMessage = new ChatMessage() { 
+        Role = ChatMessageRole.Assistant, 
+        Content = "I'm gonna go now." + CONVO_END_STRING
+    };
+
     private static Model _model = Model.ChatGPTTurbo;   //originally was ChatGPTTurbo
     private static double _temperature = 0.5;           //originally was 0.1
-    private static int _maxTokens = 256;                //originally was 50
+    private static int _maxTokens = 100;                //originally was 50
     private static double _frequencyPenalty = 0.4;      //originally was 0
     private static double _presencePenalty = 0.4;       //originally was 0
 
@@ -151,13 +156,15 @@ public static class ConvoUtilsGPT
         var request = ConvoUtilsGPT.GetSerialisedChatRequest(msgText);
         if (request.HasValue)
         {
-            Debug.Log("request has value");
             chatRequestToProcess = request.Value;
             //OnNewChatRequestToProcess?.Invoke(null, request.Value);
             hasNewChatRequestToProcess = true;
             currentlyWaitingForServerResponse = true;
-
-            Debug.Log($"things should be true {hasNewChatRequestToProcess} {currentlyWaitingForServerResponse}");
+        }
+        else
+        {
+            ConversationUIChatGPT.I.SetNewDialogueToDisplay(safetyNetMessage.Content);
+            currentlyWaitingForServerResponse = false;
         }
     }
 
@@ -175,13 +182,15 @@ public static class ConvoUtilsGPT
 
     public static FixedString4096Bytes? GetSerialisedChatRequest(string msgText)
     {
-        Debug.Log($"checking msgText {msgText}");
         if (TryAddUserResponse(msgText))
         {
-            Debug.Log($"msgText is ok");
-            return ProduceSerialisedChatRequest();
+            Debug.Log("after tryAddUserResponse");
+            var serialised = ProduceSerialisedChatRequest();
+            if (serialised.Length < 4093)
+            {
+                return serialised;
+            } 
         }
-        Debug.Log($"msgText is NOT ok");
         return null;
     }
 
@@ -201,8 +210,6 @@ public static class ConvoUtilsGPT
             userMessage.Content = userMessage.Content.Substring(0, USER_MSG_CHAR_LIMIT);
         }
 
-        Debug.Log(string.Format("{0}: {1}", userMessage.rawRole, userMessage.Content));
-
         messages.Add(userMessage);
 
         return true;
@@ -221,30 +228,45 @@ public static class ConvoUtilsGPT
 
     public static string ProduceSerialisedChatRequest()
     {
-        var chatRequest = new ChatRequest()
+        try
         {
-            Model = _model,
-            Temperature = _temperature,
-            MaxTokens = _maxTokens,
-            Messages = messages,
-            FrequencyPenalty = _frequencyPenalty,
-            PresencePenalty = _presencePenalty
-        };
-        return JsonConvert.SerializeObject(chatRequest);
+            var chatRequest = new ChatRequest()
+            {
+                Model = _model,
+                Temperature = _temperature,
+                MaxTokens = _maxTokens,
+                Messages = messages,
+                FrequencyPenalty = _frequencyPenalty,
+                PresencePenalty = _presencePenalty
+            };
+            return JsonConvert.SerializeObject(chatRequest);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 
     public static async Task<string> GetResponseAsServer(string serialisedChatRequest)
     {
         var chatRequest = JsonConvert.DeserializeObject<ChatRequest>(serialisedChatRequest.ToString());
-        var chatResult = await API.Chat.CreateChatCompletionAsync(chatRequest);
+        try
+        {
+            var chatResult = await API.Chat.CreateChatCompletionAsync(chatRequest);
+            ChatMessage responseMessage = new ChatMessage();
+            responseMessage.Role = chatResult.Choices[0].Message.Role;
+            responseMessage.Content = chatResult.Choices[0].Message.Content;
+
+            var serialisedChatMessage = JsonConvert.SerializeObject(responseMessage);
+
+            return serialisedChatMessage;
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+            return JsonConvert.SerializeObject(safetyNetMessage);
+        }
         
-        ChatMessage responseMessage = new ChatMessage();
-        responseMessage.Role = chatResult.Choices[0].Message.Role;
-        responseMessage.Content = chatResult.Choices[0].Message.Content;
-
-        var serialisedChatMessage = JsonConvert.SerializeObject(responseMessage);
-
-        return serialisedChatMessage;
     }
 
     public static void ProcessResponseMessage(string serialisedResponseMessage)

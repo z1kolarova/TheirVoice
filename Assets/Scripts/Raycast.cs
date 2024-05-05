@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class Raycast : MonoBehaviour
 {
-    [SerializeField] float promptDistance = 20f;
-    [SerializeField] float interractDistance = 3f;
+    [SerializeField] float interactDistance = 5f;
     [SerializeField] LayerMask layerMask;
     [SerializeField] TMP_Text interactText;
 
@@ -20,23 +19,18 @@ public class Raycast : MonoBehaviour
 
         Ray ray = new Ray(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward));
 
-        if (Physics.Raycast(ray, out hitInfo, promptDistance, layerMask))
+        if (Physics.Raycast(ray, out hitInfo, interactDistance, layerMask))
         {
             if (hitInfo.transform.gameObject.layer == LayerMask.NameToLayer("Passerbys"))
             {
-                if (hitInfo.distance <= interractDistance)
+                interactText.gameObject.SetActive(true);
+                if (Input.GetKeyDown(KeyCode.E))
                 {
-                    interactText.gameObject.SetActive(true);
-                    if(Input.GetKeyDown(KeyCode.E))
-                    {
-                        PlayerController.I.BeginConversation(hitInfo.transform.gameObject.GetComponent<PasserbyAI>());
-                    }
-
-                    Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * hitInfo.distance), Color.green);
-                }
-                else {
                     interactText.gameObject.SetActive(false);
+                    PlayerController.I.BeginConversation(hitInfo.transform.gameObject.GetComponent<PasserbyAI>());
                 }
+
+                Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * hitInfo.distance), Color.green);
             }
             else
             {
@@ -47,7 +41,7 @@ public class Raycast : MonoBehaviour
         else
         {
             interactText.gameObject.SetActive(false);
-            Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * promptDistance), Color.yellow);
+            Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * interactDistance), Color.yellow);
         }
     }
 }

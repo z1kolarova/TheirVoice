@@ -82,10 +82,17 @@ public class GPTManagerClient : NetworkBehaviour
     {
         if (IsServer)
         {
-            //NetworkManagerUI.I.WriteLineToOutput($"I'm a server asking API for response to {chatRequestFromClient}.");
-            var res = await ConvoUtilsGPT.GetResponseAsServer(chatRequestFromClient);
-            //NetworkManagerUI.I.WriteLineToOutput($"I brought \"{res}\" as response.");
-            ReceiveResponseClientRpc(res, SingleTarget(clientId));
+            try
+            {
+                //NetworkManagerUI.I.WriteLineToOutput($"I'm a server asking API for response to {chatRequestFromClient}.");
+                var res = await ConvoUtilsGPT.GetResponseAsServer(chatRequestFromClient);
+                //NetworkManagerUI.I.WriteLineToOutput($"I brought \"{res}\" as response.");
+                ReceiveResponseClientRpc(res, SingleTarget(clientId));
+            }
+            catch (Exception e)
+            {
+                NetworkManagerUI.I.WriteBadLineToOutput(e.ToString());
+            }
         }
     }
 
