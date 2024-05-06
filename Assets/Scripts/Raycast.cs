@@ -23,14 +23,22 @@ public class Raycast : MonoBehaviour
         {
             if (hitInfo.transform.gameObject.layer == LayerMask.NameToLayer("Passerbys"))
             {
-                interactText.gameObject.SetActive(true);
-                if (Input.GetKeyDown(KeyCode.E))
+                var passerby = hitInfo.transform.gameObject.GetComponent<PasserbyAI>();
+                if (passerby != null && passerby.CanBeApproached())
                 {
-                    interactText.gameObject.SetActive(false);
-                    PlayerController.I.BeginConversation(hitInfo.transform.gameObject.GetComponent<PasserbyAI>());
-                }
+                    interactText.gameObject.SetActive(true);
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        interactText.gameObject.SetActive(false);
+                        PlayerController.I.BeginConversation(passerby);
+                    }
 
-                Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * hitInfo.distance), Color.green);
+                    Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * hitInfo.distance), Color.green);
+                }
+                else
+                {
+                    Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * hitInfo.distance), Color.red);
+                }
             }
             else
             {

@@ -119,6 +119,8 @@ public class PasserbyAI : MonoBehaviour
         StopAndTurnTowards(gameObject);
     }
 
+    public bool CanBeApproached() => State != PasserbyStates.Leaving && State != PasserbyStates.InConversation;
+
     public void BeApproached(GameObject player)
     {
         isGettingApproached = true;
