@@ -81,8 +81,6 @@ public class PlayerController : MonoBehaviour
 
     private const float _threshold = 0.01f;
 
-    private bool isInteracting = false;
-
     private bool IsCurrentDeviceMouse
     {
         get
@@ -280,22 +278,6 @@ public class PlayerController : MonoBehaviour
 
         // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
         Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
-    }
-
-    public void SetIsInteracting(bool valueToSet)
-    { 
-        isInteracting = valueToSet;
-    }
-
-    public void BeginConversation(PasserbyAI passerby)
-    {
-        SetIsInteracting(true);
-        ConversationManager.I.TriggerStartDialogue(passerby);
-    }
-
-    public void EndConversation()
-    {
-        SetIsInteracting(false);
     }
 
     private void CheckPauseMenu()

@@ -22,7 +22,7 @@ namespace Assets.Scripts
 
         public void SetCursorUnlockState(bool uiActive)
         {
-            bool shouldUIBeActive = uiActive || conversationManager.InDialog;
+            bool shouldUIBeActive = uiActive || conversationManager.IsInDialogue;
             crossHair.gameObject.SetActive(!shouldUIBeActive);
             Cursor.lockState = shouldUIBeActive ? CursorLockMode.None : CursorLockMode.Locked;
         }

@@ -14,7 +14,7 @@ public class Raycast : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ConversationManager.I.InDialog)
+        if (ConversationManager.I.IsInDialogue)
             return;
 
         Ray ray = new Ray(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward));
@@ -30,7 +30,7 @@ public class Raycast : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.E))
                     {
                         interactText.gameObject.SetActive(false);
-                        PlayerController.I.BeginConversation(passerby);
+                        ConversationManager.I.TriggerStartDialogue(passerby);
                     }
 
                     Debug.DrawRay(cvc.transform.position, cvc.transform.TransformDirection(Vector3.forward * hitInfo.distance), Color.green);

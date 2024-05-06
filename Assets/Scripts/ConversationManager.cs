@@ -8,7 +8,7 @@ public class ConversationManager : MonoBehaviour
     public static ConversationManager I => instance;
     static ConversationManager instance;
     
-    [HideInInspector] public bool InDialog = false;
+    [HideInInspector] public bool IsInDialogue = false;
     [HideInInspector] public bool HasAllNeededConnections = false;
 
     private static System.Random rng;
@@ -38,7 +38,7 @@ public class ConversationManager : MonoBehaviour
 
     public void TriggerStartDialogue(PasserbyAI passerby)
     {
-        InDialog = true;
+        IsInDialogue = true;
         talkingTo = passerby;
         passerbyWasWatching = passerby.State == PasserbyStates.Watching;
         talkingTo.BeApproached(PlayerController.I.transform.gameObject);
@@ -91,10 +91,9 @@ public class ConversationManager : MonoBehaviour
     {
         talkingTo.EndConversation();
         talkingTo = null;
-        InDialog = false;
+        IsInDialogue = false;
 
         PersonalityInfoUI.I.SetActive(false);
-        PlayerController.I.EndConversation();
     }
 
     private List<T> SelectUpToFromCollection<T>(int amount, List<T> collection)
