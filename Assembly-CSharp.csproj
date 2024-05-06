@@ -182,6 +182,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\Prompts\Plaintext\meateater_with_vegetarian_girlfriend.txt" />
     <None Include="Assets\Sketchfab For Unity\Dependencies\Libraries\Newtonsoft.Json.dll" />
+    <None Include="Assets\Prompts\Plaintext\_wasnt_watching_footage.txt" />
     <None Include="Assets\Prompts\troll_too_cool_for_this.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\Prompts\vegetarian_is_enough_loves_cheese.txt" />
@@ -202,6 +203,7 @@
     <None Include="Assets\Prompts\Plaintext\angry_religious_carnist.txt" />
     <None Include="Assets\Import\license.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
+    <None Include="Assets\Prompts\_wasnt_watching_footage.txt" />
     <None Include="Assets\Sketchfab For Unity\Dependencies\Libraries\Ionic.Zip.Unity.dll" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />

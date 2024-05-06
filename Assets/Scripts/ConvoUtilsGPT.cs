@@ -17,6 +17,13 @@ public static class ConvoUtilsGPT
     private static int USER_MSG_CHAR_LIMIT = 500;
     private static string CONVO_END_STRING = "#END_OF_CONVO#";
     private static string CONVO_END_INSTRUCTION = $"\r\nYou can choose to end the conversation whenever you decide (to end the conversation, append \"{CONVO_END_STRING}\" to the last message).";
+    private static string NOT_INTERESTED_PROMPT_NAME = "_wasnt_watching_footage";
+
+    public static PromptLabel notInterestedPromptLabel = new PromptLabel() { 
+        Name = NOT_INTERESTED_PROMPT_NAME,
+        EndConvoAbility = EndConvoAbility.Always,
+        Tags = ArgumentationTag.None
+    };
 
     private static ChatMessage safetyNetMessage = new ChatMessage() { 
         Role = ChatMessageRole.Assistant, 
@@ -67,7 +74,7 @@ public static class ConvoUtilsGPT
         }
     }
 
-    public static Prompt CreatePrompt(string promptText, EndConvoAbility endConvoAbility, int chanceIfSometimes)
+    public static Prompt CreatePrompt(string promptText, EndConvoAbility endConvoAbility, int chanceIfSometimes = 50)
     {
         bool willBeAbleToEndConvo = false;
         switch (endConvoAbility)
@@ -93,11 +100,12 @@ public static class ConvoUtilsGPT
             Text = promptText
         };
     }
-    //public static Prompt AddAbilityToEndConvo(this Prompt originalPrompt)
-    //{ 
-    //    originalPrompt.Text += CONVO_END_INSTRUCTION;
-    //    return originalPrompt;
-    //}
+
+    public static Prompt CreateNotInterestedPrompt()
+    {
+        var text = GetPromptTextByLabel(notInterestedPromptLabel);
+        return CreatePrompt(text, notInterestedPromptLabel.EndConvoAbility);
+    }
 
     public static void InitNewConvoWithPrompt(string prompt)
     {

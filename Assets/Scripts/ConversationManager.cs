@@ -13,6 +13,7 @@ public class ConversationManager : MonoBehaviour
 
     private static System.Random rng;
     private PasserbyAI talkingTo;
+    private bool passerbyWasWatching;
 
     private void Start()
     {
@@ -39,20 +40,22 @@ public class ConversationManager : MonoBehaviour
     {
         InDialog = true;
         talkingTo = passerby;
-        var origState = passerby.State;
+        passerbyWasWatching = passerby.State == PasserbyStates.Watching;
         talkingTo.BeApproached(PlayerController.I.transform.gameObject);
+
+        var promptLabelToUse = passerbyWasWatching ? talkingTo.personality.PromptLabel : ConvoUtilsGPT.notInterestedPromptLabel;
+        var promptToUse = passerbyWasWatching ? talkingTo.personality.Prompt : ConvoUtilsGPT.CreateNotInterestedPrompt();
+
         PersonalityInfoUI.I.SetActive(true);
-        PersonalityInfoUI.I.GetAttributesForDisplay(talkingTo.personality.PromptLabel.Name,
-            talkingTo.personality.Prompt.GeneralConvoEndingAbility,
-            talkingTo.personality.Prompt.CanEndConvoThisTime);
+        PersonalityInfoUI.I.GetAttributesForDisplay(promptLabelToUse.Name, promptToUse.GeneralConvoEndingAbility, promptToUse.CanEndConvoThisTime);
         if (!HasAllNeededConnections || Utilities.ConversationMode == ConversationModes.Premade)
         {
-            ConversationUI.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
+            ConversationUI.I.StartDialogue(npcInterested: passerbyWasWatching);
         }
         else
         {
-            ConvoUtilsGPT.InitNewConvoWithPrompt(talkingTo.personality.Prompt.Text);
-            ConversationUIChatGPT.I.StartDialogue(npcInterested: origState == PasserbyStates.Watching);
+            ConvoUtilsGPT.InitNewConvoWithPrompt(promptToUse.Text);
+            ConversationUIChatGPT.I.StartDialogue(npcInterested: passerbyWasWatching);
         }
     }
 
