@@ -785,16 +785,16 @@ MonoBehaviour:
   m_Padding:
     m_Left: 150
     m_Right: 150
-    m_Top: 150
-    m_Bottom: 150
+    m_Top: 0
+    m_Bottom: 0
   m_ChildAlignment: 4
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!1 &830051877
 GameObject:
@@ -990,7 +990,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: 500
+  m_MinHeight: -1
   m_PreferredWidth: -1
   m_PreferredHeight: 500
   m_FlexibleWidth: -1
@@ -1604,8 +1604,8 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: 500
   m_MinHeight: 500
-  m_PreferredWidth: -1
-  m_PreferredHeight: -1
+  m_PreferredWidth: 500
+  m_PreferredHeight: 500
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 2
