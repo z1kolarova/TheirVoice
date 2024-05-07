@@ -92,6 +92,11 @@ public class NetworkManagerUI : MonoBehaviour
         outputTMP.text = logText;
     }
 
+    public void EmptyOutput()
+    {
+        outputTMP.text = "";
+    }
+
     public void UpdatePlayerCounter(PlayerCountEventArgs e) 
     {
         WriteLineToOutput($"Changing player counter from {e.originalCount} to {e.newTotalCount}");

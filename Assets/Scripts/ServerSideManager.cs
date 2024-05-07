@@ -190,6 +190,10 @@ public class ServerSideManager : MonoBehaviour
     private void OnConnectionStateChanged(LobbyEventConnectionState state)
     {
         NetworkManagerUI.I.WriteLineToOutput("lobby connection state changed to: " + state.ToString());
+        if (state == LobbyEventConnectionState.Error)
+        {
+            ReplaceNonfunctionalLobby("lobby after error state", 100);
+        }
     }
     private void OnKickedFromLobby()
     {
@@ -199,6 +203,7 @@ public class ServerSideManager : MonoBehaviour
 
     private void ReplaceNonfunctionalLobby(string newLobbyName, int newMaxPlayers)
     {
+        NetworkManagerUI.I.EmptyOutput();
         StopLobbyHeartBeat();
         CreateLobby(newLobbyName, newMaxPlayers);
     }
@@ -241,7 +246,7 @@ public class ServerSideManager : MonoBehaviour
 
             lobbyFreshlyCreated = true;
             hostLobby = lobby;
-            NetworkManagerUI.I.WriteLineToOutput("End of CreateLobby " + (hostLobby != null).ToString());
+            NetworkManagerUI.I.WriteLineToOutput("End of CreateLobby, name: " + lobbyName + ", success: " + (hostLobby != null).ToString());
         }
         catch (LobbyServiceException e)
         {
