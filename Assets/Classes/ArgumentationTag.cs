@@ -20,6 +20,7 @@ namespace Assets.Classes
         Lions = 1 << 11,
         PlantsFeelPain = 1 << 12,
         CropDeaths = 1 << 13,
+        Expensive = 1 << 14,
     }
 }
 

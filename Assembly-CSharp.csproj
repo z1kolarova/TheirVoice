@@ -172,6 +172,7 @@
     <None Include="Assets\Sketchfab For Unity\Dependencies\Shaders\GLTFPackOccMetalRough.shader" />
     <None Include="Assets\Prompts\welfarist.txt" />
     <None Include="Assets\Prompts\Plaintext\endless_stream_of_questions.txt" />
+    <None Include="Assets\Prompts\Plaintext\social_student_just_needs_nudge.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
     <None Include="Assets\Prompts\baking_grandparent.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
@@ -194,6 +195,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
     <None Include="Assets\Prompts\Plaintext\vegetarian_is_enough_loves_cheese.txt" />
+    <None Include="Assets\Prompts\social_student_just_needs_nudge.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\Sketchfab For Unity\Dependencies\Libraries\SketchfabPlugin.dll" />
