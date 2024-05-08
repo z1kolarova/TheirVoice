@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Unity.VisualScripting.InputSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,10 +7,12 @@ public class MainMenuManager : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] Button startButton;
     [SerializeField] Button howItWorksButton;
+    [SerializeField] Button creditsButton;
     [SerializeField] Button exitButton;
 
     [Header("Panels")]
-    [SerializeField] HowItWorksPanel howItWorksPanel;
+    [SerializeField] InfoPanel howItWorksPanel;
+    [SerializeField] InfoPanel creditsPanel;
 
     void Start()
     {
@@ -25,6 +22,10 @@ public class MainMenuManager : MonoBehaviour
 
         howItWorksButton.onClick.AddListener(() => {
             howItWorksPanel.SetActive(true);
+        });
+
+        creditsButton.onClick.AddListener(() => {
+            creditsPanel.SetActive(true);
         });
 
         exitButton.onClick.AddListener(() => {

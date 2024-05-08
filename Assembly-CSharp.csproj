@@ -82,7 +82,6 @@
     <Compile Include="Assets\Scripts\SpeechBubble.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\OpenAIAPI.cs" />
     <Compile Include="Assets\Scripts\PasserbyAI.cs" />
-    <Compile Include="Assets\Scripts\HowItWorksPanel.cs" />
     <Compile Include="Assets\Scripts\GPTManagerServer.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\ICompletionEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Embedding\EmbeddingRequest.cs" />
@@ -156,6 +155,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatMessage.cs" />
     <Compile Include="Assets\StarterAssets\InputSystem\StarterAssetsInputs.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\FilesEndpoint.cs" />
+    <Compile Include="Assets\Scripts\InfoPanel.cs" />
     <Compile Include="Assets\Scripts\ScreenControl.cs" />
   </ItemGroup>
   <ItemGroup>

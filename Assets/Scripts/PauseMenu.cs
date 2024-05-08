@@ -12,7 +12,7 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Button exitGameBtn;
 
     [Header("Panels")]
-    [SerializeField] private HowItWorksPanel howToPanel;
+    [SerializeField] private InfoPanel howToPanel;
 
     void Start()
     {
