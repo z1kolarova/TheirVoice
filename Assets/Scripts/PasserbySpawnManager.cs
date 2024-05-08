@@ -39,6 +39,7 @@ public class PasserBySpawnManager : MonoBehaviour
     }
 
     public void Remove(PasserbyAI passerbyAI) {
+        PersonalityGenerator.I.RemoveFromPromptLabelsInScene(passerbyAI.personality.PromptLabel);
         passerbyList.Remove(passerbyAI);
     }
 }

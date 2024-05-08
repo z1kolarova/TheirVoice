@@ -29,6 +29,8 @@ public class PasserbyAI : MonoBehaviour
 
     PasserbyStates state = PasserbyStates.WanderingAround;
     public PasserbyStates State { get { return state; } }
+
+    private GameObject npcModel;
     Vector3 tempDestination;
     GameObject watchedObject;
 
@@ -40,9 +42,10 @@ public class PasserbyAI : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _agent = GetComponent<NavMeshAgent>();
         _sensor = GetComponent<AISensor>();
-        
+
         // load model
-        var model = GameObject.Instantiate(PasserbyModelManager.I.GetRandomModel(), this.transform);
+        npcModel = PasserbyModelManager.I.GetRandomModel();
+        var model = GameObject.Instantiate(npcModel, this.transform);
         model.transform.localPosition = new Vector3(0, -1.1f, 0);
         animator = model.GetComponent<Animator>();
         animator.runtimeAnimatorController = PasserbyModelManager.I.animatorController;
@@ -152,6 +155,7 @@ public class PasserbyAI : MonoBehaviour
         }
 
         PasserBySpawnManager.I.Remove(this);
+        PasserbyModelManager.I.RemoveFromModelsInScene(npcModel);
         Destroy(transform.gameObject);
     }
 
