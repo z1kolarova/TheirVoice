@@ -67,7 +67,9 @@ public class TestRelay : MonoBehaviour
                 NetworkManager.Singleton.Shutdown();
             }
 
-            currentAllocation = await RelayService.Instance.CreateAllocationAsync(99); // 1 server + 99 clients = 100 => the max capacity
+            // 1 server + 99 clients = 100 => the max capacity
+            // 1 server + 49 clients = 50 => the used value to fit within the free tier
+            currentAllocation = await RelayService.Instance.CreateAllocationAsync(49);
 
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(currentAllocation.AllocationId);
 

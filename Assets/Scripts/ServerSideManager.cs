@@ -192,13 +192,13 @@ public class ServerSideManager : MonoBehaviour
         NetworkManagerUI.I.WriteLineToOutput("lobby connection state changed to: " + state.ToString());
         if (state == LobbyEventConnectionState.Error)
         {
-            ReplaceNonfunctionalLobby("lobby after error state", 100);
+            ReplaceNonfunctionalLobby("lobby after error state", 50);
         }
     }
     private void OnKickedFromLobby()
     {
         NetworkManagerUI.I.WriteBadLineToOutput("somehow the server got kicked from lobby");
-        ReplaceNonfunctionalLobby("got kicked so new lobby", 100);
+        ReplaceNonfunctionalLobby("got kicked so new lobby", 50);
     }
 
     private void ReplaceNonfunctionalLobby(string newLobbyName, int newMaxPlayers)

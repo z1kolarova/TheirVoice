@@ -111,7 +111,7 @@ public class NetworkManagerUI : MonoBehaviour
     {
         NetworkManagerUI.I.WriteLineToOutput("In ServerStartProcess");
         await ServerSideManager.I.AuthenticateServer();
-        ServerSideManager.I.CreateLobby("testingLobby", 100);
+        ServerSideManager.I.CreateLobby("initialLobby", 50);
         //TestLobby.I.CreateLobby();
     }
 

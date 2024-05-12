@@ -33,10 +33,10 @@ RectTransform:
   - {fileID: 5991905921275203297}
   m_Father: {fileID: 4802377352964311541}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 826.5, y: -358.44376}
-  m_SizeDelta: {x: 1613, y: 328.1225}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4138713398046915602
 MonoBehaviour:
@@ -217,10 +217,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4923400659556868063}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 806.5, y: -124.03938}
-  m_SizeDelta: {x: 1613, y: 90.68626}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &536468883032957715
 CanvasRenderer:
@@ -252,7 +252,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'You can move around using W, A, S and D.
 
-    To interact with a passerby,
+    To interact with a bystander,
     press E while you''re near them and they''re in the center of your screen.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -488,10 +488,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8504471594340230461}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 806.5, y: -157.78938}
-  m_SizeDelta: {x: 1613, y: 158.18625}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3801063826716574357
 CanvasRenderer:
@@ -631,10 +631,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4923400659556868063}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 806.5, y: -36.84813}
-  m_SizeDelta: {x: 1613, y: 73.69626}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8705678138848625817
 CanvasRenderer:
@@ -765,10 +765,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1802914561370438248}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 806.5, y: -200.9094}
-  m_SizeDelta: {x: 1613, y: 254.42625}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8966174042142603764
 CanvasRenderer:
@@ -798,12 +798,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'You are in the position of an animal rights activist with the group Anonymous
-    for the Voiceless.
+  m_text: 'You are in the position of an animal rights activist with the organisation
+    Anonymous for the Voiceless.
 
-    The event you are attending, Cube of Truth, consists
-    of activists with screens showing footage from various animal industries (the
-    cube) and other activists, who have conversations with passerbys that stopped
+    The event you are attending, Cube of Truth,
+    consists of activists with screens showing footage from various animal industries
+    (the Cube) and other activists, who have conversations with bystanders that stopped
     to look at the footage.
 
 
@@ -812,7 +812,7 @@ MonoBehaviour:
     You are the voice of the animals.
 
     Talk
-    to the passerbys, call out their hypocrisies and help them align their actions
+    to the bystanders, call out their hypocrisies and help them align their actions
     with their values.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -990,10 +990,10 @@ RectTransform:
   - {fileID: 6209274794775540184}
   m_Father: {fileID: 4802377352964311541}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 826.5, y: -792.8113}
-  m_SizeDelta: {x: 1613, y: 530.61255}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6553544961424559481
 MonoBehaviour:
@@ -1053,10 +1053,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4071917585388498120}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 806.5, y: -36.848137}
-  m_SizeDelta: {x: 1613, y: 73.69627}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8310638577047557284
 CanvasRenderer:
@@ -1188,10 +1188,10 @@ RectTransform:
   - {fileID: 4057902846575855375}
   m_Father: {fileID: 4802377352964311541}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 826.5, y: -1181.5588}
-  m_SizeDelta: {x: 1613, y: 236.8825}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4430212659365718660
 MonoBehaviour:
@@ -1353,10 +1353,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8504471594340230461}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 806.5, y: -36.84813}
-  m_SizeDelta: {x: 1613, y: 73.69626}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2950254564482448990
 CanvasRenderer:
@@ -1711,10 +1711,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4071917585388498120}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 806.5, y: -302.15442}
-  m_SizeDelta: {x: 1613, y: 456.91626}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1964563041020401324
 CanvasRenderer:
@@ -1757,24 +1757,27 @@ MonoBehaviour:
     footage makes the person feel (most people feel bad in some way).
 
     Ask if
-    they consider themselves against animal cruelty (most people do).
+    they consider themselves against animal exploitation and cruelty (most people
+    do).
 
-    Ask if
-    they think it''s possible to be against animal cruelty while buying animal products,
-    funding what is happening on the screen.
+    Ask if they think it''s possible to be against animal cruelty while
+    buying animal products, funding what is happening on the screen.
 
-    Go from there. Call out misinformation
-    but don''t get caught up in endless debates.
+    Go from
+    there. Call out misinformation but don''t get caught up in any debate.
 
-    Call out excuses and ask if
-    they would consider it a good justification if they were in the position of the
-    animals.
+    Address
+    excuses and ask whether they would consider it a good justification if they were
+    in the position of the animals.
 
-    Ask what they feel is stopping them from going vegan.
+    Ask what they feel is stopping them from
+    going vegan.
+
+    Ask them what the number one benefit of veganism is for both
+    them and the animals.
 
 
-    Don''t
-    waste your time and effort on trolls.'
+    Don''t waste your time and effort on trolls.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1964,7 +1967,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 3785755081409814919}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.5846154
+  m_Size: 0.4876923
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2001,10 +2004,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1802914561370438248}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 806.5, y: -36.84813}
-  m_SizeDelta: {x: 1613, y: 73.69626}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6321617861434355416
 CanvasRenderer:
@@ -2336,10 +2339,10 @@ RectTransform:
   - {fileID: 158526834138447614}
   m_Father: {fileID: 4802377352964311541}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 826.5, y: -104.69125}
-  m_SizeDelta: {x: 1613, y: 169.3825}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &9019538171628985107
 MonoBehaviour:

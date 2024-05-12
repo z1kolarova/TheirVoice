@@ -191,7 +191,7 @@ public class TestLobby : MonoBehaviour
     {
         //NetworkManagerUI.I.WriteLineToOutput("inside JoinLobbyAndRelay");
         Debug.Log("inside JoinLobbyAndRelay");
-        var lobbyJoined = await TryQuickJoinLobby();
+        var lobbyJoined = await TryQuickJoinLobbyAsync();
         if (lobbyJoined)
         {
             Debug.Log("lobbyJoined was true");
@@ -207,7 +207,7 @@ public class TestLobby : MonoBehaviour
         }
     }
 
-    public async Task<bool> TryQuickJoinLobby()
+    public async Task<bool> TryQuickJoinLobbyAsync()
     {
         try
         {

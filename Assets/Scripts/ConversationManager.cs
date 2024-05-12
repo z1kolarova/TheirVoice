@@ -46,14 +46,14 @@ public class ConversationManager : MonoBehaviour
         var promptLabelToUse = passerbyWasWatching ? talkingTo.personality.PromptLabel : ConvoUtilsGPT.notInterestedPromptLabel;
         var promptToUse = passerbyWasWatching ? talkingTo.personality.Prompt : ConvoUtilsGPT.CreateNotInterestedPrompt();
 
-        PersonalityInfoUI.I.SetActive(true);
-        PersonalityInfoUI.I.GetAttributesForDisplay(promptLabelToUse.Name, promptToUse.GeneralConvoEndingAbility, promptToUse.CanEndConvoThisTime);
         if (!HasAllNeededConnections || Utilities.ConversationMode == ConversationModes.Premade)
         {
             ConversationUI.I.StartDialogue(npcInterested: passerbyWasWatching);
         }
         else
         {
+            PersonalityInfoUI.I.SetActive(true);
+            PersonalityInfoUI.I.GetAttributesForDisplay(promptLabelToUse.Name, promptToUse.GeneralConvoEndingAbility, promptToUse.CanEndConvoThisTime);
             ConvoUtilsGPT.InitNewConvoWithPrompt(promptToUse.Text);
             ConversationUIChatGPT.I.StartDialogue(npcInterested: passerbyWasWatching);
         }

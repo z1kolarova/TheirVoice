@@ -32,7 +32,7 @@ public static class ConvoUtilsGPT
 
     private static Model _model = Model.ChatGPTTurbo;   //originally was ChatGPTTurbo
     private static double _temperature = 0.5;           //originally was 0.1
-    private static int _maxTokens = 100;                //originally was 50
+    private static int _maxTokens = 1050;                //originally was 256
     private static double _frequencyPenalty = 0.4;      //originally was 0
     private static double _presencePenalty = 0.4;       //originally was 0
 
