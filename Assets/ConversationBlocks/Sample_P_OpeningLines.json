@@ -27,12 +27,12 @@
         "ResponsePoolName": "Sample_NPC_1"
     },
     {
-        "Text": "How do you feel when you see these videos?",
+        "Text": "Would you like to talk about what's on the screens?",
         "Impact": {
             "Patience": -1,
             "Awareness": 1,
             "Compassion": 1
         },
-        "ResponsePoolName": "Sample_NPC_1"
+        "ResponsePoolName": "NPC_WouldYouLikeToTalk"
     }
 ]

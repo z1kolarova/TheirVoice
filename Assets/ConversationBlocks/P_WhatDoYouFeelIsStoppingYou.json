@@ -1,6 +1,15 @@
 [
     {
-        "Text": "Can you just answer my question?",
+        "Text": "What do you feel is stopping you from going vegan?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "Sample_NPC_Goodbye"
+    },
+    {
+        "Text": "Why do you feel you need animal products?",
         "Impact": {
             "Patience": -1,
             "Awareness": 0,
@@ -9,29 +18,20 @@
         "ResponsePoolName": "Sample_NPC_Goodbye"
     },
     {
-        "Text": "Why are you avoiding answering?",
+        "Text": "Can you think of something stopping you from no longer consuming animal products?",
         "Impact": {
             "Patience": -1,
-            "Awareness": 0,
+            "Awareness": 1,
             "Compassion": 0
         },
         "ResponsePoolName": "Sample_NPC_Goodbye"
     },
     {
-        "Text": "You didn't answer my question.",
+        "Text": "What makes you think people can't just stop consuming animal products?",
         "Impact": {
             "Patience": -1,
-            "Awareness": 0,
-            "Compassion": 0
-        },
-        "ResponsePoolName": "Sample_NPC_Goodbye"
-    },
-    {
-        "Text": "Stop dodging the question.",
-        "Impact": {
-            "Patience": -1,
-            "Awareness": 0,
-            "Compassion": 0
+            "Awareness": 1,
+            "Compassion": 1
         },
         "ResponsePoolName": "Sample_NPC_Goodbye"
     }

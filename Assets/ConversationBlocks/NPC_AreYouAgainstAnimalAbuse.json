@@ -1,22 +1,22 @@
 [
     {
         "Text": "Yes, of course I am!",
-        "ResponsePoolName":"P_TBD"
+        "ResponsePoolName":"Sample_P_CanYouBeAgainstWhileFunding"
     },
     {
         "Text": "Of course! I love animals and I can't stand to see them getting hurt!",
-        "ResponsePoolName": "P_TBD"
+        "ResponsePoolName": "Sample_P_CanYouBeAgainstWhileFunding"
     },
     {
         "Text": "I don't do any protests like you or anything, but yeah.",
-        "ResponsePoolName": "P_TBD"
+        "ResponsePoolName": "Sample_P_CanYouBeAgainstWhileFunding"
     },
     {
         "Text": "I don't care about animals.",
-        "ResponsePoolName": "P_TBD"
+        "ResponsePoolName": "P_IsThatHowYouReallyFeel"
     },
     {
         "Text": "I'd never hurt an animal. I have a rescue dog and he's my best friend.",
-        "ResponsePoolName": "P_TBD"
+        "ResponsePoolName": "Sample_P_CanYouBeAgainstWhileFunding"
     }
 ]

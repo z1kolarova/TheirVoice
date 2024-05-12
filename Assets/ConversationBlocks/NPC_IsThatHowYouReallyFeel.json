@@ -1,0 +1,14 @@
+[
+    {
+        "Text": "Yeah, I don't see any problem with it.",
+        "ResponsePoolName": "P_Goodbye"
+    },    
+    {
+        "Text": "Hmmmm. Yummy.",
+        "ResponsePoolName": "P_Goodbye"
+    },    
+    {
+        "Text": "No, I guess not.",
+        "ResponsePoolName": "P_AreYouAgainstAnimalAbuse"
+    }
+]

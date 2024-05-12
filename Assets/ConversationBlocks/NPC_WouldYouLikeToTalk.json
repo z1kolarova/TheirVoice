@@ -1,0 +1,10 @@
+[
+    {
+        "Text": "What is there to talk about really? It's not nice to look at, but that's where food comes from.",
+        "ResponsePoolName": "P_AreYouAgainstAnimalAbuse"
+    },
+    {
+        "Text": "Yeah, sure.",
+        "ResponsePoolName": "P_AreYouAgainstAnimalAbuse"
+    }
+]

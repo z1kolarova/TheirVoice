@@ -1,0 +1,38 @@
+[
+    {
+        "Text": "Is that how you really feel?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_IsThatHowYouReallyFeel"
+    },
+    {
+        "Text": "Do you mean that?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "NPC_IsThatHowYouReallyFeel"
+    },
+    {
+        "Text": "Are you sure?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 0
+        },
+        "ResponsePoolName": "NPC_IsThatHowYouReallyFeel"
+    },
+    {
+        "Text": "Not many people say that. How come?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 1,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_IsThatHowYouReallyFeel"
+    }
+]

@@ -25,5 +25,14 @@
             "Compassion": 1
         },
         "ResponsePoolName": "NPC_AreYouAgainstAnimalAbuse"
+    },
+    {
+        "Text": "Is what you see on the screen something you're against?",
+        "Impact": {
+            "Patience": -1,
+            "Awareness": 0,
+            "Compassion": 1
+        },
+        "ResponsePoolName": "NPC_AreYouAgainstAnimalAbuse"
     }
 ]
