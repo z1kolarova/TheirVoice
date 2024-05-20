@@ -13,7 +13,17 @@ public class NetworkManagerUI : MonoBehaviour
     [SerializeField] private Button serverBtn;
     [SerializeField] private Button clientBtn;
     [SerializeField] private Button shutdownBtn;
-    public string logText = "";
+    
+    private string logHistory = "";
+    private string _logText = "";
+    public string logText
+    {
+        get { return _logText; }
+        set {
+            _logText = value;
+            outputTMP.text = _logText;
+        }
+    }
     [SerializeField] private TMP_Text outputTMP;
     [SerializeField] private TMP_Text currentPlayersTMP;
 
@@ -28,11 +38,9 @@ public class NetworkManagerUI : MonoBehaviour
     {
         serverBtn.onClick.AddListener(() => {
             logText += "Server button was clicked\n";
-            outputTMP.text = logText;
             ServerStartProcess();
             actsAsARunningServer = true;
             logText += "NetworkManager.Singleton.StartServer happened\n";
-            outputTMP.text = logText;
             serverBtn.enabled = false;
             serverBtn.gameObject.SetActive(false);
             clientBtn.enabled = false;
@@ -42,10 +50,8 @@ public class NetworkManagerUI : MonoBehaviour
 
         clientBtn.onClick.AddListener(() => {
             logText += "Client button was clicked\n";
-            outputTMP.text = logText;
             ClientStartProcess();
             logText += "NetworkManager.Singleton.StartClient happened\n";
-            outputTMP.text = logText;
             serverBtn.enabled = false;
             clientBtn.enabled = false;
             clientBtn.gameObject.SetActive(false);
@@ -54,7 +60,6 @@ public class NetworkManagerUI : MonoBehaviour
 
         shutdownBtn.onClick.AddListener(() => {
             logText += "Shutdown button was clicked\n";
-            outputTMP.text = logText;
             
             if (actsAsARunningServer)
             {
@@ -69,7 +74,6 @@ public class NetworkManagerUI : MonoBehaviour
 
             NetworkManager.Singleton.Shutdown();
             logText += "NetworkManager.Singleton.Shutdown happened\n";
-            outputTMP.text = logText;
             serverBtn.gameObject.SetActive(true);
             serverBtn.enabled = true;
             clientBtn.gameObject.SetActive(true);
@@ -82,19 +86,18 @@ public class NetworkManagerUI : MonoBehaviour
     {
         var lineContent = $"{DateTime.Now.ToString("HH:mm:ss")}: {text}";
         logText += $"{lineContent}\n";
-        outputTMP.text = logText;
     }
     
     public void WriteBadLineToOutput(string text, bool timestamp = true)
     {
         var lineContent = $"{DateTime.Now.ToString("HH:mm:ss")} ERROR: {text}";
         logText += $"<color=#FF0000>{lineContent}\n</color>";
-        outputTMP.text = logText;
     }
 
     public void EmptyOutput()
     {
-        outputTMP.text = "";
+        logHistory += logText;
+        logText = "";
     }
 
     public void UpdatePlayerCounter(PlayerCountEventArgs e) 
@@ -118,7 +121,6 @@ public class NetworkManagerUI : MonoBehaviour
     private async void ClientStartProcess()
     {
         logText += "Inside ClientStartProcess\n";
-        outputTMP.text = logText;
         var authenticated = await TestLobby.I.AuthenticateClient();
         NetworkManagerUI.I.WriteLineToOutput("authenticated " + authenticated);
         if (authenticated)
@@ -133,5 +135,9 @@ public class NetworkManagerUI : MonoBehaviour
         {
             NetworkManagerUI.I.WriteBadLineToOutput("Authentication failed miserably and we have a problem...");
         }
+    }
+
+    public string GetFullLogText() {
+        return logHistory + logText;
     }
 }

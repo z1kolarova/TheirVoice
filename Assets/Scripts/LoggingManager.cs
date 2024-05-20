@@ -54,7 +54,7 @@ public class LoggingManager : MonoBehaviour
         }
         if (Utilities.MakeSureFileExists(logDirPath, currentLogFileName))
         {
-            File.WriteAllText(currentLogFilePath, NetworkManagerUI.I.logText);
+            File.WriteAllText(currentLogFilePath, NetworkManagerUI.I.GetFullLogText());
         }
     }
 
