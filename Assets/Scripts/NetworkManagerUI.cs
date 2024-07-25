@@ -22,6 +22,10 @@ public class NetworkManagerUI : MonoBehaviour
         set {
             _logText = value;
             outputTMP.text = _logText;
+            int currentVertexCount = outputTMP.textInfo.meshInfo[0].vertices.Length;
+            if (currentVertexCount > 64000) {
+                _logText = _logText.Substring((int)(_logText.Length * 0.2f));
+            }
         }
     }
     [SerializeField] private TMP_Text outputTMP;
