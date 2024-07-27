@@ -16,15 +16,15 @@ public class NetworkManagerUI : MonoBehaviour
     
     private string logHistory = "";
     private string _logText = "";
+    private int subStringIndex = 0;
     public string logText
     {
         get { return _logText; }
         set {
             _logText = value;
-            outputTMP.text = _logText;
-            int currentVertexCount = outputTMP.textInfo.meshInfo[0].vertices.Length;
-            if (currentVertexCount > 64000) {
-                _logText = _logText.Substring((int)(_logText.Length * 0.2f));
+            outputTMP.text = _logText.Substring(subStringIndex);
+            if (outputTMP.textInfo.meshInfo[0].vertices.Length > 64000) {
+                subStringIndex += (int)(outputTMP.text.Length * 0.5f);
             }
         }
     }
