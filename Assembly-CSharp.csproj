@@ -72,6 +72,7 @@
     <Compile Include="Assets\Scripts\LoggingManager.cs" />
     <Compile Include="Assets\Scripts\ConvoUtils.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabUI.cs" />
+    <Compile Include="Assets\Scripts\UI\ConversationUI.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\IChatEndpoint.cs" />
     <Compile Include="Assets\Classes\PersonalityCore.cs" />
     <Compile Include="Assets\StarterAssets\TutorialInfo\Scripts\Readme.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Assets\Scripts\SpeechBubble.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\OpenAIAPI.cs" />
     <Compile Include="Assets\Scripts\PasserbyAI.cs" />
+    <Compile Include="Assets\ThirdParty\CalvinRien\SaveWav.cs" />
     <Compile Include="Assets\Scripts\GPTManagerServer.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\ICompletionEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Embedding\EmbeddingRequest.cs" />
@@ -107,20 +109,19 @@
     <Compile Include="Assets\StarterAssets\FirstPersonController\Scripts\BasicRigidBodyPush.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\ImageResponseFormat.cs" />
+    <Compile Include="Assets\Scripts\AudioInputManager.cs" />
     <Compile Include="Assets\Scripts\PersonalityInfoUI.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatRequest.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\IFilesEndpoint.cs" />
     <Compile Include="Assets\Scripts\PasserbySpawnManager.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\EndpointBase.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\Resizer.cs" />
-    <Compile Include="Assets\Scripts\ConversationUI.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabApi.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\ModelsEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\ImageGenerationEndpoint.cs" />
     <Compile Include="Assets\Scripts\PasserbyModelManager.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Moderation\ModerationResult.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionRequest.cs" />
-    <Compile Include="Assets\Scripts\ConversationChatGPTUI.cs" />
     <Compile Include="Assets\Classes\ArgumentationTag.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\CanvasInputs\UICanvasControllerInput.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabPlugin.cs" />
@@ -136,8 +137,11 @@
     <Compile Include="Assets\Scripts\RngUtils.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\IImageGenerationEndpoint.cs" />
     <Compile Include="Assets\Scripts\ConvoUtilsGPT.cs" />
+    <Compile Include="Assets\Scripts\AudioUtilsWhisper.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\IModelsEndpoint.cs" />
     <Compile Include="Assets\Classes\Prompt.cs" />
+    <Compile Include="Assets\Scripts\UI\ConversationUIChatGPT.cs" />
+    <Compile Include="Assets\Scripts\AudioInputSettingsPanel.cs" />
     <Compile Include="Assets\Scripts\SpeechBubbleManager.cs" />
     <Compile Include="Assets\Scripts\GPTManagerClient.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionEndpoint.cs" />
@@ -883,6 +887,9 @@
     <Reference Include="Unity.Multiplayer.Tools.NetworkSolutionInterface">
       <HintPath>Library\ScriptAssemblies\Unity.Multiplayer.Tools.NetworkSolutionInterface.dll</HintPath>
     </Reference>
+    <Reference Include="OpenAI.Runtime">
+      <HintPath>Library\ScriptAssemblies\OpenAI.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Networking.Transport">
       <HintPath>Library\ScriptAssemblies\Unity.Networking.Transport.dll</HintPath>
     </Reference>
@@ -903,6 +910,9 @@
     </Reference>
     <Reference Include="Unity.Mathematics.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.Mathematics.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenAI.Editor">
+      <HintPath>Library\ScriptAssemblies\OpenAI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Multiplayer.Tools.NetStatsMonitor.Configuration">
       <HintPath>Library\ScriptAssemblies\Unity.Multiplayer.Tools.NetStatsMonitor.Configuration.dll</HintPath>

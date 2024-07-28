@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using OpenAI_API.Chat;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Netcode;
@@ -13,6 +14,9 @@ public class GPTManagerClient : NetworkBehaviour
     //private NetworkVariable<bool> chatRequestToProcess = new NetworkVariable<bool>(false, readPerm: NetworkVariableReadPermission.Owner, writePerm: NetworkVariableWritePermission.Owner);
     //private NetworkVariable<bool> responseToProcess = new NetworkVariable<bool>(false, readPerm: NetworkVariableReadPermission.Owner, writePerm: NetworkVariableWritePermission.Owner);
 
+    private List<string> chunksClient;
+    private List<string> chunksServer;
+    private int totalChunks = 0;
     private bool sayHello = true;
 
     public override void OnNetworkSpawn()
@@ -26,11 +30,7 @@ public class GPTManagerClient : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //ConvoUtilsGPT.OnNewChatRequestToProcess += (object o, FixedString4096Bytes request) => {
-        //    Debug.Log($"I'll try to get response to {request.Value}");
-        //    TryGetGPTResponseServerRpc(OwnerClientId, request.Value.ToString());
-        //    Debug.Log($"After the try...");
-        //};
+        chunksClient = new List<string>();
     }
 
     private void ChatRequestProcessing(bool previousValue, bool newValue)
@@ -60,6 +60,18 @@ public class GPTManagerClient : NetworkBehaviour
 
             TryGetGPTResponseServerRpc(OwnerClientId, request.Value.ToString());
         }
+        if (AudioUtilsWhisper.HasNewRequestToProcess())
+        {
+            AudioUtilsWhisper.UpdateRequestBeganProcessing();
+            Debug.Log($"HasNewWhisperRequestToProcess");
+            StartChunkAccumulation();
+
+
+            //var request = AudioUtilsWhisper.GetTranscriptChunk();
+            //Debug.Log($"{request.Value}");
+
+            //TryGetWhisperTranscriptServerRpc(OwnerClientId, request.Value.ToString());
+        }
         if (sayHello)
         {
             //NetworkManagerUI.I.WriteLineToOutput($"Hello");
@@ -71,7 +83,7 @@ public class GPTManagerClient : NetworkBehaviour
     private ClientRpcParams SingleTarget(ulong clientId)
         => new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new ulong[] { clientId } } };
 
-
+    #region ChatGPT
     [ServerRpc]
     private void TryGetGPTResponseServerRpc(ulong clientId, string chatRequestFromClient)
     {
@@ -105,4 +117,79 @@ public class GPTManagerClient : NetworkBehaviour
         Debug.Log("param is: " + chatMessageResponse.ToString());
         ConvoUtilsGPT.ProcessResponseMessage(chatMessageResponse);
     }
+    #endregion
+
+    #region Chunky
+    private void StartChunkAccumulation()
+    {
+        var allChunks = AudioUtilsWhisper.GetAllChunks();
+        var chunkCount = allChunks.Count;
+        Debug.Log(chunkCount);
+        for (int i = 0; i < chunkCount; i++)
+        {
+            var chunk = allChunks[i];
+            AccumulateChunksServerRpc(OwnerClientId, chunk, i == chunkCount - 1);
+        }
+        Debug.Log("after accumulation");
+    }
+    [ServerRpc]
+    private void AccumulateChunksServerRpc(ulong clientId, string chunk, bool isLast = false)
+    {
+        ReceiveRawChunk(clientId, chunk, isLast);
+    }
+
+    private async void ReceiveRawChunk(ulong clientId, string chunk, bool isLast)
+    {
+        if (IsServer)
+        {
+            try
+            {
+                AudioUtilsWhisper.GetAllChunks().Add(chunk);
+                if (isLast)
+                {
+                    var request = AudioUtilsWhisper.DechunkDataToSerialisedRequest();
+                    AudioUtilsWhisper.GetAllChunks().Clear();
+                    var res = await AudioUtilsWhisper.GetResponseAsServer(request);
+                    ReceiveWhisperResponseClientRpc(res, SingleTarget(clientId));
+                }
+            }
+            catch (Exception e)
+            {
+                NetworkManagerUI.I.WriteBadLineToOutput(e.ToString());
+            }
+        }
+    }
+    #endregion
+
+    #region Whisper
+    [ServerRpc]
+    private void TryGetWhisperTranscriptServerRpc(ulong clientId, string transcriptRequestFromClient)
+    {
+        HandleGettingTranscript(clientId, transcriptRequestFromClient);
+    }
+
+    private async void HandleGettingTranscript(ulong clientId, string transcriptRequestFromClient)
+    {
+        if (IsServer)
+        {
+            try
+            {
+                var res = await AudioUtilsWhisper.GetResponseAsServer(transcriptRequestFromClient);
+                ReceiveWhisperResponseClientRpc(res, SingleTarget(clientId));
+            }
+            catch (Exception e)
+            {
+                NetworkManagerUI.I.WriteBadLineToOutput(e.ToString());
+            }
+        }
+    }
+
+    [ClientRpc]
+    private void ReceiveWhisperResponseClientRpc(string transcriptResponse, ClientRpcParams clientRpcParams = default)
+    {
+        Debug.Log("I am in the ClientRpc.");
+        Debug.Log("param is: " + transcriptResponse.ToString());
+        AudioUtilsWhisper.ProcessResult(transcriptResponse);
+    }
+    #endregion
 }

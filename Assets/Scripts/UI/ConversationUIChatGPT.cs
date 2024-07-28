@@ -15,6 +15,7 @@ public class ConversationUIChatGPT : MonoBehaviour
     [SerializeField] SpeechBubble npcSpeechBubble;
 
     [SerializeField] TMP_InputField inputField;
+    [SerializeField] Button micBtn;
     [SerializeField] Button sendBtn;
 
     [SerializeField] Button endConversationBtn;
@@ -24,6 +25,8 @@ public class ConversationUIChatGPT : MonoBehaviour
     public void Start()
     {
         instance = this;
+
+        micBtn.transform.gameObject.SetActive(AudioInputManager.I.MicrophoneSelected);
 
         sendBtn.onClick.AddListener(() => { 
             StartCoroutine(GetAndDisplayResponse(Utilities.ConversationMode == ConversationModes.RealGPT));
@@ -38,6 +41,11 @@ public class ConversationUIChatGPT : MonoBehaviour
         HideUIAndLockMouse();
     }
 
+    public void SetRecordingButtonActive(bool active)
+    {
+        micBtn.transform.gameObject.SetActive(active);
+    }
+
     public void StartDialogue(bool npcInterested = true, bool playerStarts = true)
     {
         SpeechBubbleManager.I.SetUsedSpeechBubble(npcSpeechBubble);
@@ -48,9 +56,13 @@ public class ConversationUIChatGPT : MonoBehaviour
         DisplayUI();
     }
 
+    public void SetUserInputText(string transcription)
+    {
+        inputField.text = transcription;
+    }
+
     public void SetNewDialogueToDisplay(string text)
     {
-        Debug.Log("set new Dialogue to display " + text);
         newDialogueToDisplay = text;
     }
 
@@ -82,7 +94,6 @@ public class ConversationUIChatGPT : MonoBehaviour
             yield return StartCoroutine(ContinueDialogue("Here's a fake response for you."));
             sendBtn.enabled = true;
         }
-
     }
 
     //private async void GetResponse()

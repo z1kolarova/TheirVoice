@@ -8,16 +8,22 @@ public class PauseMenu : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] private Button backToGameBtn;
     [SerializeField] private Button howToBtn;
+    [SerializeField] private Button audioInputSettingsBtn;
     [SerializeField] private Button backToMainMenuBtn;
     [SerializeField] private Button exitGameBtn;
 
     [Header("Panels")]
     [SerializeField] private InfoPanel howToPanel;
+    [SerializeField] private AudioInputSettingsPanel audioInputSettingsPanel;
 
     void Start()
     {
         backToGameBtn.onClick.AddListener(() => {
             TogglePauseMenu();
+        });
+
+        audioInputSettingsBtn.onClick.AddListener(() => {
+            audioInputSettingsPanel.SetActive(true);
         });
 
         howToBtn.onClick.AddListener(() => {
@@ -36,6 +42,7 @@ public class PauseMenu : MonoBehaviour
 
     public void TogglePauseMenu()
     {
+        audioInputSettingsPanel.SetActive(false);
         howToPanel.SetActive(false);
 	    gameObject.SetActive(!gameObject.activeSelf);
 	    UserInterfaceUtilities.I.SetCursorUnlockState(gameObject.activeSelf);

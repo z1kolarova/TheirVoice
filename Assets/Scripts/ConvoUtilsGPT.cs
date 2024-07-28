@@ -176,18 +176,6 @@ public static class ConvoUtilsGPT
         }
     }
 
-    public static ChatRequest GetChatRequest(string msgText)
-    {
-        Debug.Log($"checking msgText {msgText}");
-        if (TryAddUserResponse(msgText))
-        {
-            Debug.Log($"msgText is ok");
-            return ProduceChatRequest();
-        }
-        Debug.Log($"msgText is NOT ok");
-        return null;
-    }
-
     public static FixedString4096Bytes? GetSerialisedChatRequest(string msgText)
     {
         if (TryAddUserResponse(msgText))
@@ -238,15 +226,7 @@ public static class ConvoUtilsGPT
     {
         try
         {
-            var chatRequest = new ChatRequest()
-            {
-                Model = _model,
-                Temperature = _temperature,
-                MaxTokens = _maxTokens,
-                Messages = messages,
-                FrequencyPenalty = _frequencyPenalty,
-                PresencePenalty = _presencePenalty
-            };
+            var chatRequest = ProduceChatRequest();
             return JsonConvert.SerializeObject(chatRequest);
         }
         catch (Exception)
