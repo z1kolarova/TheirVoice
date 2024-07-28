@@ -1,13 +1,9 @@
-using JetBrains.Annotations;
-using OpenAI_API.Chat;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-public class GPTManagerClient : NetworkBehaviour
+public class PlayerPrefabRpcs : NetworkBehaviour
 {
     //private NetworkVariable<FixedString4096Bytes> serialisedChatRequest = new NetworkVariable<FixedString4096Bytes>("", readPerm: NetworkVariableReadPermission.Owner, writePerm: NetworkVariableWritePermission.Owner);
     //private NetworkVariable<FixedString4096Bytes> responseAsSerialisedChatMessage = new NetworkVariable<FixedString4096Bytes>("", readPerm: NetworkVariableReadPermission.Owner, writePerm: NetworkVariableWritePermission.Owner);

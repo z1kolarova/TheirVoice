@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2729438625375073099}
   - component: {fileID: 7874802323453386663}
   m_Layer: 0
-  m_Name: GPTManagerClient
+  m_Name: PlayerNetworkObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

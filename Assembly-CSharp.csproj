@@ -121,7 +121,6 @@
     <Compile Include="Assets\Scripts\NPCs\PasserbySpawnManager.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\ModelsEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\ImageGenerationEndpoint.cs" />
-    <Compile Include="Assets\Scripts\ServerConnectivity\LobbyManager.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Moderation\ModerationResult.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionRequest.cs" />
     <Compile Include="Assets\Classes\ArgumentationTag.cs" />
@@ -147,9 +146,9 @@
     <Compile Include="Assets\Scripts\NPCs\AISensor.cs" />
     <Compile Include="Assets\Scripts\UI\MainMenuManager.cs" />
     <Compile Include="Assets\Scripts\SpeechBubbleManager.cs" />
-    <Compile Include="Assets\Scripts\GPTManagerClient.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionEndpoint.cs" />
     <Compile Include="Assets\Scripts\ConversationNPC.cs" />
+    <Compile Include="Assets\Scripts\PlayerPrefabRpcs.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\Utilities\MobileDisableAutoSwitchControls.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\ApiResultBase.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\Model.cs" />
