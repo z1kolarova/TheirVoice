@@ -27,7 +27,8 @@ public class ConversationUIChatGPT : MonoBehaviour
 
         micBtn.transform.gameObject.SetActive(AudioInputManager.I.HasMicrophoneSelected);
 
-        sendBtn.onClick.AddListener(() => { 
+        sendBtn.onClick.AddListener(() => {
+            AudioInputManager.I.EnsureRecordingStops();
             StartCoroutine(GetAndDisplayResponse(Utilities.ConversationMode == ConversationModes.RealGPT));
             inputField.Select();
         });
