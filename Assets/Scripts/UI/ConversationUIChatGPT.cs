@@ -2,7 +2,6 @@
 using Assets.Scripts;
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +25,7 @@ public class ConversationUIChatGPT : MonoBehaviour
     {
         instance = this;
 
-        micBtn.transform.gameObject.SetActive(AudioInputManager.I.MicrophoneSelected);
+        micBtn.transform.gameObject.SetActive(AudioInputManager.I.HasMicrophoneSelected);
 
         sendBtn.onClick.AddListener(() => { 
             StartCoroutine(GetAndDisplayResponse(Utilities.ConversationMode == ConversationModes.RealGPT));
@@ -35,6 +34,7 @@ public class ConversationUIChatGPT : MonoBehaviour
 
         endConversationBtn.onClick.AddListener(() =>
         {
+            AudioInputManager.I.EnsureRecordingStops();
             StartCoroutine(EndDialogue());
         });
 
@@ -77,10 +77,6 @@ public class ConversationUIChatGPT : MonoBehaviour
         sendBtn.enabled = false;
         inputField.text = "";
 
-        //var response = realGPT ? ConvoUtilsGPT.GetResponseTo(msgText) : ConvoUtilsGPT.FakeGettingResponseTo(msgText);
-        //yield return new WaitUntil(() => response.IsCompleted);
-        //yield return StartCoroutine(ContinueDialogue(response.Result));
-
         if (realGPT)
         {
             ConvoUtilsGPT.GetServerResponseTo(msgText);
@@ -95,40 +91,6 @@ public class ConversationUIChatGPT : MonoBehaviour
             sendBtn.enabled = true;
         }
     }
-
-    //private async void GetResponse()
-    //{
-    //    if (string.IsNullOrWhiteSpace(inputField.text))
-    //    {
-    //        return;
-    //    }
-
-    //    var msgText = inputField.text.Trim();
-    //    sendBtn.enabled = false;
-    //    inputField.text = "";
-
-    //    var response = await ConvoUtilsGPT.GetResponseTo(msgText);
-    //    StartCoroutine(DoNPCDialogue(response, false));
-
-    //    sendBtn.enabled = true;
-    //}
-
-    //private async void FakeGettingResponse()
-    //{
-    //    if (string.IsNullOrWhiteSpace(inputField.text))
-    //    {
-    //        return;
-    //    }
-
-    //    var msgText = inputField.text.Trim();
-    //    sendBtn.enabled = false;
-    //    inputField.text = "";
-
-    //    var responseText = await ConvoUtilsGPT.FakeGettingResponseTo(msgText);
-    //    StartCoroutine(DoNPCDialogue(responseText, false));
-
-    //    sendBtn.enabled = true;
-    //}
 
     public IEnumerator ContinueDialogue(string npcResponseText)
     {

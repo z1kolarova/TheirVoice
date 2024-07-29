@@ -17,6 +17,7 @@ public class MainMenuManager : MonoBehaviour
     void Start()
     {
         startButton.onClick.AddListener(() => {
+            startButton.enabled = false;
             LoadCubeOfTruth();
         });
 

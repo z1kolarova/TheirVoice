@@ -3,8 +3,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PauseMenu : MonoBehaviour 
-{
+public class PauseMenu : MonoBehaviour
+{    
+    public static PauseMenu I => instance;
+    static PauseMenu instance;
+
     [Header("Buttons")]
     [SerializeField] private Button backToGameBtn;
     [SerializeField] private Button howToBtn;
@@ -16,8 +19,12 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private InfoPanel howToPanel;
     [SerializeField] private AudioInputSettingsPanel audioInputSettingsPanel;
 
+    public bool IsActive => gameObject.activeSelf;
+
     void Start()
     {
+        instance = this;
+
         backToGameBtn.onClick.AddListener(() => {
             TogglePauseMenu();
         });

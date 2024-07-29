@@ -9,6 +9,7 @@ namespace Assets.Scripts
 
         [SerializeField] GameObject crossHair;
         [SerializeField] ConversationManager conversationManager;
+        [SerializeField] PauseMenu pauseMenu;
 
         public void Start()
         {
@@ -20,9 +21,9 @@ namespace Assets.Scripts
             return Cursor.lockState == CursorLockMode.Locked;
         }
 
-        public void SetCursorUnlockState(bool uiActive)
+        public void SetCursorUnlockState(bool activatingUI)
         {
-            bool shouldUIBeActive = uiActive || conversationManager.IsInDialogue;
+            bool shouldUIBeActive = activatingUI || pauseMenu.IsActive || conversationManager.IsInDialogue;
             crossHair.gameObject.SetActive(!shouldUIBeActive);
             Cursor.lockState = shouldUIBeActive ? CursorLockMode.None : CursorLockMode.Locked;
         }
