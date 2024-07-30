@@ -12,6 +12,7 @@ public class AudioInputManager : MonoBehaviour
     static AudioInputManager instance;
 
     [SerializeField] Button recordButton;
+    [SerializeField] Image recordButtonBg;
     [SerializeField] TMP_InputField outputTMP;
     [SerializeField] int maxRecordingDuration = 5;
 
@@ -77,6 +78,7 @@ public class AudioInputManager : MonoBehaviour
     public void ToggleRecordingState()
     {
         isRecording = !isRecording;
+        recordButtonBg.color = isRecording ? Color.red : Color.white;
         recordButton.GetComponentInChildren<TextMeshProUGUI>().text = isRecording ? stopRecordingBtnText : startRecordingBtnText;
     }
 
