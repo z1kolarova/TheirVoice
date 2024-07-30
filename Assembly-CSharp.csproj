@@ -218,7 +218,7 @@
     <None Include="Assets\Prompts\Plaintext\sad_single_parent.txt" />
     <None Include="Assets\Prompts\convenient_vegetarian.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
-    <None Include="Assets\Prompts\Angry_religious_carnist.txt" />
+    <None Include="Assets\Prompts\angry_religious_carnist.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
     <None Include="Assets\Sketchfab For Unity\Dependencies\Libraries\GLTFSerialization.dll" />
   </ItemGroup>

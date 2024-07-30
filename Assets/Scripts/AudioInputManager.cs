@@ -14,7 +14,7 @@ public class AudioInputManager : MonoBehaviour
     [SerializeField] Button recordButton;
     [SerializeField] Image recordButtonBg;
     [SerializeField] TMP_InputField outputTMP;
-    [SerializeField] int maxRecordingDuration = 5;
+    [SerializeField] int maxRecordingDuration = 60;
 
     private readonly string fileName = "output.wav";
     private readonly int recordingFrequency = 44100;
@@ -26,6 +26,8 @@ public class AudioInputManager : MonoBehaviour
     public string SelectedMicrophone { get { return selectedMicrophone; } }
 
     private AudioClip clip;
+    private AudioClip trimmedClip;
+    private int startedClipCounter;
     private bool isRecording;
     private float time;
     private OpenAIApi openAIApi = new OpenAIApi(Environment.GetEnvironmentVariable("OPENAI_API_KEY_THEIR_VOICE", EnvironmentVariableTarget.User));
@@ -34,30 +36,24 @@ public class AudioInputManager : MonoBehaviour
     {
         instance = this;
         recordButton.onClick.AddListener(RecordBtnAction);
+        startedClipCounter = 0;
         isRecording = false;
     }
 
-    private void StartRecording()
+    private IEnumerator StartRecording()
     {
         ToggleRecordingState();
         clip = Microphone.Start(selectedMicrophone, false, maxRecordingDuration, recordingFrequency);
-    }
+        startedClipCounter++;
+        var rememberCounter = startedClipCounter;
+        yield return new WaitForSeconds(maxRecordingDuration - 1);
 
-    private IEnumerator StopRecording()
-    {
-        Debug.Log("in stop recording");
-        EnsureRecordingStops();
-
-        byte[] data = SaveWav.Save(fileName, clip);
-
-        yield return GetAndDisplayTranscription(data);
-    }
-
-    private IEnumerator GetAndDisplayTranscription(byte[] data, string language = "en")
-    {
-        outputTMP.text = "audio processing in progress";
-        AudioUtilsWhisper.GetTranscriptionThroughServer(data, language);
-        yield return new WaitWhile(AudioUtilsWhisper.IsWaitingForResponse);
+        if (isRecording && startedClipCounter == rememberCounter) 
+        { 
+            recordButton.enabled = false;
+            yield return StartCoroutine(StopRecording());
+            recordButton.enabled = true;
+        }
     }
 
     private void RecordBtnAction()
@@ -71,8 +67,24 @@ public class AudioInputManager : MonoBehaviour
         else
         {
             Debug.Log("before StartRecording");
-            StartRecording();
+            StartCoroutine(StartRecording());
         }
+    }
+
+    private IEnumerator StopRecording()
+    {
+        EnsureRecordingStops();
+
+        byte[] data = SaveWav.Save(fileName, trimmedClip);
+
+        yield return GetAndDisplayTranscription(data);
+    }
+
+    private IEnumerator GetAndDisplayTranscription(byte[] data, string language = "en")
+    {
+        outputTMP.text = "...audio processing in progress...";
+        AudioUtilsWhisper.GetTranscriptionThroughServer(data, language);
+        yield return new WaitWhile(AudioUtilsWhisper.IsWaitingForResponse);
     }
 
     public void ToggleRecordingState()
@@ -87,7 +99,14 @@ public class AudioInputManager : MonoBehaviour
         if (isRecording)
         {
             ToggleRecordingState();
+            var lastSample = Microphone.GetPosition(selectedMicrophone);
             Microphone.End(selectedMicrophone);
+
+            float[] samples = new float[lastSample];
+            clip.GetData(samples, 0);
+
+            trimmedClip = AudioClip.Create(fileName, lastSample, clip.channels, clip.frequency, false);
+            trimmedClip.SetData(samples, 0);
         }
     }
 
