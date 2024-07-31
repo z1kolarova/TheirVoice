@@ -1,8 +1,6 @@
 ﻿using Assets.Classes;
 using Newtonsoft.Json;
-using OpenAI_API;
-using OpenAI_API.Chat;
-using OpenAI_API.Models;
+using OpenAI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,15 +24,15 @@ public static class ConvoUtilsGPT
     };
 
     private static ChatMessage safetyNetMessage = new ChatMessage() { 
-        Role = ChatMessageRole.Assistant, 
+        Role = "assistant", //ChatMessageRole.Assistant, 
         Content = "I'm gonna go now." + CONVO_END_STRING
     };
 
-    private static Model _model = Model.ChatGPTTurbo;   //originally was ChatGPTTurbo
-    private static double _temperature = 0.5;           //originally was 0.1
-    private static int _maxTokens = 1050;                //originally was 256
-    private static double _frequencyPenalty = 0.4;      //originally was 0
-    private static double _presencePenalty = 0.4;       //originally was 0
+    private static string _model = "gpt-4o-mini";       //originally was Model.ChatGPTTurbo when using different API
+    private static float _temperature = 0.5f;           //originally was 0.1
+    private static int _maxTokens = 1050;               //originally was 256
+    private static float _frequencyPenalty = 0.4f;      //originally was 0
+    private static float _presencePenalty = 0.4f;       //originally was 0
 
     private static FixedString4096Bytes chatRequestToProcess = "";
     public static FixedString4096Bytes GetChatRequestToProcess() => chatRequestToProcess;
@@ -48,14 +46,14 @@ public static class ConvoUtilsGPT
 
     //public static event EventHandler<FixedString4096Bytes> OnNewChatRequestToProcess;
 
-    private static OpenAIAPI api;
-    public static OpenAIAPI API
+    private static OpenAIApi api;
+    public static OpenAIApi API
     {
         get
         {
             if (api == null)
             {
-                api = new OpenAIAPI(Environment.GetEnvironmentVariable("OPENAI_API_KEY_THEIR_VOICE", EnvironmentVariableTarget.User));
+                api = new OpenAIApi(Environment.GetEnvironmentVariable("OPENAI_API_KEY_THEIR_VOICE", EnvironmentVariableTarget.User));
             }
             return api;
         }
@@ -110,7 +108,7 @@ public static class ConvoUtilsGPT
     public static void InitNewConvoWithPrompt(string prompt)
     {
         Messages.Clear();
-        Messages.Add(new ChatMessage(ChatMessageRole.System, prompt));
+        Messages.Add(new ChatMessage() { Role = "system", Content = prompt });
     }
 
     public static async Task<string> GetResponseTo(string msgText)
@@ -120,21 +118,22 @@ public static class ConvoUtilsGPT
             return "";
         }
 
-        ChatMessage userMessage = new ChatMessage();
-        userMessage.Role = ChatMessageRole.User;
-        userMessage.Content = msgText.Trim();
+        ChatMessage userMessage = new ChatMessage() { 
+            Role = "user", 
+            Content = msgText.Trim() 
+        };
 
         if (userMessage.Content.Length > USER_MSG_CHAR_LIMIT)
         {
             userMessage.Content = userMessage.Content.Substring(0, USER_MSG_CHAR_LIMIT);
         }
 
-        Debug.Log(string.Format("{0}: {1}", userMessage.rawRole, userMessage.Content));
+        Debug.Log(string.Format("{0}: {1}", userMessage.Role, userMessage.Content));
 
         Messages.Add(userMessage);
 
 
-        var chatResult = await API.Chat.CreateChatCompletionAsync(new ChatRequest()
+        var chatResult = await API.CreateChatCompletion(new CreateChatCompletionRequest()
         {
             Model = _model,
             Temperature = _temperature,
@@ -144,13 +143,16 @@ public static class ConvoUtilsGPT
             PresencePenalty = _presencePenalty
         });
 
-        if (chatResult == null || chatResult.Choices.Count == 0)
+        if (chatResult.Choices.Count == 0)
         {
             Debug.Log("ChatGPT didn't give back chatResult");
         }
-        ChatMessage responseMessage = new ChatMessage();
-        responseMessage.Role = chatResult.Choices[0].Message.Role;
-        responseMessage.Content = chatResult.Choices[0].Message.Content;
+
+        ChatMessage responseMessage = new ChatMessage()
+        {
+            Role = chatResult.Choices[0].Message.Role,
+            Content = chatResult.Choices[0].Message.Content
+        };
 
         messages.Add(responseMessage);
 
@@ -165,7 +167,6 @@ public static class ConvoUtilsGPT
         if (request.HasValue)
         {
             chatRequestToProcess = request.Value;
-            //OnNewChatRequestToProcess?.Invoke(null, request.Value);
             hasNewChatRequestToProcess = true;
             currentlyWaitingForServerResponse = true;
         }
@@ -197,9 +198,11 @@ public static class ConvoUtilsGPT
             return false;
         }
 
-        ChatMessage userMessage = new ChatMessage();
-        userMessage.Role = ChatMessageRole.User;
-        userMessage.Content = msgText.Trim();
+        ChatMessage userMessage = new ChatMessage()
+        {
+            Role = "user",
+            Content = msgText.Trim()
+        };
 
         if (userMessage.Content.Length > USER_MSG_CHAR_LIMIT)
         {
@@ -211,8 +214,8 @@ public static class ConvoUtilsGPT
         return true;
     }
 
-    public static ChatRequest ProduceChatRequest() =>
-        new ChatRequest()
+    public static CreateChatCompletionRequest ProduceChatRequest() =>
+        new CreateChatCompletionRequest()
         {
             Model = _model,
             Temperature = _temperature,
@@ -237,13 +240,15 @@ public static class ConvoUtilsGPT
 
     public static async Task<string> GetResponseAsServer(string serialisedChatRequest)
     {
-        var chatRequest = JsonConvert.DeserializeObject<ChatRequest>(serialisedChatRequest.ToString());
+        var chatRequest = JsonConvert.DeserializeObject<CreateChatCompletionRequest>(serialisedChatRequest.ToString());
         try
         {
-            var chatResult = await API.Chat.CreateChatCompletionAsync(chatRequest);
-            ChatMessage responseMessage = new ChatMessage();
-            responseMessage.Role = chatResult.Choices[0].Message.Role;
-            responseMessage.Content = chatResult.Choices[0].Message.Content;
+            var chatResult = await API.CreateChatCompletion(chatRequest);
+            ChatMessage responseMessage = new ChatMessage()
+            {
+                Role = chatResult.Choices[0].Message.Role,
+                Content = chatResult.Choices[0].Message.Content
+            };
 
             var serialisedChatMessage = JsonConvert.SerializeObject(responseMessage);
 
@@ -254,7 +259,6 @@ public static class ConvoUtilsGPT
             Debug.Log(e);
             return JsonConvert.SerializeObject(safetyNetMessage);
         }
-        
     }
 
     public static void ProcessResponseMessage(string serialisedResponseMessage)
@@ -282,24 +286,30 @@ public static class ConvoUtilsGPT
             return "";
         }
 
-        ChatMessage userMessage = new ChatMessage();
-        userMessage.Role = ChatMessageRole.User;
-        userMessage.Content = msgText.Trim();
+        ChatMessage userMessage = new ChatMessage()
+        {
+            Role = "user",
+            Content = msgText.Trim()
+        };
 
         if (userMessage.Content.Length > USER_MSG_CHAR_LIMIT)
         {
             userMessage.Content = userMessage.Content.Substring(0, USER_MSG_CHAR_LIMIT);
         }
 
-        Debug.Log(string.Format("{0}: {1}", userMessage.rawRole, userMessage.Content));
+        Debug.Log(string.Format("{0}: {1}", userMessage.Role, userMessage.Content));
 
         messages.Add(userMessage);
 
         var responseText = RngUtils.CoinFlip()
             ? "This is a very profound (but fake) answer to what you just said." 
             : $"I'm gonna go now.{CONVO_END_STRING}";
-        
-        var responseMessage = new ChatMessage(ChatMessageRole.Assistant, responseText);
+
+        ChatMessage responseMessage = new ChatMessage()
+        {
+            Role = "assistant",
+            Content = responseText
+        };
         messages.Add(responseMessage);
 
         Debug.Log("A fake response was obtained");
