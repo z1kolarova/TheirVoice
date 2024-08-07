@@ -16,10 +16,7 @@ public class TestLobby : MonoBehaviour
     public static TestLobby I => instance;
     static TestLobby instance;
 
-    //private Lobby hostLobby;
     private Lobby joinedLobby;
-    //private float heartbeatTimerMax = 15;
-    //private float heartbeatTimer;
     private float lobbyPollTimerMax = 1.1f;
     private float lobbyPollTimer;
 
@@ -79,7 +76,6 @@ public class TestLobby : MonoBehaviour
 
     private void Update()
     {
-        //HandleLobbyHeartBeat();
         PotentiallyTryToJoinLobby();
         HandleLobbyPolling();
     }
@@ -98,19 +94,6 @@ public class TestLobby : MonoBehaviour
         }
     }
 
-    //private async void HandleLobbyHeartBeat()
-    //{
-    //    if (hostLobby != null)
-    //    {
-    //        heartbeatTimer -= Time.deltaTime;
-    //        if (heartbeatTimer < 0f)
-    //        {
-    //            heartbeatTimer = heartbeatTimerMax;
-    //            NetworkManagerUI.I.WriteLineToOutput("I wanna send heartbeat for lobby " + hostLobby.Id);
-    //            await LobbyService.Instance.SendHeartbeatPingAsync(hostLobby.Id);
-    //        }
-    //    }
-    //}
     private async void HandleLobbyPolling()
     {
         if (joinedLobby != null)
@@ -163,29 +146,6 @@ public class TestLobby : MonoBehaviour
             }
         }
     }
-
-    //public void StopLobbyHeartBeat()
-    //{
-    //    hostLobby = null;
-    //}
-
-    //public async void CreateLobby() {
-    //    try
-    //    {
-    //        string lobbyName = "MyLobby";
-    //        int maxPlayers = 4;
-    //        Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers);
-
-    //        hostLobby = lobby;
-
-    //        Debug.Log("Created lobby: " + lobby.Name + " for up to " + lobby.MaxPlayers + " players");
-    //        NetworkManagerUI.I.WriteLineToOutput("Created lobby: " + lobby.Name + " for up to " + lobby.MaxPlayers + " players");
-    //    }
-    //    catch (LobbyServiceException e)
-    //    {
-    //        NetworkManagerUI.I.WriteLineToOutput(e.ToString());
-    //    }
-    //}
 
     public async Task JoinLobbyAndRelay()
     {
