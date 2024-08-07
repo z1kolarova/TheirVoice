@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
@@ -32,6 +31,7 @@ public class ServerSideManager : MonoBehaviour
     private int playersInLobbyCount = 0;
 
     private bool lobbyFreshlyCreated = false;
+    private bool currentLobbyIsPrivate = false;
     private bool lobbyPlayerCountChanged = false;
 
     private void Awake()
@@ -51,7 +51,15 @@ public class ServerSideManager : MonoBehaviour
         HandlePseudoEvents();
     }
 
-    public async Task AuthenticateServer()
+    public async Task StartServer(bool privateLobby)
+    {
+        await AuthenticateServer();
+
+        var lobbyName = $"initial{(privateLobby ? "Private" : "Public")}Lobby";
+        CreateLobby(lobbyName, 50, privateLobby);
+    }
+
+    private async Task AuthenticateServer()
     {
         var options = new InitializationOptions();
         var profile = Guid.NewGuid().ToString().Substring(0, 8);
@@ -124,6 +132,13 @@ public class ServerSideManager : MonoBehaviour
         if (lobbyFreshlyCreated)
         {
             lobbyFreshlyCreated = false;
+            NetworkManagerUI.I.WriteLineToOutput("Handling freshly created lobby");
+
+            if (hostLobby.IsPrivate)
+            {
+                NetworkManagerUI.I.UpdateDisplayedLobbyCode(hostLobby.LobbyCode);
+            }
+
             if (hostLobby.Players.Count > 0 && !(hostLobby.Data != null && hostLobby.Data.TryGetValue(RELAY_KEY, out var relKey) && relKey != null))
             {
                 NetworkManagerUI.I.WriteLineToOutput($"very special condition was met");
@@ -154,7 +169,7 @@ public class ServerSideManager : MonoBehaviour
         if (changes.LobbyDeleted)
         {
             NetworkManagerUI.I.WriteBadLineToOutput($"lobby got deleted");
-            ReplaceNonfunctionalLobby("re-created lobby", 100);
+            ReplaceNonfunctionalLobby("re-created lobby", 50, currentLobbyIsPrivate);
         }
         else
         {
@@ -192,23 +207,23 @@ public class ServerSideManager : MonoBehaviour
         NetworkManagerUI.I.WriteLineToOutput("lobby connection state changed to: " + state.ToString());
         if (state == LobbyEventConnectionState.Error)
         {
-            ReplaceNonfunctionalLobby("lobby after error state", 50);
+            ReplaceNonfunctionalLobby("lobby after error state", 50, currentLobbyIsPrivate);
         }
     }
     private void OnKickedFromLobby()
     {
         NetworkManagerUI.I.WriteBadLineToOutput("somehow the server got kicked from lobby");
-        ReplaceNonfunctionalLobby("got kicked so new lobby", 50);
+        ReplaceNonfunctionalLobby("got kicked so new lobby", 50, currentLobbyIsPrivate);
     }
 
-    private void ReplaceNonfunctionalLobby(string newLobbyName, int newMaxPlayers)
+    private void ReplaceNonfunctionalLobby(string newLobbyName, int newMaxPlayers, bool privateLobby = false)
     {
         NetworkManagerUI.I.EmptyOutput();
         StopLobbyHeartBeat();
-        CreateLobby(newLobbyName, newMaxPlayers);
+        CreateLobby(newLobbyName, newMaxPlayers, privateLobby);
     }
 
-    public async void CreateLobby(string lobbyName, int maxPlayers)
+    public async void CreateLobby(string lobbyName, int maxPlayers, bool privateLobby = false)
     {
         try
         {
@@ -218,6 +233,7 @@ public class ServerSideManager : MonoBehaviour
             CreateLobbyOptions options = new CreateLobbyOptions
             {
                 Player = player,
+                IsPrivate = privateLobby,
                 Data = new Dictionary<string, DataObject> {
                     { RELAY_KEY, new DataObject(DataObject.VisibilityOptions.Member, null) }
                 }
@@ -237,15 +253,30 @@ public class ServerSideManager : MonoBehaviour
                 NetworkManagerUI.I.WriteBadLineToOutput(ex.ToString());
                 switch (ex.Reason)
                 {
-                    case LobbyExceptionReason.AlreadySubscribedToLobby: Debug.LogWarning($"Already subscribed to lobby[{lobby.Id}]. We did not need to try and subscribe again. Exception Message: {ex.Message}"); break;
-                    case LobbyExceptionReason.SubscriptionToLobbyLostWhileBusy: Debug.LogError($"Subscription to lobby events was lost while it was busy trying to subscribe. Exception Message: {ex.Message}"); throw;
-                    case LobbyExceptionReason.LobbyEventServiceConnectionError: Debug.LogError($"Failed to connect to lobby events. Exception Message: {ex.Message}"); throw;
-                    default: throw;
+                    case LobbyExceptionReason.AlreadySubscribedToLobby:
+                        var msgAlreadySubscribedToLobby = $"Already subscribed to lobby[{lobby.Id}]. We did not need to try and subscribe again. Exception Message: {ex.Message}";
+                        Debug.LogWarning(msgAlreadySubscribedToLobby);
+                        NetworkManagerUI.I.WriteBadLineToOutput(msgAlreadySubscribedToLobby);
+                        break;
+                    case LobbyExceptionReason.SubscriptionToLobbyLostWhileBusy:
+                        var msgSubscriptionToLobbyLostWhileBusy = $"Already subscribed to lobby[{lobby.Id}]. We did not need to try and subscribe again. Exception Message: {ex.Message}";
+                        Debug.LogWarning(msgSubscriptionToLobbyLostWhileBusy);
+                        NetworkManagerUI.I.WriteBadLineToOutput(msgSubscriptionToLobbyLostWhileBusy);
+                        throw;
+                    case LobbyExceptionReason.LobbyEventServiceConnectionError:
+                        var msgLobbyEventServiceConnectionError = $"Failed to connect to lobby events. Exception Message: {ex.Message}";
+                        Debug.LogError(msgLobbyEventServiceConnectionError);
+                        NetworkManagerUI.I.WriteBadLineToOutput(msgLobbyEventServiceConnectionError);
+                        throw;
+                    default:
+                        NetworkManagerUI.I.WriteBadLineToOutput(ex.Message);
+                        throw;
                 }
             }
 
             lobbyFreshlyCreated = true;
             hostLobby = lobby;
+            currentLobbyIsPrivate = hostLobby.IsPrivate;
             NetworkManagerUI.I.WriteLineToOutput("End of CreateLobby, name: " + lobbyName + ", success: " + (hostLobby != null).ToString());
         }
         catch (LobbyServiceException e)

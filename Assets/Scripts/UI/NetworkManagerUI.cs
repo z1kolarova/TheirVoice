@@ -10,8 +10,8 @@ public class NetworkManagerUI : MonoBehaviour
     public static NetworkManagerUI I => instance;
     static NetworkManagerUI instance;
 
-    [SerializeField] private Button serverBtn;
-    [SerializeField] private Button clientBtn;
+    [SerializeField] private Button publicServerBtn;
+    [SerializeField] private Button privateServerBtn;
     [SerializeField] private Button shutdownBtn;
     
     private string logHistory = "";
@@ -28,10 +28,10 @@ public class NetworkManagerUI : MonoBehaviour
             }
         }
     }
-    [SerializeField] private TMP_Text outputTMP;
-    [SerializeField] private TMP_Text currentPlayersTMP;
 
-    private bool actsAsARunningServer = false;
+    [SerializeField] private TMP_Text outputTMP;
+    [SerializeField] private TMP_Text lobbyCodeTMP;
+    [SerializeField] private TMP_Text currentPlayersTMP;
 
     private void Awake()
     {
@@ -40,61 +40,56 @@ public class NetworkManagerUI : MonoBehaviour
 
     public void Start()
     {
-        serverBtn.onClick.AddListener(() => {
+        publicServerBtn.onClick.AddListener(() => {
             logText += "Server button was clicked\n";
-            ServerStartProcess();
-            actsAsARunningServer = true;
+            ServerStartProcess(false);
             logText += "NetworkManager.Singleton.StartServer happened\n";
-            serverBtn.enabled = false;
-            serverBtn.gameObject.SetActive(false);
-            clientBtn.enabled = false;
-            clientBtn.gameObject.SetActive(false);
+            publicServerBtn.enabled = false;
+            publicServerBtn.gameObject.SetActive(false);
+            privateServerBtn.enabled = false;
+            privateServerBtn.gameObject.SetActive(false);
+            shutdownBtn.gameObject.SetActive(true);
             shutdownBtn.enabled = true;
         });
 
-        clientBtn.onClick.AddListener(() => {
-            logText += "Client button was clicked\n";
-            ClientStartProcess();
-            logText += "NetworkManager.Singleton.StartClient happened\n";
-            serverBtn.enabled = false;
-            clientBtn.enabled = false;
-            clientBtn.gameObject.SetActive(false);
+        privateServerBtn.onClick.AddListener(() => {
+            logText += "Private server button was clicked\n";
+            ServerStartProcess(true);
+            logText += "NetworkManager.Singleton.ServerStartProcess happened\n";
+            publicServerBtn.enabled = false;
+            publicServerBtn.gameObject.SetActive(false);
+            privateServerBtn.enabled = false;
+            privateServerBtn.gameObject.SetActive(false);
+            shutdownBtn.gameObject.SetActive(true);
             shutdownBtn.enabled = true;
         });
 
         shutdownBtn.onClick.AddListener(() => {
             logText += "Shutdown button was clicked\n";
             
-            if (actsAsARunningServer)
-            {
-                //TestLobby.I.StopLobbyHeartBeat();
-                ServerSideManager.I.StopLobbyHeartBeat();
-                actsAsARunningServer = false;
-            }
-            else {
-                TestLobby.I.StopAllActivity();
-                TestLobby.I.LeaveLobby();
-            }
-
+            ServerSideManager.I.StopLobbyHeartBeat();
             NetworkManager.Singleton.Shutdown();
+
             logText += "NetworkManager.Singleton.Shutdown happened\n";
-            serverBtn.gameObject.SetActive(true);
-            serverBtn.enabled = true;
-            clientBtn.gameObject.SetActive(true);
-            clientBtn.enabled = true;
+
+            publicServerBtn.gameObject.SetActive(true);
+            publicServerBtn.enabled = true;
+            privateServerBtn.gameObject.SetActive(true);
+            privateServerBtn.enabled = true;
             shutdownBtn.enabled = false;
+            shutdownBtn.gameObject.SetActive(false);
         });
     }
 
     public void WriteLineToOutput(string text, bool timestamp = true)
     {
-        var lineContent = $"{DateTime.Now.ToString("HH:mm:ss")}: {text}";
+        var lineContent = timestamp ? $"{DateTime.Now.ToString("HH:mm:ss")}: {text}" : text;
         logText += $"{lineContent}\n";
     }
     
     public void WriteBadLineToOutput(string text, bool timestamp = true)
     {
-        var lineContent = $"{DateTime.Now.ToString("HH:mm:ss")} ERROR: {text}";
+        var lineContent = timestamp ? $"{DateTime.Now.ToString("HH:mm:ss")} ERROR: {text}" : text;
         logText += $"<color=#FF0000>{lineContent}\n</color>";
     }
 
@@ -102,6 +97,12 @@ public class NetworkManagerUI : MonoBehaviour
     {
         logHistory += logText;
         logText = "";
+    }
+
+    public void UpdateDisplayedLobbyCode(string lobbyCode)
+    {
+        WriteLineToOutput($"There is a new private lobby code: {lobbyCode}");
+        lobbyCodeTMP.text = lobbyCode;
     }
 
     public void UpdatePlayerCounter(PlayerCountEventArgs e) 
@@ -113,13 +114,22 @@ public class NetworkManagerUI : MonoBehaviour
         currentPlayersTMP.text = e.newTotalCount.ToString();
     }
 
-
-    private async void ServerStartProcess()
+    private async void ServerStartProcess(bool privateLobby = false)
     {
         NetworkManagerUI.I.WriteLineToOutput("In ServerStartProcess");
-        await ServerSideManager.I.AuthenticateServer();
-        ServerSideManager.I.CreateLobby("initialLobby", 50);
-        //TestLobby.I.CreateLobby();
+        await ServerSideManager.I.StartServer(privateLobby);
+        NetworkManagerUI.I.WriteLineToOutput("Server should be started");
+
+        //await ServerSideManager.I.AuthenticateServer();
+
+        //if (privateLobby)
+        //{
+        //    ServerSideManager.I.CreatePrivateLobby("initialPrivateLobby", 50);
+        //}
+        //else
+        //{
+        //    ServerSideManager.I.CreateLobby("initialLobby", 50);
+        //}
     }
 
     private async void ClientStartProcess()
