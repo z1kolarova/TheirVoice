@@ -12,7 +12,6 @@ public class PlayerPrefabRpcs : NetworkBehaviour
 
     private List<string> chunksClient;
     private List<string> chunksServer;
-    private int totalChunks = 0;
     private bool sayHello = true;
 
     public override void OnNetworkSpawn()
@@ -26,6 +25,7 @@ public class PlayerPrefabRpcs : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        DontDestroyOnLoad(this.gameObject);
         chunksClient = new List<string>();
     }
 
@@ -99,7 +99,7 @@ public class PlayerPrefabRpcs : NetworkBehaviour
             }
             catch (Exception e)
             {
-                NetworkManagerUI.I.WriteBadLineToOutput(e.ToString());
+                ServerSideManagerUI.I.WriteBadLineToOutput(e.ToString());
             }
         }
     }
@@ -151,7 +151,7 @@ public class PlayerPrefabRpcs : NetworkBehaviour
             }
             catch (Exception e)
             {
-                NetworkManagerUI.I.WriteBadLineToOutput(e.ToString());
+                ServerSideManagerUI.I.WriteBadLineToOutput(e.ToString());
             }
         }
     }
@@ -161,7 +161,9 @@ public class PlayerPrefabRpcs : NetworkBehaviour
     [ServerRpc]
     private void TryGetWhisperTranscriptServerRpc(ulong clientId, string transcriptRequestFromClient)
     {
+        ServerSideManagerUI.I.WriteLineToOutput($"Client {clientId} requests transcript.");
         HandleGettingTranscript(clientId, transcriptRequestFromClient);
+        ServerSideManagerUI.I.WriteLineToOutput($"Server has delivered the requested transcript.");
     }
 
     private async void HandleGettingTranscript(ulong clientId, string transcriptRequestFromClient)
@@ -175,7 +177,7 @@ public class PlayerPrefabRpcs : NetworkBehaviour
             }
             catch (Exception e)
             {
-                NetworkManagerUI.I.WriteBadLineToOutput(e.ToString());
+                ServerSideManagerUI.I.WriteBadLineToOutput(e.ToString());
             }
         }
     }

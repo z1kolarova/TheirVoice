@@ -1,6 +1,5 @@
 using Assets.Classes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
@@ -9,12 +8,16 @@ using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
-public class TestLobby : MonoBehaviour
+//zatím se nepoužívá a je vesmìs kopie TestLobby
+public class ClientSideManager : MonoBehaviour
 {
-    public static TestLobby I => instance;
-    static TestLobby instance;
+    public static ClientSideManager I => instance;
+    static ClientSideManager instance;
+
+    [SerializeField] public string PrivateLobbyCode = "TESTCODE";
+
+    [SerializeField] LobbyNotFoundModal lobbyNotFoundModal;
 
     private Lobby joinedLobby;
     private float lobbyPollTimerMax = 1.1f;
@@ -27,9 +30,12 @@ public class TestLobby : MonoBehaviour
     private float relayRetryTimer;
 
     private ILobbyEvents lobbyEvents;
+    private bool clientAuthenticated = false;
     private bool retryLobbyQuickJoin = false;
     private bool waitingForRelayKey = false;
     private bool originalKeyWasNull = false;
+
+    [HideInInspector] public bool HasAllNeededConnections = false;
 
     public event EventHandler<LobbyEventArgs> OnLobbyUpdate;
     public event EventHandler OnFinishedConnecting;
@@ -45,15 +51,40 @@ public class TestLobby : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        Debug.Log("I am using TestLobby");
+        Debug.Log("I am using ClientSideManager");
     }
 
+    #region start
     private void Start()
     {
         quickjoinRetryTimer = quickjoinRetryTimerMax;
         relayRetryTimer = relayRetryTimerMax;
-    }
 
+        EstablishNeededConnections();
+    }
+    private async void EstablishNeededConnections()
+    {
+        // 1) authenticate client - needed no matter what
+        // 2) try quickjoining public lobby
+        // 2a) no lobby available -> show message where code can be entered to join a private lobby or allow retry
+        // 2b) quickjoin works
+        // 3) a lobby has been joined, establish relay
+
+        //WILL THIS RESULT IN PLAYER CAPSULE TRYING TO SPAWN INTO MAIN MENU???
+        if (!clientAuthenticated)
+        {
+            clientAuthenticated = await ClientSideManager.I.AuthenticateClient();
+        }
+        if (clientAuthenticated)
+        {
+            await ClientSideManager.I.JoinPublicLobbyAndRelay();
+        }
+        else
+        {
+            Debug.Log("Authentication failed miserably and we have a problem...");
+            //NetworkManagerUI.I.WriteLineToOutput("Authentication failed miserably and we have a problem...");
+        }
+    }
     public async Task<bool> AuthenticateClient()
     {
         var options = new InitializationOptions();
@@ -74,13 +105,14 @@ public class TestLobby : MonoBehaviour
 
         return true;
     }
+    #endregion start
 
+    #region update
     private void Update()
     {
         PotentiallyTryToJoinLobby();
         HandleLobbyPolling();
     }
-
     private async void PotentiallyTryToJoinLobby()
     {
         if (joinedLobby == null && retryLobbyQuickJoin)
@@ -90,7 +122,7 @@ public class TestLobby : MonoBehaviour
             {
                 quickjoinRetryTimer = quickjoinRetryTimerMax;
 
-                await JoinLobbyAndRelay();
+                await JoinPublicLobbyAndRelay();
             }
         }
     }
@@ -123,51 +155,45 @@ public class TestLobby : MonoBehaviour
             }
         }
     }
+    #endregion update
 
-    private async void OnLobbyChanged(ILobbyChanges changes)
+    #region joining
+    public async Task JoinPublicLobbyAndRelay()
     {
-        //NetworkManagerUI.I.WriteLineToOutput("I'm in OnLobbyChanged on Client");
-        Debug.Log("I'm in OnLobbyChanged on Client");
-        if (changes.LobbyDeleted)
-        {
-            //NetworkManagerUI.I.WriteLineToOutput("Lobby was deleted");
-            Debug.Log("Lobby was deleted");
-            // we have a problem
-        }
-        else 
-        {
-            if (waitingForRelayKey)
-            {
-                if (changes.Data.Changed && changes.Data.Value.ContainsKey(ServerSideManager.RELAY_KEY))
-                {
-                    //NetworkManagerUI.I.WriteLineToOutput("Calling WaitForRelayJoin another time");
-                    Debug.Log("Calling WaitForRelayJoin another time");
-                    await WaitForRelayJoin();
-                }
-            }
-        }
-    }
-
-    public async Task JoinLobbyAndRelay()
-    {
-        //NetworkManagerUI.I.WriteLineToOutput("inside JoinLobbyAndRelay");
         Debug.Log("inside JoinLobbyAndRelay");
+
         var lobbyJoined = await TryQuickJoinLobbyAsync();
+        Debug.Log($"lobbyJoined was {lobbyJoined}");
+
         if (lobbyJoined)
         {
-            Debug.Log("lobbyJoined was true");
-            //NetworkManagerUI.I.WriteLineToOutput("lobbyJoinded was true");
             retryLobbyQuickJoin = false;
             await WaitForRelayJoin();
         }
         else
         {
-            //NetworkManagerUI.I.WriteLineToOutput("lobbyJoinded was false");
-            Debug.Log("lobbyJoined was false");
-            retryLobbyQuickJoin = true;
+            // TODO: display window to let user know quickjoin didn't work out, potentially uncomment retryLobbyQuickJoin = true
+            //retryLobbyQuickJoin = true;
+
+            lobbyNotFoundModal.SetActive(true);
         }
     }
 
+    public async Task JoinPrivateLobbyAndRelay(string lobbyCode)
+    {
+        var lobbyJoined = await TryJoinPrivateLobbyByCodeAsync(lobbyCode);
+        if (lobbyJoined)
+        {
+            Debug.Log("joined private lobby");
+            retryLobbyQuickJoin = false;
+            await WaitForRelayJoin();
+        }
+        else
+        {
+            Debug.Log("private lobby join didn't work out either");
+            lobbyNotFoundModal.SetActive(true);
+        }
+    }
     public async Task<bool> TryQuickJoinLobbyAsync()
     {
         try
@@ -182,28 +208,7 @@ public class TestLobby : MonoBehaviour
             //NetworkManagerUI.I.WriteLineToOutput(joinedLobby.Id);
             Debug.Log(joinedLobby.Id);
 
-            var callbacks = new LobbyEventCallbacks();
-            callbacks.LobbyChanged += OnLobbyChanged;
-            try
-            {
-                lobbyEvents = await Lobbies.Instance.SubscribeToLobbyEventsAsync(joinedLobby.Id, callbacks);
-                //NetworkManagerUI.I.WriteLineToOutput("lobby events should be subscribed " + lobbyEvents.ToString());
-                Debug.Log("lobby events should be subscribed " + lobbyEvents.ToString());
-                return true;
-            }
-            catch (LobbyServiceException ex)
-            {
-                //NetworkManagerUI.I.WriteLineToOutput(ex.ToString());
-                Debug.Log(ex.ToString());
-                switch (ex.Reason)
-                {
-                    case LobbyExceptionReason.AlreadySubscribedToLobby: Debug.LogWarning($"Already subscribed to lobby[{joinedLobby.Id}]. We did not need to try and subscribe again. Exception Message: {ex.Message}"); break;
-                    case LobbyExceptionReason.SubscriptionToLobbyLostWhileBusy: Debug.LogError($"Subscription to lobby events was lost while it was busy trying to subscribe. Exception Message: {ex.Message}"); throw;
-                    case LobbyExceptionReason.LobbyEventServiceConnectionError: Debug.LogError($"Failed to connect to lobby events. Exception Message: {ex.Message}"); throw;
-                    default: throw;
-                }
-                return false;
-            }
+            return await SubscribeToLobbyCallbacksAsync();
         }
         catch (LobbyServiceException e)
         {
@@ -219,58 +224,39 @@ public class TestLobby : MonoBehaviour
             return false;
         }
     }
-
-    public async Task WaitForRelayJoin()
+    public async Task<bool> TryJoinPrivateLobbyByCodeAsync(string lobbyCode)
     {
         try
         {
-            var dataDic = joinedLobby?.Data;
-            if (dataDic != null)
+            Debug.Log($"Attempting to join private lobby by code: {lobbyCode}");
+            joinedLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode);
+            if (joinedLobby == null)
             {
-                originalKeyWasNull = !(dataDic.TryGetValue(ServerSideManager.RELAY_KEY, out var originalRelayKey)
-                    && originalRelayKey?.Value != null);
-                //NetworkManagerUI.I.WriteLineToOutput("originalRelayKey: " + originalRelayKey?.Value);
-                Debug.Log("originalRelayKey: " + originalRelayKey?.Value);
-
-                if (!originalKeyWasNull)
-                {
-                    //NetworkManagerUI.I.WriteLineToOutput(originalRelayKey?.Value);
-                    Debug.Log(originalRelayKey?.Value);
-                    var result = await RelayManager.I.JoinRelayNewWay(originalRelayKey?.Value);
-                    //NetworkManagerUI.I.WriteLineToOutput(result.ToString());
-                    Debug.Log(result.ToString());
-                    if (result)
-                    {
-                        waitingForRelayKey = false;
-                        ClientSideManager.I.HasAllNeededConnections = true;
-                        return;
-                    }
-                }
+                return false;
             }
+            Debug.Log(joinedLobby.Id);
 
-            waitingForRelayKey = true;
-            UpdatePlayerOptions upo1 = new UpdatePlayerOptions
+            return await SubscribeToLobbyCallbacksAsync();
+        }
+        catch (LobbyServiceException e)
+        {
+            //NetworkManagerUI.I.WriteLineToOutput(e.Reason.ToString());
+            Debug.Log(e.Reason.ToString());
+            if (e.Reason == LobbyExceptionReason.NoOpenLobbies)
             {
-                Data = new Dictionary<string, PlayerDataObject> {
-                    { ServerSideManager.TRIGGER_CREATE_RELAY_KEY, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, null)}
-                }
-            }; 
-            UpdatePlayerOptions upo2 = new UpdatePlayerOptions
-            {
-                Data = new Dictionary<string, PlayerDataObject> {
-                    { ServerSideManager.TRIGGER_CREATE_RELAY_KEY, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, "true")}
-                }
-            };
-            joinedLobby = await Lobbies.Instance.UpdatePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId, upo1);
-            joinedLobby = await Lobbies.Instance.UpdatePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId, upo2);
+                //NetworkManagerUI.I.WriteLineToOutput("The server must be offline.");
+                Debug.Log("The server must be offline.");
+            }
+            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            Debug.Log(e.ToString());
+            return false;
         }
         catch (Exception e)
         {
-            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
             Debug.Log(e.ToString());
+            return false;
         }
     }
-
     public async Task<bool> CheckForLobbies()
     {
         try
@@ -295,8 +281,118 @@ public class TestLobby : MonoBehaviour
             return false;
         }
     }
+    #endregion joining
 
-    public async Task LeaveLobby() 
+    #region callbacks
+
+    private async Task<bool> SubscribeToLobbyCallbacksAsync()
+    {
+        var callbacks = new LobbyEventCallbacks();
+        callbacks.LobbyChanged += OnLobbyChanged;
+        try
+        {
+            lobbyEvents = await Lobbies.Instance.SubscribeToLobbyEventsAsync(joinedLobby.Id, callbacks);
+            //NetworkManagerUI.I.WriteLineToOutput("lobby events should be subscribed " + lobbyEvents.ToString());
+            Debug.Log("lobby events should be subscribed " + lobbyEvents.ToString());
+            return true;
+        }
+        catch (LobbyServiceException ex)
+        {
+            //NetworkManagerUI.I.WriteLineToOutput(ex.ToString());
+            Debug.Log(ex.ToString());
+            switch (ex.Reason)
+            {
+                case LobbyExceptionReason.AlreadySubscribedToLobby: Debug.LogWarning($"Already subscribed to lobby[{joinedLobby.Id}]. We did not need to try and subscribe again. Exception Message: {ex.Message}"); break;
+                case LobbyExceptionReason.SubscriptionToLobbyLostWhileBusy: Debug.LogError($"Subscription to lobby events was lost while it was busy trying to subscribe. Exception Message: {ex.Message}"); throw;
+                case LobbyExceptionReason.LobbyEventServiceConnectionError: Debug.LogError($"Failed to connect to lobby events. Exception Message: {ex.Message}"); throw;
+                default: throw;
+            }
+            return false;
+        }
+    }
+
+    private async void OnLobbyChanged(ILobbyChanges changes)
+    {
+        //NetworkManagerUI.I.WriteLineToOutput("I'm in OnLobbyChanged on Client");
+        Debug.Log("I'm in OnLobbyChanged on Client");
+        if (changes.LobbyDeleted)
+        {
+            //NetworkManagerUI.I.WriteLineToOutput("Lobby was deleted");
+            Debug.Log("Lobby was deleted");
+            // we have a problem
+        }
+        else
+        {
+            if (waitingForRelayKey)
+            {
+                if (changes.Data.Changed && changes.Data.Value.ContainsKey(ServerSideManager.RELAY_KEY))
+                {
+                    //NetworkManagerUI.I.WriteLineToOutput("Calling WaitForRelayJoin another time");
+                    Debug.Log("Calling WaitForRelayJoin another time");
+                    await WaitForRelayJoin();
+                }
+            }
+        }
+    }
+    
+    #endregion callbacks
+
+    #region relay
+    public async Task WaitForRelayJoin()
+    {
+        try
+        {
+            var dataDic = joinedLobby?.Data;
+            if (dataDic != null)
+            {
+                originalKeyWasNull = !(dataDic.TryGetValue(ServerSideManager.RELAY_KEY, out var originalRelayKey)
+                    && originalRelayKey?.Value != null);
+                //NetworkManagerUI.I.WriteLineToOutput("originalRelayKey: " + originalRelayKey?.Value);
+                Debug.Log("originalRelayKey: " + originalRelayKey?.Value);
+
+                if (!originalKeyWasNull)
+                {
+                    //NetworkManagerUI.I.WriteLineToOutput(originalRelayKey?.Value);
+                    Debug.Log(originalRelayKey?.Value);
+                    var result = await RelayManager.I.JoinRelayNewWay(originalRelayKey?.Value);
+                    //NetworkManagerUI.I.WriteLineToOutput(result.ToString());
+                    Debug.Log(result.ToString());
+                    if (result)
+                    {
+                        Debug.Log("HasAllNeededConnections is being set to true");
+                        waitingForRelayKey = false;
+                        ClientSideManager.I.HasAllNeededConnections = true;
+                        return;
+                    }
+                }
+            }
+
+            waitingForRelayKey = true;
+            UpdatePlayerOptions upo1 = new UpdatePlayerOptions
+            {
+                Data = new Dictionary<string, PlayerDataObject> {
+                    { ServerSideManager.TRIGGER_CREATE_RELAY_KEY, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, null)}
+                }
+            };
+            UpdatePlayerOptions upo2 = new UpdatePlayerOptions
+            {
+                Data = new Dictionary<string, PlayerDataObject> {
+                    { ServerSideManager.TRIGGER_CREATE_RELAY_KEY, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, "true")}
+                }
+            };
+            joinedLobby = await Lobbies.Instance.UpdatePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId, upo1);
+            joinedLobby = await Lobbies.Instance.UpdatePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId, upo2);
+        }
+        catch (Exception e)
+        {
+            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
+            Debug.Log(e.ToString());
+        }
+    }
+    #endregion relay
+
+    #region leaving
+    public async Task LeaveLobby()
     {
         try
         {
@@ -324,4 +420,15 @@ public class TestLobby : MonoBehaviour
         await LeaveLobby();
         NetworkManager.Singleton.Shutdown();
     }
+
+    public async Task DisconnectAndCloseApp()
+    {
+        await DisconectFromEverything();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+			Application.Quit();
+#endif
+    }
+    #endregion leaving
 }

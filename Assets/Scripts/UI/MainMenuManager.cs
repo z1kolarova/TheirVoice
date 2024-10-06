@@ -10,9 +10,10 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] Button creditsButton;
     [SerializeField] Button exitButton;
 
-    [Header("Panels")]
-    [SerializeField] InfoPanel howItWorksPanel;
-    [SerializeField] InfoPanel creditsPanel;
+    [Header("Modals")]
+    [SerializeField] LobbyNotFoundModal lobbyNotFoundModal;
+    [SerializeField] InfoModal howItWorksModal;
+    [SerializeField] InfoModal creditsModal;
 
     void Start()
     {
@@ -22,11 +23,11 @@ public class MainMenuManager : MonoBehaviour
         });
 
         howItWorksButton.onClick.AddListener(() => {
-            howItWorksPanel.SetActive(true);
+            howItWorksModal.SetActive(true);
         });
 
         creditsButton.onClick.AddListener(() => {
-            creditsPanel.SetActive(true);
+            creditsModal.SetActive(true);
         });
 
         exitButton.onClick.AddListener(() => {
@@ -39,11 +40,8 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene(sceneName: "Scenes/CubeOfTruth");
     }
 
-    private void ExitSimulator() {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-			Application.Quit();
-#endif
+    private async void ExitSimulator()
+    {
+        await ClientSideManager.I.DisconnectAndCloseApp();
     }
 }

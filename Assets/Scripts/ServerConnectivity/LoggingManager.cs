@@ -48,13 +48,13 @@ public class LoggingManager : MonoBehaviour
 
     public void WriteLogFile()
     {
-        if (NetworkManagerUI.I == null)
+        if (ServerSideManagerUI.I == null)
         {
             return;
         }
         if (Utilities.MakeSureFileExists(logDirPath, currentLogFileName))
         {
-            File.WriteAllText(currentLogFilePath, NetworkManagerUI.I.GetFullLogText());
+            File.WriteAllText(currentLogFilePath, ServerSideManagerUI.I.GetFullLogText());
         }
     }
 

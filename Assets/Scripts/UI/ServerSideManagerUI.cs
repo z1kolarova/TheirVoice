@@ -5,10 +5,10 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NetworkManagerUI : MonoBehaviour
+public class ServerSideManagerUI : MonoBehaviour
 {
-    public static NetworkManagerUI I => instance;
-    static NetworkManagerUI instance;
+    public static ServerSideManagerUI I => instance;
+    static ServerSideManagerUI instance;
 
     [SerializeField] private Button publicServerBtn;
     [SerializeField] private Button privateServerBtn;
@@ -30,7 +30,10 @@ public class NetworkManagerUI : MonoBehaviour
     }
 
     [SerializeField] private TMP_Text outputTMP;
+    
+    [SerializeField] private TMP_Text lobbyCodeLabel;
     [SerializeField] private TMP_Text lobbyCodeTMP;
+
     [SerializeField] private TMP_Text currentPlayersTMP;
 
     private void Awake()
@@ -66,7 +69,7 @@ public class NetworkManagerUI : MonoBehaviour
 
         shutdownBtn.onClick.AddListener(() => {
             logText += "Shutdown button was clicked\n";
-            
+
             ServerSideManager.I.StopLobbyHeartBeat();
             NetworkManager.Singleton.Shutdown();
 
@@ -101,7 +104,11 @@ public class NetworkManagerUI : MonoBehaviour
 
     public void UpdateDisplayedLobbyCode(string lobbyCode)
     {
-        WriteLineToOutput($"There is a new private lobby code: {lobbyCode}");
+        if (!string.IsNullOrEmpty(lobbyCode))
+        {
+            WriteLineToOutput($"There is a new private lobby code: {lobbyCode}");
+        }
+        lobbyCodeLabel.gameObject.SetActive(!string.IsNullOrEmpty(lobbyCode));
         lobbyCodeTMP.text = lobbyCode;
     }
 
@@ -116,39 +123,9 @@ public class NetworkManagerUI : MonoBehaviour
 
     private async void ServerStartProcess(bool privateLobby = false)
     {
-        NetworkManagerUI.I.WriteLineToOutput("In ServerStartProcess");
+        ServerSideManagerUI.I.WriteLineToOutput("In ServerStartProcess");
         await ServerSideManager.I.StartServer(privateLobby);
-        NetworkManagerUI.I.WriteLineToOutput("Server should be started");
-
-        //await ServerSideManager.I.AuthenticateServer();
-
-        //if (privateLobby)
-        //{
-        //    ServerSideManager.I.CreatePrivateLobby("initialPrivateLobby", 50);
-        //}
-        //else
-        //{
-        //    ServerSideManager.I.CreateLobby("initialLobby", 50);
-        //}
-    }
-
-    private async void ClientStartProcess()
-    {
-        logText += "Inside ClientStartProcess\n";
-        var authenticated = await TestLobby.I.AuthenticateClient();
-        NetworkManagerUI.I.WriteLineToOutput("authenticated " + authenticated);
-        if (authenticated)
-        {
-            await TestLobby.I.JoinLobbyAndRelay();
-            //await TestLobby.I.CheckForLobbies();
-            //await TestLobby.I.TryQuickJoinLobby();
-            //NetworkManagerUI.I.WriteLineToOutput("Calling WaitForRelayJoin the first time");
-            //await TestLobby.I.WaitForRelayJoin();
-        }
-        else
-        {
-            NetworkManagerUI.I.WriteBadLineToOutput("Authentication failed miserably and we have a problem...");
-        }
+        ServerSideManagerUI.I.WriteLineToOutput("Server should be started");
     }
 
     public string GetFullLogText() {

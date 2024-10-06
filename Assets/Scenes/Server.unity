@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &406553867
 RectTransform:
   m_ObjectHideFlags: 0
@@ -157,10 +157,10 @@ RectTransform:
   - {fileID: 1750361621}
   m_Father: {fileID: 1464072560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 340, y: 0}
-  m_SizeDelta: {x: 340, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 340, y: -183}
+  m_SizeDelta: {x: 340, y: 88.85}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &406553868
 MonoBehaviour:
@@ -1842,7 +1842,7 @@ GameObject:
   - component: {fileID: 1331584298}
   - component: {fileID: 1331584302}
   m_Layer: 5
-  m_Name: NetworkManagerUI
+  m_Name: ServerSideManagerUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1883,6 +1883,7 @@ MonoBehaviour:
   privateServerBtn: {fileID: 955575113}
   shutdownBtn: {fileID: 2085161356}
   outputTMP: {fileID: 1291320078}
+  lobbyCodeLabel: {fileID: 406553869}
   lobbyCodeTMP: {fileID: 1750361623}
   currentPlayersTMP: {fileID: 625232372}
 --- !u!114 &1331584302
@@ -2458,7 +2459,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 44.69}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 44.69}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1750361622
 MonoBehaviour:

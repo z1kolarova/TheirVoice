@@ -1539,7 +1539,7 @@ GameObject:
   - component: {fileID: 115756040060129979}
   - component: {fileID: 3830066694584193703}
   m_Layer: 5
-  m_Name: AudioInputSettingsPanel
+  m_Name: AudioInputSettingsModal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

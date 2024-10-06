@@ -1,21 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Services.Authentication;
-using Unity.Services.Core;
-using Unity.Services.Lobbies.Models;
-using Unity.Services.Lobbies;
-using UnityEngine;
-using Unity.Services.Relay;
-using Unity.Services.Relay.Models;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
-using System.Threading.Tasks;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
+using UnityEngine;
 
-public class TestRelay : MonoBehaviour
+public class RelayManager : MonoBehaviour
 {
-    public static TestRelay I => instance;
-    static TestRelay instance;
+    public static RelayManager I => instance;
+    static RelayManager instance;
 
     private Allocation currentAllocation;
 
@@ -30,20 +24,11 @@ public class TestRelay : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        Debug.Log("I am using RelayManager");
     }
 
     private void Start()
     {
-
-        //await UnityServices.InitializeAsync();
-
-        //AuthenticationService.Instance.SignedIn += () =>
-        //{
-        //    Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
-        //    NetworkManagerUI.I.WriteLineToOutput("Signed in " + AuthenticationService.Instance.PlayerId);
-        //};
-
-        //await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 
     public async Task<string> CreateRelayNewWay()
@@ -58,7 +43,7 @@ public class TestRelay : MonoBehaviour
                 }
                 catch (System.Exception)
                 {
-                    NetworkManagerUI.I.WriteBadLineToOutput("Tried to get code from old allocation, didn't work");
+                    ServerSideManagerUI.I.WriteBadLineToOutput("Tried to get code from old allocation, didn't work");
                 }
             }
 
@@ -73,7 +58,7 @@ public class TestRelay : MonoBehaviour
 
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(currentAllocation.AllocationId);
 
-            NetworkManagerUI.I.WriteLineToOutput("Created relay allocation: " + joinCode);
+            ServerSideManagerUI.I.WriteLineToOutput("Created relay allocation: " + joinCode);
 
             RelayServerData rsd = new RelayServerData(currentAllocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(rsd);
@@ -84,7 +69,7 @@ public class TestRelay : MonoBehaviour
         }
         catch (RelayServiceException e)
         {
-            NetworkManagerUI.I.WriteBadLineToOutput(e.ToString());
+            ServerSideManagerUI.I.WriteBadLineToOutput(e.ToString());
             return null;
         }
     }

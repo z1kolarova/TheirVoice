@@ -15,9 +15,9 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Button backToMainMenuBtn;
     [SerializeField] private Button exitGameBtn;
 
-    [Header("Panels")]
-    [SerializeField] private InfoPanel howToPanel;
-    [SerializeField] private AudioInputSettingsPanel audioInputSettingsPanel;
+    [Header("Modals")]
+    [SerializeField] private InfoModal howToModal;
+    [SerializeField] private AudioInputSettingsModal audioInputSettingsModal;
 
     public bool IsActive => gameObject.activeSelf;
 
@@ -30,11 +30,11 @@ public class PauseMenu : MonoBehaviour
         });
 
         audioInputSettingsBtn.onClick.AddListener(() => {
-            audioInputSettingsPanel.SetActive(true);
+            audioInputSettingsModal.SetActive(true);
         });
 
         howToBtn.onClick.AddListener(() => {
-            howToPanel.SetActive(true);
+            howToModal.SetActive(true);
         });
 
         backToMainMenuBtn.onClick.AddListener(() =>
@@ -49,23 +49,20 @@ public class PauseMenu : MonoBehaviour
 
     public void TogglePauseMenu()
     {
-        audioInputSettingsPanel.SetActive(false);
-        howToPanel.SetActive(false);
+        audioInputSettingsModal.SetActive(false);
+        howToModal.SetActive(false);
 	    gameObject.SetActive(!gameObject.activeSelf);
 	    UserInterfaceUtilities.I.SetCursorUnlockState(gameObject.activeSelf);
     }
-    public async void DisconnectEverythingAndReturnToMainMenu()
+    public void DisconnectEverythingAndReturnToMainMenu()
     {
-        await TestLobby.I.DisconectFromEverything();
+        //await ClientSideManager.I.DisconectFromEverything();
+        //TODO: disposing of spawned entities?
         SceneManager.LoadScene(sceneName: "Scenes/MainMenu");
     }
 
-    public async void DisconnectAndCloseApp() {
-        await TestLobby.I.DisconectFromEverything();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+    public async void DisconnectAndCloseApp() 
+    {
+        await ClientSideManager.I.DisconnectAndCloseApp();
     }
 }

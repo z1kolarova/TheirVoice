@@ -9,7 +9,6 @@ public class ConversationManager : MonoBehaviour
     static ConversationManager instance;
     
     [HideInInspector] public bool IsInDialogue = false;
-    [HideInInspector] public bool HasAllNeededConnections = false;
 
     private static System.Random rng;
     private PasserbyAI talkingTo;
@@ -19,15 +18,15 @@ public class ConversationManager : MonoBehaviour
     {
         instance = this;
         rng = new System.Random();
-        EstablishNeededConnections();
+        //EstablishNeededConnections();
     }
 
     private async void EstablishNeededConnections()
     {
-        var authenticated = await TestLobby.I.AuthenticateClient();
+        var authenticated = await ClientSideManager.I.AuthenticateClient();
         if (authenticated)
         {
-            await TestLobby.I.JoinLobbyAndRelay();
+            await ClientSideManager.I.JoinPublicLobbyAndRelay();
         }
         else
         {
@@ -46,7 +45,8 @@ public class ConversationManager : MonoBehaviour
         var promptLabelToUse = passerbyWasWatching ? talkingTo.personality.PromptLabel : ConvoUtilsGPT.notInterestedPromptLabel;
         var promptToUse = passerbyWasWatching ? talkingTo.personality.Prompt : ConvoUtilsGPT.CreateNotInterestedPrompt();
 
-        if (!HasAllNeededConnections || Utilities.ConversationMode == ConversationModes.Premade)
+        Debug.Log($"Has all needed connections: {ClientSideManager.I.HasAllNeededConnections}");
+        if (!ClientSideManager.I.HasAllNeededConnections || Utilities.ConversationMode == ConversationModes.Premade)
         {
             ConversationUI.I.StartDialogue(npcInterested: passerbyWasWatching);
         }

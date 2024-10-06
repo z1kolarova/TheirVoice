@@ -123,6 +123,53 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &44758160
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 44758162}
+  - component: {fileID: 44758161}
+  m_Layer: 0
+  m_Name: ClientSideManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &44758161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 44758160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 414b2ad6da8a0ac46b45b4b551fd1d7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  privateLobbyCode: TESTCODE
+  lobbyNotFoundModal: {fileID: 0}
+  HasAllNeededConnections: 0
+--- !u!4 &44758162
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 44758160}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &63887069 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 144193282864607038, guid: 09aade0ecefd01e4b8f7661acf64f5c2, type: 3}
@@ -2816,7 +2863,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsInDialogue: 0
-  HasAllNeededConnections: 0
 --- !u!4 &887503118
 Transform:
   m_ObjectHideFlags: 0
@@ -2825,8 +2871,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 887503116}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.255137, y: 6.3519034, z: 32.809322}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3564,8 +3610,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1271222174}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.8747687, y: 1.6029173, z: 3.6750069}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5411,17 +5457,17 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1695700532}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1197.8221, y: -703.5757, z: -9.149394}
-  m_LocalScale: {x: 2.4896264, y: 2.4896264, z: 2.4896264}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 69670601}
   - {fileID: 1271222175}
   - {fileID: 646581177}
   - {fileID: 93012313}
   - {fileID: 453328261}
   - {fileID: 887503118}
-  - {fileID: 69670601}
   - {fileID: 240846358}
   m_Father: {fileID: 1354411978}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6073,7 +6119,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8148052548684301881, guid: 9f8708f4831643d4ba45adb9171dc239, type: 3}
       propertyPath: m_Name
-      value: HowItWorksWindow
+      value: HowItWorksModal
       objectReference: {fileID: 0}
     - target: {fileID: 8148052548684301881, guid: 9f8708f4831643d4ba45adb9171dc239, type: 3}
       propertyPath: m_IsActive
@@ -6145,7 +6191,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae0ea9b97ca18bf469b44caca1ee3f30, type: 3}
+  m_Script: {fileID: 11500000, guid: a9953f34a907c774cad970eda7a683ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1968588209
@@ -15432,9 +15478,17 @@ PrefabInstance:
       value: -464.5731
       objectReference: {fileID: 0}
     - target: {fileID: 5429299666951717409, guid: 43b6e418ef2ac6f43ac9d8099d1e2503, type: 3}
+      propertyPath: howToModal
+      value: 
+      objectReference: {fileID: 1958316969}
+    - target: {fileID: 5429299666951717409, guid: 43b6e418ef2ac6f43ac9d8099d1e2503, type: 3}
       propertyPath: howToPanel
       value: 
       objectReference: {fileID: 1958316969}
+    - target: {fileID: 5429299666951717409, guid: 43b6e418ef2ac6f43ac9d8099d1e2503, type: 3}
+      propertyPath: audioInputSettingsModal
+      value: 
+      objectReference: {fileID: 906406001877236497}
     - target: {fileID: 5429299666951717409, guid: 43b6e418ef2ac6f43ac9d8099d1e2503, type: 3}
       propertyPath: audioInputSettingsPanel
       value: 
@@ -16106,6 +16160,7 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 44758162}
   - {fileID: 1354411978}
   - {fileID: 2084445384}
   - {fileID: 60889539378096550}

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InfoPanel : MonoBehaviour
+public class InfoModal : MonoBehaviour
 {
     [SerializeField] Button closePanelBtn;
 
