@@ -1,19 +1,24 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class InfoModal : MonoBehaviour
+public class InfoModal : JustCloseModal
 {
-    [SerializeField] Button closePanelBtn;
+    public static InfoModal I => instance;
+    static InfoModal instance;
 
-    void Start()
+    [SerializeField] TMP_Text titleLabel;
+    [SerializeField] TMP_Text infoLabel;
+
+    protected override void Awake()
     {
-        closePanelBtn.onClick.AddListener(() => {
-            gameObject.SetActive(false);
-        });
+        instance = this;
+        gameObject.SetActive(false);
     }
 
-    public void SetActive(bool value)
+    public void Display(string title, string info)
     {
-        gameObject.SetActive(value);
+        titleLabel.text = title;
+        infoLabel.text = info;
+        SetActive(true);
     }
 }

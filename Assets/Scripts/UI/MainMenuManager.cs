@@ -12,8 +12,8 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Modals")]
     [SerializeField] LobbyNotFoundModal lobbyNotFoundModal; //is moved to ClientSideManager, can be removed from here
-    [SerializeField] InfoModal howItWorksModal;
-    [SerializeField] InfoModal creditsModal;
+    [SerializeField] JustCloseModal howItWorksModal;
+    [SerializeField] JustCloseModal creditsModal;
 
     void Start()
     {
@@ -23,7 +23,7 @@ public class MainMenuManager : MonoBehaviour
         });
 
         howItWorksButton.onClick.AddListener(() => {
-            howItWorksModal.SetActive(true);
+            HowItWorksModal.I.Display();
         });
 
         creditsButton.onClick.AddListener(() => {

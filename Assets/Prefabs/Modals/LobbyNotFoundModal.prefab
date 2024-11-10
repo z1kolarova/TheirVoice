@@ -825,7 +825,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ff465c505af2b54d9fd6d5fb15641e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeBtn: {fileID: 4787442939670541880}
+  closeModalBtn: {fileID: 4787442939670541880}
   codeInputField: {fileID: 6342518708979789391}
   retryPublicLobbyJoinBtn: {fileID: 5441651293162179701}
   tryPrivateJoinBtn: {fileID: 4308747116381199549}

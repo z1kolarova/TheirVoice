@@ -16,7 +16,6 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Button exitGameBtn;
 
     [Header("Modals")]
-    [SerializeField] private InfoModal howToModal;
     [SerializeField] private AudioInputSettingsModal audioInputSettingsModal;
 
     public bool IsActive => gameObject.activeSelf;
@@ -34,7 +33,7 @@ public class PauseMenu : MonoBehaviour
         });
 
         howToBtn.onClick.AddListener(() => {
-            howToModal.SetActive(true);
+            HowItWorksModal.I.Display();
         });
 
         backToMainMenuBtn.onClick.AddListener(() =>
@@ -50,8 +49,8 @@ public class PauseMenu : MonoBehaviour
     public void TogglePauseMenu()
     {
         audioInputSettingsModal.SetActive(false);
-        howToModal.SetActive(false);
-	    gameObject.SetActive(!gameObject.activeSelf);
+        HowItWorksModal.I.Hide();
+        gameObject.SetActive(!gameObject.activeSelf);
 	    UserInterfaceUtilities.I.SetCursorUnlockState(gameObject.activeSelf);
     }
     public void DisconnectEverythingAndReturnToMainMenu()

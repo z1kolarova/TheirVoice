@@ -7,16 +7,10 @@ using System.IO;
 using System.Threading.Tasks;
 using Unity.Collections;
 using UnityEngine;
+using static Constants;
 
 public static class ConvoUtilsGPT
 {
-    public static string PromptsDir = "./Assets/Prompts/";
-    public static string PromptBankFileName = "_PromptBank";
-    private static int USER_MSG_CHAR_LIMIT = 500;
-    private static string CONVO_END_STRING = "#END_OF_CONVO#";
-    private static string CONVO_END_INSTRUCTION = $"\r\nYou can choose to end the conversation whenever you decide (to end the conversation, append \"{CONVO_END_STRING}\" to the last message).";
-    private static string NOT_INTERESTED_PROMPT_NAME = "_wasnt_watching_footage";
-
     public static PromptLabel notInterestedPromptLabel = new PromptLabel() { 
         Name = NOT_INTERESTED_PROMPT_NAME,
         EndConvoAbility = EndConvoAbility.Always,
@@ -325,7 +319,7 @@ public static class ConvoUtilsGPT
 
     public static List<PromptLabel> GetPromptBank()
     {
-        var path = Path.Combine(PromptsDir, $"{PromptBankFileName}.json");
+        var path = Path.Combine(PromptsDir, PromptBankFileName);
         List<PromptLabel> result = new List<PromptLabel>();
 
         using (StreamReader sr = new StreamReader(path))
@@ -352,7 +346,7 @@ public static class ConvoUtilsGPT
 
     public static void SerializePromptBank(List<PromptLabel> promptLabels)
     {
-        var filePath = Path.Combine(PromptsDir, $"{PromptBankFileName}.json");
+        var filePath = Path.Combine(PromptsDir, PromptBankFileName);
         
         using (StreamWriter sw = new StreamWriter(filePath))
         using (JsonWriter writer = new JsonTextWriter(sw))

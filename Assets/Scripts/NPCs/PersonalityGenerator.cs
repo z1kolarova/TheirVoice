@@ -24,9 +24,6 @@ public class PersonalityGenerator : MonoBehaviour
     [Range(0, 100)] public int EggsOdds;
     [Range(0, 100)] public int HoneyOdds;
 
-    public static string PromptsDir = "./Assets/Prompts/";
-    public static string PromptBankFileName = "_PromptBank";
-
     private int rangeMax = 100;
     private List<(AnimalExploitationsInDiet, int)> _tupleList;
     private List<PromptLabel> promptBank;

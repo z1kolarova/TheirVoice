@@ -2,16 +2,21 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LobbyNotFoundModal : JustCloseModal
+public class ServerManagePromptsModal : MonoBehaviour
 {
+    [SerializeField] Button closeBtn;
     [SerializeField] TMP_InputField codeInputField;
     [SerializeField] Button retryPublicLobbyJoinBtn;
     [SerializeField] Button tryPrivateJoinBtn;
 
-    protected override void Start()
+    void Start()
     {
         codeInputField.text = ClientSideManager.I.PrivateLobbyCode;
 
+        closeBtn.onClick.AddListener(() =>
+        {
+            gameObject.SetActive(false);
+        });
         retryPublicLobbyJoinBtn.onClick.AddListener(() =>
         {
             ClientSideManager.I.JoinPublicLobbyAndRelay();
@@ -23,7 +28,10 @@ public class LobbyNotFoundModal : JustCloseModal
             ClientSideManager.I.JoinPrivateLobbyAndRelay(codeInputField.text.ToUpper());
             gameObject.SetActive(false);
         });
+    }
 
-        base.Start();
+    public void SetActive(bool value)
+    {
+        gameObject.SetActive(value);
     }
 }

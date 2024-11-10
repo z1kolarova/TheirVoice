@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6225686538393333902}
-  - component: {fileID: 1180896526240674864}
   - component: {fileID: 3294085113262468109}
+  - component: {fileID: 1180896526240674864}
   m_Layer: 5
   m_Name: BtnGroup
   m_TagString: Untagged
@@ -38,32 +38,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1180896526240674864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8843767600131106}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 7
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!114 &3294085113262468109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,7 +57,33 @@ MonoBehaviour:
   m_PreferredHeight: 50
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
-  m_LayoutPriority: 3
+  m_LayoutPriority: 5
+--- !u!114 &1180896526240674864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8843767600131106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 7
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 1
+  m_ChildScaleHeight: 1
+  m_ReverseArrangement: 0
 --- !u!1 &220574668773472183
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,7 +143,7 @@ MonoBehaviour:
     m_Bottom: 15
   m_ChildAlignment: 4
   m_Spacing: 45
-  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
@@ -171,7 +171,7 @@ GameObject:
   - component: {fileID: 7360987687813686721}
   - component: {fileID: 6759270938519123073}
   m_Layer: 5
-  m_Name: NoMicUsedLabel
+  m_Name: InfoLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -218,9 +218,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: -1
+  m_MinHeight: 20
   m_PreferredWidth: -1
-  m_PreferredHeight: 15
+  m_PreferredHeight: 100
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -244,8 +244,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: The server connected properly and all online features (NPCs having personalities
-    using AI, optional Speech-to-Text) should work.
+  m_text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ligula leo,
+    facilisis nec ante sed, ornare pellentesque odio. Donec ut aliquam mauris. Morbi
+    non faucibus leo, in luctus quam. In non gravida velit. Integer faucibus pulvinar
+    nibh at tristique. Vestibulum justo elit, auctor at scelerisque sed, egestas
+    quis nulla. Suspendisse potenti. Nam id scelerisque justo. Aenean at odio sagittis,
+    consequat magna vel, pellentesque ante.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -272,7 +276,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48.8
+  m_fontSize: 33.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -323,11 +327,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8628380423857892251}
-  - component: {fileID: 4191053089952058759}
+  - component: {fileID: 7234152329103678362}
   - component: {fileID: 115756040060129979}
   - component: {fileID: 3830066694584193703}
   m_Layer: 5
-  m_Name: ServerConnectedOkModal
+  m_Name: InfoModal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -353,7 +357,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -600, y: -400}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &4191053089952058759
+--- !u!114 &7234152329103678362
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -362,13 +366,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5685311920624414179}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 084323c92bd43384c8a6d5cc6c02a33f, type: 3}
+  m_Script: {fileID: 11500000, guid: a9953f34a907c774cad970eda7a683ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noMicUsedLabel: {fileID: 6759270938519123073}
-  microphoneSelectionDropdown: {fileID: 0}
-  continueWithoutMicBtn: {fileID: 3202785373631231076}
-  selectMicBtn: {fileID: 0}
+  closeModalBtn: {fileID: 3202785373631231076}
+  titleLabel: {fileID: 1175896111792636185}
+  infoLabel: {fileID: 6759270938519123073}
 --- !u!222 &115756040060129979
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -493,7 +496,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: GOOD NEWS!
+  m_text: TITLE FOR THE InfoModal -  TYPICALLY WILL PROBABLY BE ALL CAPS, STILL LOOKS
+    NOT TERRIBLE 3 LINES TALL
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -520,12 +524,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 100
-  m_fontSizeBase: 100
+  m_fontSize: 60
+  m_fontSizeBase: 60
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 60
+  m_fontSizeMax: 100
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -576,11 +580,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4887715230764920066, guid: 5e2129e089c9f3b4f8a315122887db09, type: 3}
       propertyPath: m_MinWidth
-      value: -1
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 4887715230764920066, guid: 5e2129e089c9f3b4f8a315122887db09, type: 3}
       propertyPath: m_MinHeight
       value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 4887715230764920066, guid: 5e2129e089c9f3b4f8a315122887db09, type: 3}
+      propertyPath: m_LayoutPriority
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4887715230764920066, guid: 5e2129e089c9f3b4f8a315122887db09, type: 3}
       propertyPath: m_PreferredWidth
@@ -588,7 +596,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4887715230764920066, guid: 5e2129e089c9f3b4f8a315122887db09, type: 3}
       propertyPath: m_PreferredHeight
-      value: -1
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 5765553674581088689, guid: 5e2129e089c9f3b4f8a315122887db09, type: 3}
       propertyPath: m_text
@@ -624,7 +632,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8777980861509752156, guid: 5e2129e089c9f3b4f8a315122887db09, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 450
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8777980861509752156, guid: 5e2129e089c9f3b4f8a315122887db09, type: 3}
       propertyPath: m_SizeDelta.y
