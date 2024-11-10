@@ -11,7 +11,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] Button exitButton;
 
     [Header("Modals")]
-    [SerializeField] LobbyNotFoundModal lobbyNotFoundModal;
+    [SerializeField] LobbyNotFoundModal lobbyNotFoundModal; //is moved to ClientSideManager, can be removed from here
     [SerializeField] InfoModal howItWorksModal;
     [SerializeField] InfoModal creditsModal;
 
