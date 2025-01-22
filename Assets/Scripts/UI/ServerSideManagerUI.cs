@@ -10,31 +10,37 @@ public class ServerSideManagerUI : MonoBehaviour
     public static ServerSideManagerUI I => instance;
     static ServerSideManagerUI instance;
 
+    [Header("Buttons")]
     [SerializeField] private Button publicServerBtn;
     [SerializeField] private Button privateServerBtn;
     [SerializeField] private Button shutdownBtn;
-    
-    private string logHistory = "";
-    private string _logText = "";
-    private int subStringIndex = 0;
-    public string logText
-    {
-        get { return _logText; }
-        set {
-            _logText = value;
-            outputTMP.text = _logText.Substring(subStringIndex);
-            if (outputTMP.textInfo.meshInfo[0].vertices.Length > 64000) {
-                subStringIndex += (int)(outputTMP.text.Length * 0.5f);
-            }
-        }
-    }
 
+    [SerializeField] private Button managePromptsBtn;
+
+    [Header("Text outputs")]
     [SerializeField] private TMP_Text outputTMP;
     
     [SerializeField] private TMP_Text lobbyCodeLabel;
     [SerializeField] private TMP_Text lobbyCodeTMP;
 
     [SerializeField] private TMP_Text currentPlayersTMP;
+
+    private string logHistory = "";
+    private string _logText = "";
+    private int subStringIndex = 0;
+    public string logText
+    {
+        get { return _logText; }
+        set
+        {
+            _logText = value;
+            outputTMP.text = _logText.Substring(subStringIndex);
+            if (outputTMP.textInfo.meshInfo[0].vertices.Length > 64000)
+            {
+                subStringIndex += (int)(outputTMP.text.Length * 0.5f);
+            }
+        }
+    }
 
     private void Awake()
     {
@@ -82,6 +88,12 @@ public class ServerSideManagerUI : MonoBehaviour
             shutdownBtn.enabled = false;
             shutdownBtn.gameObject.SetActive(false);
         });
+
+        managePromptsBtn.onClick.AddListener(() => {
+            ServerManagePromptsModal.I.Display();
+        });
+
+        ServerManagePromptsModal.I.Hide();
     }
 
     public void WriteLineToOutput(string text, bool timestamp = true)

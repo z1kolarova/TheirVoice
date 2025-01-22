@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public static class Utilities
@@ -34,6 +35,7 @@ public static class Utilities
                 {
                     Directory.CreateDirectory(dirPath);
                 }
+                File.Create(filePath).Close();
             }
             return true;
         }
@@ -66,6 +68,9 @@ public static class Utilities
     }
 
     public static List<TEnum> ValueList<TEnum>() => Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();
+
+    public static string GetDisplayedTextOfDropdown(this TMP_Dropdown dropdown)
+        => dropdown.options[dropdown.value].text;
 }
 
 public struct Borders {

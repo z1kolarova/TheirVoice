@@ -830,7 +830,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cc7bfffc9fdf1c4f876fc2c24271b24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildServer: 0
+  buildServer: 1
 --- !u!4 &1319499591
 Transform:
   m_ObjectHideFlags: 0

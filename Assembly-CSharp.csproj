@@ -87,6 +87,7 @@
     <Compile Include="Assets\Scripts\NPCs\PasserbyAI.cs" />
     <Compile Include="Assets\ThirdParty\CalvinRien\SaveWav.cs" />
     <Compile Include="Assets\Scripts\GPTManagerServer.cs" />
+    <Compile Include="Assets\PromptEntry.cs" />
     <Compile Include="Assets\Scripts\ServerConnectivity\LoggingManager.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\ICompletionEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Embedding\EmbeddingRequest.cs" />
