@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class PromptEntry : MonoBehaviour
 {
     [SerializeField] Toggle active;
-    [SerializeField] TMP_Text title;
-    [SerializeField] TMP_Text convoEnding;
-    [SerializeField] TMP_Text availableInThisLanguage;
+    [SerializeField] TMP_Text promptNameLabel;
+    [SerializeField] TMP_Text endConvoAbilityLabel;
+    [SerializeField] TMP_Text availableInThisLanguageLabel;
     [SerializeField] Button editPromptBtn;
 
     private PromptSettingsLabel psl;
@@ -22,12 +22,19 @@ public class PromptEntry : MonoBehaviour
 
     }
 
+    public string GetName() => psl.Name;
+
     public void AssignLabel(PromptSettingsLabel promptSettingsLabel)
     {
         psl = promptSettingsLabel;
         active.isOn = psl.Active;
-        title.text = psl.Name;
-        convoEnding.text = psl.GeneralConvoEndingAbility.ToString();
-        availableInThisLanguage.text = promptSettingsLabel.AvailableInCurrentLanguage ? "Yes" : "No";
+        promptNameLabel.text = psl.Name;
+        endConvoAbilityLabel.text = psl.GeneralConvoEndingAbility.ToString();
+        SetLangAvailability(promptSettingsLabel.AvailableInCurrentLanguage);
+    }
+
+    public void SetLangAvailability(bool newAvailable)
+    {
+        availableInThisLanguageLabel.text = newAvailable ? "Yes" : "No";
     }
 }

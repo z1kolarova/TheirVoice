@@ -24,7 +24,7 @@ public static class Utilities
         }
     }
 
-    public static bool MakeSureFileExists(string dirPath, string fileName)
+    public static string EnsureFileExists(string dirPath, string fileName)
     {
         var filePath = Path.Combine(dirPath, fileName);
         try
@@ -37,12 +37,12 @@ public static class Utilities
                 }
                 File.Create(filePath).Close();
             }
-            return true;
+            return filePath;
         }
         catch (Exception e)
         {
             Debug.Log(e.ToString());
-            return false;
+            return "";
         }
     }
 

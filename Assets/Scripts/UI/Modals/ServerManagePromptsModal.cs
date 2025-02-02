@@ -52,12 +52,18 @@ public class ServerManagePromptsModal : JustCloseModal
     private void LoadMainPromptBank()
     {
         Debug.Log("LoadMainPromptBank is called");
-        var promptBankFilePath = Path.Combine(Constants.PromptsDir, Constants.PromptBankFileName);
+
+        var promptBankFilePath = Utilities.EnsureFileExists(Constants.PromptsDir, Constants.PromptBankFileName);
 
         using (StreamReader sr = new StreamReader(promptBankFilePath))
         using (JsonReader jr = new JsonTextReader(sr))
         {
             mainBankPrompts = Utilities.Serializer.Deserialize<List<PromptInMainBank>>(jr) ?? new List<PromptInMainBank>();
+        }
+
+        foreach (var prompt in mainBankPrompts)
+        {
+            CreateAndAddPromptEntry(prompt);
         }
     }
 
@@ -86,7 +92,7 @@ public class ServerManagePromptsModal : JustCloseModal
 
     private void LoadPromptsOfLanguage(string language)
     {
-        Debug.Log("LoadPromptsOfLanguage is called");
+        Debug.Log($"LoadPromptsOfLanguage {language} is called");
         //var dir = Path.Combine(Constants.PromptsDir, language);
         //var promptFiles = Directory.GetFiles(dir);
 
@@ -108,7 +114,7 @@ public class ServerManagePromptsModal : JustCloseModal
         //    CreateAndAddPromptEntry(psl);
         //}
 
-        EmptyDisplayedList();
+        //EmptyDisplayedList();
 
         if (!langPromptAvailabilityDic.ContainsKey((language, language)))
         {
@@ -116,7 +122,7 @@ public class ServerManagePromptsModal : JustCloseModal
             var langPromptBank = Path.Combine(langDir, Constants.PromptBankFileName);
             List<string> langAvailablePromptNames;
 
-            Utilities.MakeSureFileExists(langDir, Constants.PromptBankFileName);
+            Utilities.EnsureFileExists(langDir, Constants.PromptBankFileName);
             using (StreamReader sr = new StreamReader(langPromptBank))
             using (JsonReader jr = new JsonTextReader(sr))
             {
@@ -127,12 +133,16 @@ public class ServerManagePromptsModal : JustCloseModal
             {
                 langPromptAvailabilityDic.Add((language, name), true);
             }
+
+            langPromptAvailabilityDic.Add((language, language), true);
         }
 
-        foreach (var prompt in mainBankPrompts)
-        {
-            CreateAndAddPromptEntry(prompt, language);
-        }
+        UpdateLangAvailabilities(language);
+
+        //foreach (var prompt in mainBankPrompts)
+        //{
+        //    CreateAndAddPromptEntry(prompt, language);
+        //}
     }
 
     private void SaveAllPromptsOfLanguage(string language)
@@ -143,15 +153,23 @@ public class ServerManagePromptsModal : JustCloseModal
         //}
     }
 
-    private void CreateAndAddPromptEntry(PromptInMainBank mainPrompt, string language)
+    private void UpdateLangAvailabilities(string language)
+    {
+        foreach (var peGameObject in displayedPromptEntries)
+        {
+            var promptEntry = peGameObject.GetComponent<PromptEntry>();
+            var langAvailability = langPromptAvailabilityDic.TryGetValue((language, promptEntry.GetName()), out var isAvailable);
+            peGameObject.GetComponent<PromptEntry>().SetLangAvailability(langAvailability ? isAvailable : false);
+        }
+    }
+
+    private void CreateAndAddPromptEntry(PromptInMainBank mainPrompt)
     {
         var psl = new PromptSettingsLabel() { 
             Active = mainPrompt.Active,
             Name = mainPrompt.Name,
             GeneralConvoEndingAbility = mainPrompt.GeneralConvoEndingAbility,
-            AvailableInCurrentLanguage = langPromptAvailabilityDic.TryGetValue((language, mainPrompt.Name), out var isAvailable)
-                ? isAvailable
-                : false
+            AvailableInCurrentLanguage = false
         };
         GameObject newEntry = Instantiate(promptEntryTemplate);
         newEntry.GetComponent<PromptEntry>().AssignLabel(psl);
