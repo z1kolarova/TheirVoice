@@ -90,6 +90,7 @@ public class ServerSideManagerUI : MonoBehaviour
         });
 
         managePromptsBtn.onClick.AddListener(() => {
+            logText += "ManagePrompts button was clicked\n";
             ServerManagePromptsModal.I.Display();
         });
 

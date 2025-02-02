@@ -1796,7 +1796,7 @@ GameObject:
   - component: {fileID: 4802377352964311541}
   - component: {fileID: 1491092777309220531}
   m_Layer: 5
-  m_Name: PromptList
+  m_Name: PromptEntries
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2570,7 +2570,6 @@ GameObject:
   - component: {fileID: 5952201292919223167}
   - component: {fileID: 662330904403066519}
   - component: {fileID: 5444405062672525914}
-  - component: {fileID: 1771947311620664729}
   - component: {fileID: 7001707073221860698}
   m_Layer: 5
   m_Name: ManagePromptsModal
@@ -2637,19 +2636,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1771947311620664729
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8148052548684301881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ea9318027d6b0143ac0f7083837cef4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  closeModalBtn: {fileID: 8790380257310309039}
 --- !u!114 &7001707073221860698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2906,6 +2892,10 @@ PrefabInstance:
     - target: {fileID: 7085436981404332754, guid: b1fc979243936b3418313e7e3be5fe2b, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7295205555440540112, guid: b1fc979243936b3418313e7e3be5fe2b, type: 3}
+      propertyPath: m_fontSize
+      value: 28.95
       objectReference: {fileID: 0}
     - target: {fileID: 7336834552649237959, guid: b1fc979243936b3418313e7e3be5fe2b, type: 3}
       propertyPath: m_AnchorMax.y

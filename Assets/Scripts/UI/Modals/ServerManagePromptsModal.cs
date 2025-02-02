@@ -6,7 +6,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 
 public class ServerManagePromptsModal : JustCloseModal
 {
@@ -25,21 +24,40 @@ public class ServerManagePromptsModal : JustCloseModal
     private List<GameObject> displayedPromptEntries = new List<GameObject>();
     private Dictionary<(string, string), bool> langPromptAvailabilityDic = new Dictionary<(string, string), bool>();
 
+    private float PromptEntryHeight => promptEntryTemplate.GetComponent<RectTransform>()?.rect.height ?? 0;
+    private float PromptEntrySpacing => promptDisplayArea.GetComponent<VerticalLayoutGroup>()?.spacing ?? 0;
+    private float PromptDisplayAreaTopAndBottomPadding()
+    { 
+        var vlg = promptDisplayArea.GetComponent<VerticalLayoutGroup>();
+        if (vlg != null)
+	    {
+            return vlg.padding.top + vlg.padding.bottom;
+	    }
+        return 0;
+    } 
+
     private string CurrentlySelectedLanguage => languageSelectionDropdown?.options[languageSelectionDropdown.value].text;
 
     protected override void Awake()
     {
         instance = this;
 
-        addNewPromptBtn.onClick.AddListener(() => {
+        addNewPromptBtn.onClick.AddListener(() =>
+        {
             SaveAllPromptsOfLanguage(CurrentlySelectedLanguage);
         });
 
-        languageSelectionDropdown.onValueChanged.AddListener(newValue => {
+        languageSelectionDropdown.onValueChanged.AddListener(newValue =>
+        {
             var langName = languageSelectionDropdown.options[newValue].text;
             LoadPromptsOfLanguage(langName);
         });
 
+    }
+
+    protected override void Start()
+    {
+        base.Start();
         LoadMainPromptBank();
     }
 
@@ -51,8 +69,7 @@ public class ServerManagePromptsModal : JustCloseModal
 
     private void LoadMainPromptBank()
     {
-        Debug.Log("LoadMainPromptBank is called");
-
+        //ServerSideManagerUI.I.WriteLineToOutput("I am trying to load");
         var promptBankFilePath = Utilities.EnsureFileExists(Constants.PromptsDir, Constants.PromptBankFileName);
 
         using (StreamReader sr = new StreamReader(promptBankFilePath))
@@ -65,11 +82,19 @@ public class ServerManagePromptsModal : JustCloseModal
         {
             CreateAndAddPromptEntry(prompt);
         }
+
+        var parentRect = promptDisplayArea.GetComponent<RectTransform>();
+        if (parentRect != null)
+        {
+            var spacingHeight = displayedPromptEntries.Count > 1 ? PromptEntrySpacing * (displayedPromptEntries.Count - 1) : 0;
+            var settingHeight = PromptEntryHeight * displayedPromptEntries.Count + spacingHeight + PromptDisplayAreaTopAndBottomPadding();
+            parentRect.sizeDelta = new Vector2(parentRect.sizeDelta.x, settingHeight);
+        }
     }
 
     private void PopulateDropdownWithLanguages()
     {
-        Debug.Log("PopulateDropdownWithLanguages is called");
+        ServerSideManagerUI.I.WriteLineToOutput(nameof(PopulateDropdownWithLanguages));
         languageSelectionDropdown.options.Clear();
 
         var langs = Directory.GetDirectories(Constants.PromptsDir)
@@ -83,16 +108,13 @@ public class ServerManagePromptsModal : JustCloseModal
             languageSelectionDropdown.options.Add(new TMP_Dropdown.OptionData(lang));
         }
 
-        Debug.Log(langs.Contains("English"));
-        Debug.Log(langs.IndexOf("English"));
         languageSelectionDropdown.value = langs.Contains("English") ? langs.IndexOf("English") : 0;
         languageSelectionDropdown.RefreshShownValue();
-        Debug.Log("End of PopulateDropdownWithLanguages");
+        ServerSideManagerUI.I.WriteLineToOutput("reached end of" + nameof(PopulateDropdownWithLanguages));
     }
 
     private void LoadPromptsOfLanguage(string language)
     {
-        Debug.Log($"LoadPromptsOfLanguage {language} is called");
         //var dir = Path.Combine(Constants.PromptsDir, language);
         //var promptFiles = Directory.GetFiles(dir);
 
