@@ -94,7 +94,6 @@ public class ServerManagePromptsModal : JustCloseModal
 
     private void PopulateDropdownWithLanguages()
     {
-        ServerSideManagerUI.I.WriteLineToOutput(nameof(PopulateDropdownWithLanguages));
         languageSelectionDropdown.options.Clear();
 
         var langs = Directory.GetDirectories(Constants.PromptsDir)
@@ -110,7 +109,6 @@ public class ServerManagePromptsModal : JustCloseModal
 
         languageSelectionDropdown.value = langs.Contains("English") ? langs.IndexOf("English") : 0;
         languageSelectionDropdown.RefreshShownValue();
-        ServerSideManagerUI.I.WriteLineToOutput("reached end of" + nameof(PopulateDropdownWithLanguages));
     }
 
     private void LoadPromptsOfLanguage(string language)
