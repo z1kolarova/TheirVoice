@@ -47,7 +47,8 @@ public static class ConvoUtilsGPT
         {
             if (api == null)
             {
-                api = new OpenAIApi(Environment.GetEnvironmentVariable("OPENAI_API_KEY_THEIR_VOICE", EnvironmentVariableTarget.User));
+                ServerSideManagerUI.I.WriteLineToOutput("using API key " + APIKeyManager.I.SelectedKeyName);
+                api = new OpenAIApi(Environment.GetEnvironmentVariable(APIKeyManager.I.SelectedKeyName, EnvironmentVariableTarget.User));
             }
             return api;
         }

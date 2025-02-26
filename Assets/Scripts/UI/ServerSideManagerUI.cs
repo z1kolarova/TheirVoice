@@ -10,6 +10,9 @@ public class ServerSideManagerUI : MonoBehaviour
     public static ServerSideManagerUI I => instance;
     static ServerSideManagerUI instance;
 
+    [Header("API key selection")]
+    [SerializeField] private TMP_Dropdown keySelectionDropdown;
+
     [Header("Buttons")]
     [SerializeField] private Button publicServerBtn;
     [SerializeField] private Button privateServerBtn;
@@ -49,8 +52,14 @@ public class ServerSideManagerUI : MonoBehaviour
 
     public void Start()
     {
+        keySelectionDropdown.onValueChanged.AddListener(delegate
+        {
+            CommunicateKeySelection();
+        });
+
         publicServerBtn.onClick.AddListener(() => {
             logText += "Server button was clicked\n";
+            SetKeySelectionInteractable(false);
             ServerStartProcess(false);
             logText += "NetworkManager.Singleton.StartServer happened\n";
             publicServerBtn.enabled = false;
@@ -63,6 +72,7 @@ public class ServerSideManagerUI : MonoBehaviour
 
         privateServerBtn.onClick.AddListener(() => {
             logText += "Private server button was clicked\n";
+            SetKeySelectionInteractable(false);
             ServerStartProcess(true);
             logText += "NetworkManager.Singleton.ServerStartProcess happened\n";
             publicServerBtn.enabled = false;
@@ -87,6 +97,7 @@ public class ServerSideManagerUI : MonoBehaviour
             privateServerBtn.enabled = true;
             shutdownBtn.enabled = false;
             shutdownBtn.gameObject.SetActive(false);
+            SetKeySelectionInteractable(APIKeyManager.I.IsKeySelected);
         });
 
         managePromptsBtn.onClick.AddListener(() => {
@@ -95,6 +106,7 @@ public class ServerSideManagerUI : MonoBehaviour
         });
 
         ServerManagePromptsModal.I.Hide();
+        PopulateDropdownWithKeyOptions();
     }
 
     public void WriteLineToOutput(string text, bool timestamp = true)
@@ -132,6 +144,43 @@ public class ServerSideManagerUI : MonoBehaviour
             return;
 
         currentPlayersTMP.text = e.newTotalCount.ToString();
+    }
+    private void PopulateDropdownWithKeyOptions()
+    {
+        keySelectionDropdown.options.Clear();
+
+        var keyNameOptions = APIKeyManager.I.GetKeyNameOptions();
+
+        foreach (var keyName in keyNameOptions)
+        {
+            keySelectionDropdown.options.Add(new TMP_Dropdown.OptionData(keyName));
+        }
+
+        if (APIKeyManager.I.IsKeySelected)
+        {
+            keySelectionDropdown.value = keyNameOptions.IndexOf(APIKeyManager.I.SelectedKeyName);
+        }
+        else
+        {
+            keySelectionDropdown.value = 0;
+        }
+
+        keySelectionDropdown.RefreshShownValue();
+
+        if (keySelectionDropdown.options.Count == 0)
+        {
+            SetKeySelectionInteractable(false);
+        }
+    }
+
+    private void CommunicateKeySelection()
+    {
+        APIKeyManager.I.SetSelectedKeyName(keySelectionDropdown.options[keySelectionDropdown.value].text);
+    }
+
+    private void SetKeySelectionInteractable(bool interactable)
+    {
+        keySelectionDropdown.interactable = interactable;
     }
 
     private async void ServerStartProcess(bool privateLobby = false)
