@@ -13,21 +13,15 @@ public static class AudioUtilsWhisper
     private static string _model = "whisper-1";
     private static int MaxChunkSize = 4000;
 
-    private static int preparedChunkNumber = -1;
-    private static int totalChunkCount = -1;
     private static List<string> chunksToProcess = new List<string>();
     public static List<string> GetAllChunks() => chunksToProcess;
     private static FixedString4096Bytes chunkToProcess = "";
     public static FixedString4096Bytes GetTranscriptChunk() => chunkToProcess;
     private static bool hasNewChunkToProcess = false;
     public static bool HasNewChunkToProcess() => hasNewChunkToProcess;
+    
     private static bool needsNewChunkToProcess = false;
     public static bool NeedsNewChunkToProcess() => needsNewChunkToProcess;
-
-
-
-
-
 
     private static FixedString4096Bytes transcriptionRequestToProcess = "";
     public static FixedString4096Bytes GetTranscriptRequest() => transcriptionRequestToProcess;
@@ -63,10 +57,10 @@ public static class AudioUtilsWhisper
             Array.Copy(data, i, chunk, 0, length);
             chunksToProcess.Add(Convert.ToBase64String(chunk));
         }
-        totalChunkCount = chunksToProcess.Count;
         hasNewRequestToProcess = true;
         currentlyWaitingForServerResponse = true;
     }
+
     public static string DechunkDataToSerialisedRequest()
     {
         List<byte> data = new List<byte>();
@@ -79,37 +73,10 @@ public static class AudioUtilsWhisper
         return request;
     }
 
-    //public static void PrepareChunk()
-    //{
-    //    if (preparedChunkNumber + 1 < chunksToProcess.Count)
-    //    {
-    //        transcriptionRequestToProcess = chunksToProcess[++preparedChunkNumber];
-    //        hasNewChunkToProcess = true;
-    //    }
-    //}
-
     public static void GetTranscriptionThroughServer(byte[] data, string language = "en")
     {
         Debug.Log("Beginning of GetTranscriptionThroughServer");
-
         ChunkData(data);
-
-
-
-
-        //var request = GetSerialisedRequest(data, language);
-        //Debug.Log(request);
-        //if (request.HasValue)
-        //{
-        //    transcriptionRequestToProcess = request.Value;
-        //    hasNewRequestToProcess = true;
-        //    currentlyWaitingForServerResponse = true;
-        //}
-        //else
-        //{
-        //    ConversationUIChatGPT.I.SetUserInputText("Transcription failed");
-        //    currentlyWaitingForServerResponse = false;
-        //}
     }
 
     private static string GetSerialisedRequest(byte[] data, string language = "en")
@@ -128,8 +95,8 @@ public static class AudioUtilsWhisper
         }
     }
 
-    public static CreateAudioTranscriptionsRequest ProduceRequest(byte[] data, string language = "en") =>
-        new CreateAudioTranscriptionsRequest()
+    public static CreateAudioTranscriptionsRequest ProduceRequest(byte[] data, string language = "en")
+        => new CreateAudioTranscriptionsRequest()
         {
             FileData = new FileData() { Data = data, Name = _fileName },
             Model = _model,

@@ -273,11 +273,11 @@ public static class ConvoUtilsGPT
         currentlyWaitingForServerResponse = false;
     }
 
-    public static async Task<string> FakeGettingResponseTo(string msgText)
+    public static Task<string> FakeGettingResponseTo(string msgText)
     {
         if (string.IsNullOrWhiteSpace(msgText))
         {
-            return "";
+            return Task.FromResult("");
         }
 
         ChatMessage userMessage = new ChatMessage()
@@ -307,7 +307,7 @@ public static class ConvoUtilsGPT
         messages.Add(responseMessage);
 
         Debug.Log("A fake response was obtained");
-        return responseMessage.Content;
+        return Task.FromResult(responseMessage.Content);
     }
 
     public static bool WillEndConvo(this string msgText, out string msgToUse)

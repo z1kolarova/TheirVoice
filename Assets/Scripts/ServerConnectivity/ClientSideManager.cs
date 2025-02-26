@@ -37,7 +37,6 @@ public class ClientSideManager : MonoBehaviour
     [HideInInspector] public bool HasAllNeededConnections = false;
 
     public event EventHandler<LobbyEventArgs> OnLobbyUpdate;
-    public event EventHandler OnFinishedConnecting;
 
     private void Awake()
     {

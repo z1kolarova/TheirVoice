@@ -14,13 +14,13 @@ public class LobbyNotFoundModal : JustCloseModal
 
         retryPublicLobbyJoinBtn.onClick.AddListener(() =>
         {
-            ClientSideManager.I.JoinPublicLobbyAndRelay();
+            _ = ClientSideManager.I.JoinPublicLobbyAndRelay();
             gameObject.SetActive(false);
         });
 
         tryPrivateJoinBtn.onClick.AddListener(() =>
         {
-            ClientSideManager.I.JoinPrivateLobbyAndRelay(codeInputField.text.ToUpper());
+            _ = ClientSideManager.I.JoinPrivateLobbyAndRelay(codeInputField.text.ToUpper());
             gameObject.SetActive(false);
         });
 

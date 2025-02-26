@@ -25,9 +25,6 @@ public class ServerSideManager : MonoBehaviour
 
     private ILobbyEvents lobbyEvents;
 
-    public event EventHandler<PlayerCountEventArgs> OnPlayerCountChanged;
-    public event EventHandler<LobbyEventArgs> OnLobbyCreated;
-
     private int playersInLobbyCount = 0;
 
     private bool lobbyFreshlyCreated = false;

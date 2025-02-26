@@ -55,7 +55,6 @@ public class PauseMenu : MonoBehaviour
     }
     public void DisconnectEverythingAndReturnToMainMenu()
     {
-        //await ClientSideManager.I.DisconectFromEverything();
         //TODO: disposing of spawned entities?
         SceneManager.LoadScene(sceneName: "Scenes/MainMenu");
     }

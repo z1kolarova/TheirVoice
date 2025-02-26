@@ -1,6 +1,4 @@
 using Assets.ThirdParty.CalvinRien;
-using OpenAI;
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -29,8 +27,6 @@ public class AudioInputManager : MonoBehaviour
     private AudioClip trimmedClip;
     private int startedClipCounter;
     private bool isRecording;
-    private float time;
-    private OpenAIApi openAIApi = new OpenAIApi(Environment.GetEnvironmentVariable("OPENAI_API_KEY_THEIR_VOICE", EnvironmentVariableTarget.User));
 
     private void Start()
     {
