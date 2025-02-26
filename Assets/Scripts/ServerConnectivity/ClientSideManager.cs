@@ -362,6 +362,7 @@ public class ClientSideManager : MonoBehaviour
                         ClientSideManager.I.HasAllNeededConnections = true;
                         InfoModal.I.Display("All is looking good".ToUpper(),
                             "The connection to server has been successfully established, so all online features (NPCs having personalities using AI, optional Speech-to-Text) should work.");
+                        MainMenuManager.I.SetStartButtonInteractable(true);
                         return;
                     }
                 }

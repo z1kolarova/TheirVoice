@@ -3,7 +3,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenuManager : MonoBehaviour
-{
+{    
+    public static MainMenuManager I => instance;
+    static MainMenuManager instance;
+
     [Header("Buttons")]
     [SerializeField] Button startButton;
     [SerializeField] Button howItWorksButton;
@@ -11,9 +14,13 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] Button exitButton;
 
     [Header("Modals")]
-    [SerializeField] LobbyNotFoundModal lobbyNotFoundModal; //is moved to ClientSideManager, can be removed from here
     [SerializeField] JustCloseModal howItWorksModal;
     [SerializeField] JustCloseModal creditsModal;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     void Start()
     {
@@ -33,6 +40,8 @@ public class MainMenuManager : MonoBehaviour
         exitButton.onClick.AddListener(() => {
             ExitSimulator();
         });
+
+        SetStartButtonInteractable(ClientSideManager.I.HasAllNeededConnections);
     }
 
     private void LoadCubeOfTruth()
@@ -43,5 +52,10 @@ public class MainMenuManager : MonoBehaviour
     private async void ExitSimulator()
     {
         await ClientSideManager.I.DisconnectAndCloseApp();
+    }
+
+    public void SetStartButtonInteractable(bool interactable)
+    {
+        startButton.interactable = interactable;
     }
 }
