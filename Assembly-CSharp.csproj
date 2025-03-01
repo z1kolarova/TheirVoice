@@ -127,6 +127,7 @@
     <Compile Include="Assets\Scripts\UI\PersonalityInfoUI.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\CanvasInputs\UICanvasControllerInput.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabPlugin.cs" />
+    <Compile Include="Assets\Scripts\UI\Modals\ServerEditPromptModal.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabImporterWindow.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\File.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\AssetBrowser\SketchfabModelWindow.cs" />
@@ -153,8 +154,10 @@
     <Compile Include="Assets\Scripts\PlayerPrefabRpcs.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\Utilities\MobileDisableAutoSwitchControls.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\ApiResultBase.cs" />
+    <Compile Include="Assets\Scripts\PromptManager.cs" />
     <Compile Include="Assets\Scripts\UI\ServerSideManagerUI.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\Model.cs" />
+    <Compile Include="Assets\Structs\LangPrompt.cs" />
     <Compile Include="Assets\Scripts\Utilities\Utilities.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\JustCloseModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\APIAuthentication.cs" />

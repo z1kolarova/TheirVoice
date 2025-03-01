@@ -11,30 +11,52 @@ public class PromptEntry : MonoBehaviour
     [SerializeField] TMP_Text availableInThisLanguageLabel;
     [SerializeField] Button editPromptBtn;
 
-    private PromptSettingsLabel psl;
+    //private PromptSettingsLabel psl;
+    private PromptEntryContent pec;
 
     // Start is called before the first frame update
     void Start()
     {
         editPromptBtn.onClick.AddListener(() => {
-            Debug.Log("edit prompt button was clicked");
+            ServerEditPromptModal.I.Display();
+            ServerEditPromptModal.I.Populate(pec, ServerManagePromptsModal.I.CurrentlySelectedLanguage);
         });
-
     }
 
-    public string GetName() => psl.Name;
+    public string GetPromptName() => pec.Name;
 
-    public void AssignLabel(PromptSettingsLabel promptSettingsLabel)
+    public void AssignLabel(PromptEntryContent promptEntryContent)
     {
-        psl = promptSettingsLabel;
-        active.isOn = psl.Active;
-        promptNameLabel.text = psl.Name;
-        endConvoAbilityLabel.text = psl.GeneralConvoEndingAbility.ToString();
-        SetLangAvailability(promptSettingsLabel.AvailableInCurrentLanguage);
+        pec = promptEntryContent;
+        active.isOn = pec.Active;
+        promptNameLabel.text = pec.Name;
+        endConvoAbilityLabel.text = pec.EndConvoAbility.ToString();
+        UpdateAvailablity(pec.AvailableInCurrentLanguage);
     }
 
-    public void SetLangAvailability(bool newAvailable)
+    public void Populate(MinimalPromptSkeleton mps, string language)
     {
+        pec = new PromptEntryContent
+        {
+            Active = false,
+            Name = mps.Name,
+            EndConvoAbility = mps.EndConvoAbility,
+        };
+
+        active.isOn = pec.Active;
+        promptNameLabel.text = pec.Name;
+        endConvoAbilityLabel.text = pec.EndConvoAbility.ToString();
+        UpdateAvailablity(PromptManager.I.GetPromptAvailabilityInLang(mps.Name, language));
+    }
+
+    public void UpdatePromptAvailability(string language)
+    {
+        var newAvailability = PromptManager.I.GetPromptAvailabilityInLang(pec.Name, language);
+        UpdateAvailablity(newAvailability);
+    }
+    public void UpdateAvailablity(bool newAvailable)
+    {
+        pec.AvailableInCurrentLanguage = newAvailable;
         availableInThisLanguageLabel.text = newAvailable ? "Yes" : "No";
     }
 }

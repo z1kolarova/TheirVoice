@@ -106,6 +106,7 @@ public class ServerSideManagerUI : MonoBehaviour
         });
 
         ServerManagePromptsModal.I.Hide();
+        ServerEditPromptModal.I.Hide();
         PopulateDropdownWithKeyOptions();
     }
 

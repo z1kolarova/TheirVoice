@@ -71,6 +71,26 @@ public static class Utilities
 
     public static string GetDisplayedTextOfDropdown(this TMP_Dropdown dropdown)
         => dropdown.options[dropdown.value].text;
+
+    public static void PopulateDropdownAndPreselect(this TMP_Dropdown dropdown, List<string> options,
+        string selectedOptionText = "")
+    {
+        dropdown.options.Clear();
+
+        foreach (var option in options)
+        {
+            dropdown.options.Add(new TMP_Dropdown.OptionData(option));
+        }
+
+        dropdown.SelectLabelInDropdown(selectedOptionText);
+    }
+
+    public static void SelectLabelInDropdown(this TMP_Dropdown dropdown, string label)
+    {
+        var labels = dropdown.options.Select(x => x.text).ToList();
+        dropdown.value = labels.IndexOf(label);
+        dropdown.RefreshShownValue();
+    }
 }
 
 public struct Borders {
