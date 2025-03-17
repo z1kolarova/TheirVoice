@@ -61,6 +61,7 @@ public class ServerManagePromptsModal : JustCloseModal
     {
         base.Display();
         languageSelectionDropdown.PopulateDropdownAndPreselect(PromptManager.I.Languages, CurrentlySelectedLanguage);
+        ResizePromptDisplay();
     }
 
     private void LoadPromptEntries()
@@ -69,7 +70,10 @@ public class ServerManagePromptsModal : JustCloseModal
         {
             CreateAndAddPromptEntry(prompt);
         }
+    }
 
+    private void ResizePromptDisplay()
+    {
         var parentRect = promptDisplayArea.GetComponent<RectTransform>();
         if (parentRect != null)
         {

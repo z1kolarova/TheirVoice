@@ -1,7 +1,4 @@
 using Assets.Classes;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -62,7 +59,7 @@ public class ServerEditPromptModal : JustCloseModal
         var lbl = prompt.EndConvoAbility.ToString();
         endConvoAbilityDropdown.SelectLabelInDropdown(lbl);
         languageSelectionDropdown.SelectLabelInDropdown(language);
-        PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, language, out originalPromptText);
+        RefreshForLanguage(language);
     }
 
     private void RefreshForLanguage(string language)
@@ -72,5 +69,7 @@ public class ServerEditPromptModal : JustCloseModal
 
         if (!PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, currentlySelectedLanguage, out originalPromptText))
             originalPromptText = "";
+
+        promptTextInput.text = originalPromptText;
     }
 }

@@ -275,7 +275,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 3587433522671302266}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999492
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2322,10 +2322,10 @@ RectTransform:
   - {fileID: 7774227903167055433}
   m_Father: {fileID: 240675530113283086}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000289917}
-  m_SizeDelta: {x: -20, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -20, y: 656}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &7576380851200748141
 MonoBehaviour:
@@ -2633,7 +2633,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7871661489221367693, guid: b1fc979243936b3418313e7e3be5fe2b, type: 3}
       propertyPath: m_fontSize
-      value: 50.95
+      value: 53.7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2812,7 +2812,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3349261746674000301, guid: 0f7adf2be4beb884bbd0e95fa528fa9d, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3349261746674000301, guid: 0f7adf2be4beb884bbd0e95fa528fa9d, type: 3}
       propertyPath: m_AnchorMin.x
@@ -2820,11 +2820,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3349261746674000301, guid: 0f7adf2be4beb884bbd0e95fa528fa9d, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3349261746674000301, guid: 0f7adf2be4beb884bbd0e95fa528fa9d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 2337
       objectReference: {fileID: 0}
     - target: {fileID: 3349261746674000301, guid: 0f7adf2be4beb884bbd0e95fa528fa9d, type: 3}
       propertyPath: m_SizeDelta.y
@@ -2860,7 +2860,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3349261746674000301, guid: 0f7adf2be4beb884bbd0e95fa528fa9d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 1168.5
       objectReference: {fileID: 0}
     - target: {fileID: 3349261746674000301, guid: 0f7adf2be4beb884bbd0e95fa528fa9d, type: 3}
       propertyPath: m_AnchoredPosition.y
