@@ -114,8 +114,9 @@ public class PromptManager : MonoBehaviour
     #endregion Availability
     
     #region Fulltext
-    public bool TryGetPromptTextInLanguage(string fileName, string language, out string fullPromptText)
+    public bool TryGetPromptTextInLanguage(string promptName, string language, out string fullPromptText)
     {
+        var fileName = promptName + ".txt";
         fullPromptText = "";
 
         var key = new LangPrompt { Language = language, PromptFileName = fileName };
@@ -134,6 +135,7 @@ public class PromptManager : MonoBehaviour
     {
         fullPromptText = "";
         var filePath = Path.Combine(Constants.PromptsDir, language, fileName);
+
         if (File.Exists(filePath))
         {
             fullPromptText = File.ReadAllText(filePath);

@@ -11,6 +11,8 @@ public static class Utils
 {
     public static ConversationModes ConversationMode = ConversationModes.RealGPT;
 
+    #region Serialization
+
     private static JsonSerializer serializer;
     public static JsonSerializer Serializer
     {
@@ -23,6 +25,10 @@ public static class Utils
             return serializer;
         }
     }
+
+    #endregion Serialization
+
+    #region Files
 
     public static string EnsureFileExists(string dirPath, string fileName)
     {
@@ -46,6 +52,16 @@ public static class Utils
         }
     }
 
+    public static void WriteFileContents(string dirPath, string fileName, string fileContents)
+    {
+        var filePath = EnsureFileExists(dirPath, fileName);
+        File.WriteAllText(filePath, fileContents);
+    }
+
+    #endregion Files
+
+    #region Borders and vectors
+
     public static Borders Borders => new Borders(-25f, 25f, -25f, 25f);
     public static Vector2 ProjectInto(this Vector2 v2, Borders borders)
     {
@@ -67,7 +83,11 @@ public static class Utils
             && Mathf.Abs(v1.z - v2.z) <= precision;
     }
 
+    #endregion Borders and vectors
+
     public static List<TEnum> ValueList<TEnum>() => Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();
+
+    #region Dropdowns
 
     public static string GetDisplayedTextOfDropdown(this TMP_Dropdown dropdown)
         => dropdown.options[dropdown.value].text;
@@ -91,6 +111,9 @@ public static class Utils
         dropdown.value = labels.IndexOf(label);
         dropdown.RefreshShownValue();
     }
+
+    #endregion Dropdowns
+
     public static string YesOrNo(this bool isItYes) => isItYes ? "Yes" : "No";
 }
 

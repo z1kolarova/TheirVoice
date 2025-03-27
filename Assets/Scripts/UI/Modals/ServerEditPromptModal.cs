@@ -1,4 +1,5 @@
 using Assets.Classes;
+using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -10,6 +11,7 @@ public class ServerEditPromptModal : JustCloseModal
     static ServerEditPromptModal instance;
 
     [SerializeField] TMP_InputField fileNameInput;
+    [SerializeField] TMP_Text fileExistsLabel;
     [SerializeField] TMP_Dropdown endConvoAbilityDropdown;
     [SerializeField] TMP_Dropdown languageSelectionDropdown;
 
@@ -20,6 +22,7 @@ public class ServerEditPromptModal : JustCloseModal
     [SerializeField] private Button saveChangesBtn;
 
     private MinimalPromptSkeleton prompt;
+    private string originalFileName;
     private string originalPromptText;
     private string currentlySelectedLanguage = "English";
 
@@ -29,7 +32,7 @@ public class ServerEditPromptModal : JustCloseModal
 
         saveChangesBtn.onClick.AddListener(() =>
         {
-            //SaveChangesInPrompt();
+            SaveChangesInPrompt();
         });
 
         languageSelectionDropdown.onValueChanged.AddListener(newValue =>
@@ -55,7 +58,9 @@ public class ServerEditPromptModal : JustCloseModal
     public void Populate(MinimalPromptSkeleton promptSkeleton, string language)
     {
         prompt = promptSkeleton;
+        originalFileName = prompt.Name;
         fileNameInput.text = prompt.Name;
+
         var lbl = prompt.EndConvoAbility.ToString();
         endConvoAbilityDropdown.SelectLabelInDropdown(lbl);
         languageSelectionDropdown.SelectLabelInDropdown(language);
@@ -67,9 +72,27 @@ public class ServerEditPromptModal : JustCloseModal
         if (prompt == null)
             return;
 
-        if (!PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, currentlySelectedLanguage, out originalPromptText))
-            originalPromptText = "";
+        var fileExists = PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, language, out originalPromptText);
 
+        fileExistsLabel.text = fileExists.YesOrNo();
         promptTextInput.text = originalPromptText;
+    }
+
+    private void SaveChangesInPrompt()
+    {
+        if (fileNameInput.text != originalFileName)
+        {
+            //TODO: handle file name change
+            // - rename plaintext file of each language
+            // - rename it in all prompt bank files
+
+            // - or maybe just give them IDs...
+        }
+        if (fileNameInput.text == originalFileName && promptTextInput.text != originalPromptText)
+        {
+            var dirPath = Path.Combine(Constants.PromptsDir, currentlySelectedLanguage);
+            Utils.WriteFileContents(dirPath, fileNameInput.text + ".txt", promptTextInput.text);
+        }
+
     }
 }
