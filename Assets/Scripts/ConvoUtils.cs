@@ -15,7 +15,7 @@ public static class ConvoUtils
         using (StreamReader sr = new StreamReader(path))
         using (JsonReader jr = new JsonTextReader(sr))
         {
-            result = Utilities.Serializer.Deserialize<List<T>>(jr);
+            result = Utils.Serializer.Deserialize<List<T>>(jr);
         }
 
         return result;
@@ -25,7 +25,7 @@ public static class ConvoUtils
         using (StreamWriter sw = new StreamWriter(filePath))
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            Utilities.Serializer.Serialize(writer, convoBlocks);
+            Utils.Serializer.Serialize(writer, convoBlocks);
         }
     }
     public static void SerializeOneAsResponsePool<T>(T convoBlock, string filePath) where T : IConversationBlock
@@ -33,7 +33,7 @@ public static class ConvoUtils
         using (StreamWriter sw = new StreamWriter(filePath))
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            Utilities.Serializer.Serialize(writer, new T[] { convoBlock });
+            Utils.Serializer.Serialize(writer, new T[] { convoBlock });
         }
     }
 }

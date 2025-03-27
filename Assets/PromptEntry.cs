@@ -57,6 +57,6 @@ public class PromptEntry : MonoBehaviour
     public void UpdateAvailablity(bool newAvailable)
     {
         pec.AvailableInCurrentLanguage = newAvailable;
-        availableInThisLanguageLabel.text = newAvailable ? "Yes" : "No";
+        availableInThisLanguageLabel.text = newAvailable.YesOrNo();
     }
 }

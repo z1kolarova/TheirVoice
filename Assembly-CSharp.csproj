@@ -150,6 +150,7 @@
     <Compile Include="Assets\Scripts\SpeechBubbleManager.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionEndpoint.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\PauseMenu.cs" />
+    <Compile Include="Assets\Scripts\Utilities\Utils.cs" />
     <Compile Include="Assets\Scripts\ConversationNPC.cs" />
     <Compile Include="Assets\Scripts\PlayerPrefabRpcs.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\Utilities\MobileDisableAutoSwitchControls.cs" />
@@ -158,7 +159,6 @@
     <Compile Include="Assets\Scripts\UI\ServerSideManagerUI.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\Model.cs" />
     <Compile Include="Assets\Structs\LangPrompt.cs" />
-    <Compile Include="Assets\Scripts\Utilities\Utilities.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\JustCloseModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\APIAuthentication.cs" />
     <Compile Include="Assets\StarterAssets\FirstPersonController\Scripts\FirstPersonController.cs" />

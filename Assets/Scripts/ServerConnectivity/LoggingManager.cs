@@ -50,7 +50,7 @@ public class LoggingManager : MonoBehaviour
             return;
         }
 
-        Utilities.EnsureFileExists(logDirPath, currentLogFileName);
+        Utils.EnsureFileExists(logDirPath, currentLogFileName);
         File.WriteAllText(currentLogFilePath, ServerSideManagerUI.I.GetFullLogText());
     }
 }

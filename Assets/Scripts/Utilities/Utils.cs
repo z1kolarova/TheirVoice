@@ -7,7 +7,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 
-public static class Utilities
+public static class Utils
 {
     public static ConversationModes ConversationMode = ConversationModes.RealGPT;
 
@@ -91,6 +91,7 @@ public static class Utilities
         dropdown.value = labels.IndexOf(label);
         dropdown.RefreshShownValue();
     }
+    public static string YesOrNo(this bool isItYes) => isItYes ? "Yes" : "No";
 }
 
 public struct Borders {

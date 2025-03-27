@@ -29,7 +29,7 @@ public class ConversationUIChatGPT : MonoBehaviour
 
         sendBtn.onClick.AddListener(() => {
             AudioInputManager.I.EnsureRecordingStops();
-            StartCoroutine(GetAndDisplayResponse(Utilities.ConversationMode == ConversationModes.RealGPT));
+            StartCoroutine(GetAndDisplayResponse(Utils.ConversationMode == ConversationModes.RealGPT));
             inputField.Select();
         });
 
@@ -137,7 +137,7 @@ public class ConversationUIChatGPT : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Return) && sendBtn.isActiveAndEnabled)
         {
-            StartCoroutine(GetAndDisplayResponse(Utilities.ConversationMode == ConversationModes.RealGPT));
+            StartCoroutine(GetAndDisplayResponse(Utils.ConversationMode == ConversationModes.RealGPT));
         }
     }
 }

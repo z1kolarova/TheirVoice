@@ -161,7 +161,7 @@ public class PasserbyAI : MonoBehaviour
 
     private void ChooseNewTempDestination()
     {
-        var v2 = UnityEngine.Random.insideUnitCircle.ProjectInto(Utilities.Borders);
+        var v2 = UnityEngine.Random.insideUnitCircle.ProjectInto(Utils.Borders);
         tempDestination = new Vector3(v2.x, _rb.position.y, v2.y);
     }
 

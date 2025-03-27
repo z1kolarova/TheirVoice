@@ -63,7 +63,7 @@ public static partial class ConversationConsts
         var eats = new List<AnimalExploitationsInDiet>();
         var eatsFlags = AnimalExploitationsInDiet.None;
         var flagCount = 0;
-        foreach (var item in Utilities.ValueList<AnimalExploitationsInDiet>())
+        foreach (var item in Utils.ValueList<AnimalExploitationsInDiet>())
         {
             if (item == AnimalExploitationsInDiet.None)
             {

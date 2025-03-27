@@ -326,7 +326,7 @@ public static class ConvoUtilsGPT
         using (StreamReader sr = new StreamReader(path))
         using (JsonReader jr = new JsonTextReader(sr))
         {
-            result = Utilities.Serializer.Deserialize<List<PromptLabel>>(jr);
+            result = Utils.Serializer.Deserialize<List<PromptLabel>>(jr);
         }
 
         return result;
@@ -352,7 +352,7 @@ public static class ConvoUtilsGPT
         using (StreamWriter sw = new StreamWriter(filePath))
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            Utilities.Serializer.Serialize(writer, promptLabels);
+            Utils.Serializer.Serialize(writer, promptLabels);
         }
     }
     public static void SerializePrompt<T>(T prompt, string fileName)
@@ -361,7 +361,7 @@ public static class ConvoUtilsGPT
         using (StreamWriter sw = new StreamWriter(filePath))
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            Utilities.Serializer.Serialize(writer, prompt);
+            Utils.Serializer.Serialize(writer, prompt);
         }
     }
 }

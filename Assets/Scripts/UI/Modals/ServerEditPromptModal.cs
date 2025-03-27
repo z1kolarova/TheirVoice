@@ -43,7 +43,7 @@ public class ServerEditPromptModal : JustCloseModal
     {
         base.Start();
 
-        endConvoAbilityDropdown.PopulateDropdownAndPreselect(Utilities.ValueList<EndConvoAbility>().Select(x => x.ToString()).ToList());
+        endConvoAbilityDropdown.PopulateDropdownAndPreselect(Utils.ValueList<EndConvoAbility>().Select(x => x.ToString()).ToList());
         languageSelectionDropdown.PopulateDropdownAndPreselect(PromptManager.I.Languages, currentlySelectedLanguage);
     }
 

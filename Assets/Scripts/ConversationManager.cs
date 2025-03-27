@@ -46,7 +46,7 @@ public class ConversationManager : MonoBehaviour
         var promptToUse = passerbyWasWatching ? talkingTo.personality.Prompt : ConvoUtilsGPT.CreateNotInterestedPrompt();
 
         Debug.Log($"Has all needed connections: {ClientSideManager.I.HasAllNeededConnections}");
-        if (!ClientSideManager.I.HasAllNeededConnections || Utilities.ConversationMode == ConversationModes.Premade)
+        if (!ClientSideManager.I.HasAllNeededConnections || Utils.ConversationMode == ConversationModes.Premade)
         {
             ConversationUI.I.StartDialogue(npcInterested: passerbyWasWatching);
         }

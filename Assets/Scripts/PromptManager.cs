@@ -68,12 +68,12 @@ public class PromptManager : MonoBehaviour
     #region MainBank
     private void LoadMainPromptBank()
     {
-        var promptBankFilePath = Utilities.EnsureFileExists(Constants.PromptsDir, Constants.PromptBankFileName);
+        var promptBankFilePath = Utils.EnsureFileExists(Constants.PromptsDir, Constants.PromptBankFileName);
 
         using (StreamReader sr = new StreamReader(promptBankFilePath))
         using (JsonReader jr = new JsonTextReader(sr))
         {
-            mainBankPrompts = Utilities.Serializer.Deserialize<List<PromptInMainBank>>(jr) ?? new List<PromptInMainBank>();
+            mainBankPrompts = Utils.Serializer.Deserialize<List<PromptInMainBank>>(jr) ?? new List<PromptInMainBank>();
         }
     }
     #endregion MainBank
@@ -88,11 +88,11 @@ public class PromptManager : MonoBehaviour
             var langPromptBank = Path.Combine(langDir, Constants.PromptBankFileName);
             List<string> langAvailablePromptNames;
 
-            Utilities.EnsureFileExists(langDir, Constants.PromptBankFileName);
+            Utils.EnsureFileExists(langDir, Constants.PromptBankFileName);
             using (StreamReader sr = new StreamReader(langPromptBank))
             using (JsonReader jr = new JsonTextReader(sr))
             {
-                langAvailablePromptNames = Utilities.Serializer.Deserialize<List<string>>(jr) ?? new List<string>();
+                langAvailablePromptNames = Utils.Serializer.Deserialize<List<string>>(jr) ?? new List<string>();
             }
 
             foreach (var name in langAvailablePromptNames)
