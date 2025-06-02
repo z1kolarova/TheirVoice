@@ -1,4 +1,4 @@
-namespace Assets.Classes
+namespace Assets.Enums
 {
     public enum EndConvoAbility
     { 

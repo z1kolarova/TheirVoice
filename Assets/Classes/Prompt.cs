@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Enums;
+using System.Collections.Generic;
 
 namespace Assets.Classes
 {
     public class Prompt
     {
         public EndConvoAbility GeneralConvoEndingAbility { get; set; }
+        //public int? ChaceToEndConvoAutonomously {  get; set; } //null ... use default value
         public bool CanEndConvoThisTime { get; set; }
         public string Text { get; set; }
     }

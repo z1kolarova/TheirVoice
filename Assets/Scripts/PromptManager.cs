@@ -111,8 +111,21 @@ public class PromptManager : MonoBehaviour
         langPromptAvailabilityDic.TryGetValue(key, out bool available);
         return available;
     }
+
+    public void SetPromptAvailabilityInLang(string promptFileName, string language, bool newAvailability)
+    {
+        EnsureAvailabilitiesLoaded(language);
+        var key = new LangPrompt(language, promptFileName);
+        langPromptAvailabilityDic[key] = newAvailability;
+    }
+
+    public void SaveLangAvailabilitiesFile(string language)
+    {
+        langPromptAvailabilityDic.Where(de => de.Key.Language == language && de.Value)
+            .Select(de => de.Key.PromptFileName).ToList();
+    }
     #endregion Availability
-    
+
     #region Fulltext
     public bool TryGetPromptTextInLanguage(string promptName, string language, out string fullPromptText)
     {
@@ -129,6 +142,13 @@ public class PromptManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public bool DropPromptTextInLanguageFromCache(string promptName, string language)
+    {
+        var fileName = promptName + ".txt";
+        var key = new LangPrompt { Language = language, PromptFileName = fileName };
+        return langPromptCachedTextDic.Remove(key);
     }
 
     public bool TryReadPromptTextInLanguageFromFile(string fileName, string language, out string fullPromptText)

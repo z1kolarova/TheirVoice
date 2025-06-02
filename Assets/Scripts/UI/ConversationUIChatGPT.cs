@@ -1,4 +1,4 @@
-﻿using Assets.Classes;
+﻿using Assets.Enums;
 using Assets.Scripts;
 using System.Collections;
 using TMPro;

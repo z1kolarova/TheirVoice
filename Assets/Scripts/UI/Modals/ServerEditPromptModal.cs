@@ -1,4 +1,5 @@
 using Assets.Classes;
+using Assets.Enums;
 using System.IO;
 using System.Linq;
 using TMPro;
@@ -14,6 +15,7 @@ public class ServerEditPromptModal : JustCloseModal
     [SerializeField] TMP_Text fileExistsLabel;
     [SerializeField] TMP_Dropdown endConvoAbilityDropdown;
     [SerializeField] TMP_Dropdown languageSelectionDropdown;
+    [SerializeField] TMP_Dropdown promptReadyDropdown;
 
     [SerializeField] TMP_InputField promptTextInput;
 
@@ -46,8 +48,9 @@ public class ServerEditPromptModal : JustCloseModal
     {
         base.Start();
 
-        endConvoAbilityDropdown.PopulateDropdownAndPreselect(Utils.ValueList<EndConvoAbility>().Select(x => x.ToString()).ToList());
+        endConvoAbilityDropdown.PopulateDropdownAndPreselect(Utils.ValueList<EndConvoAbility>().Select(x => x.ToString()));
         languageSelectionDropdown.PopulateDropdownAndPreselect(PromptManager.I.Languages, currentlySelectedLanguage);
+        promptReadyDropdown.PopulateDropdownAndPreselect(Utils.NoYesSelectOptions);
     }
 
     public override void Display()
@@ -92,7 +95,8 @@ public class ServerEditPromptModal : JustCloseModal
         {
             var dirPath = Path.Combine(Constants.PromptsDir, currentlySelectedLanguage);
             Utils.WriteFileContents(dirPath, fileNameInput.text + ".txt", promptTextInput.text);
+            PromptManager.I.DropPromptTextInLanguageFromCache(prompt.Name, currentlySelectedLanguage);
+            fileExistsLabel.text = PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, currentlySelectedLanguage, out _).YesOrNo();
         }
-
     }
 }

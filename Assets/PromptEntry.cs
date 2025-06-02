@@ -31,7 +31,7 @@ public class PromptEntry : MonoBehaviour
         active.isOn = pec.Active;
         promptNameLabel.text = pec.Name;
         endConvoAbilityLabel.text = pec.EndConvoAbility.ToString();
-        UpdateAvailablity(pec.AvailableInCurrentLanguage);
+        SetDisplayedAvailablity(pec.AvailableInCurrentLanguage);
     }
 
     public void Populate(MinimalPromptSkeleton mps, string language)
@@ -46,15 +46,16 @@ public class PromptEntry : MonoBehaviour
         active.isOn = pec.Active;
         promptNameLabel.text = pec.Name;
         endConvoAbilityLabel.text = pec.EndConvoAbility.ToString();
-        UpdateAvailablity(PromptManager.I.GetPromptAvailabilityInLang(mps.Name, language));
+        SetDisplayedAvailablity(PromptManager.I.GetPromptAvailabilityInLang(mps.Name, language));
     }
 
     public void UpdatePromptAvailability(string language)
     {
         var newAvailability = PromptManager.I.GetPromptAvailabilityInLang(pec.Name, language);
-        UpdateAvailablity(newAvailability);
+        SetDisplayedAvailablity(newAvailability);
     }
-    public void UpdateAvailablity(bool newAvailable)
+
+    public void SetDisplayedAvailablity(bool newAvailable)
     {
         pec.AvailableInCurrentLanguage = newAvailable;
         availableInThisLanguageLabel.text = newAvailable.YesOrNo();

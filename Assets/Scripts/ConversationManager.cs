@@ -1,4 +1,5 @@
 using Assets.Classes;
+using Assets.Enums;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;

@@ -1,4 +1,6 @@
-﻿namespace Assets.Classes
+﻿using Assets.Enums;
+
+namespace Assets.Classes
 {
     public class PromptLabel
     {

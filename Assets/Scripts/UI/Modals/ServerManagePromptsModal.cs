@@ -46,7 +46,7 @@ public class ServerManagePromptsModal : JustCloseModal
         languageSelectionDropdown.onValueChanged.AddListener(newValue =>
         {
             CurrentlySelectedLanguage = languageSelectionDropdown.options[newValue].text;
-            UpdateLangAvailabilities(CurrentlySelectedLanguage);
+            GetLangAvailabilities(CurrentlySelectedLanguage);
         });
 
     }
@@ -83,7 +83,7 @@ public class ServerManagePromptsModal : JustCloseModal
         }
     }
 
-    private void UpdateLangAvailabilities(string language)
+    private void GetLangAvailabilities(string language)
     {
         foreach (var peGameObject in displayedPromptEntries)
         {

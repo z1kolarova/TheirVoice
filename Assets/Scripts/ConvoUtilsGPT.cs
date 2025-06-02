@@ -1,4 +1,5 @@
 ﻿using Assets.Classes;
+using Assets.Enums;
 using Newtonsoft.Json;
 using OpenAI;
 using System;

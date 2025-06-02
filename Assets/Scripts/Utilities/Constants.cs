@@ -1,4 +1,4 @@
-using Assets.Classes;
+using Assets.Enums;
 
 public static class Constants
 {

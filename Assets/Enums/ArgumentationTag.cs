@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assets.Classes
+namespace Assets.Enums
 {
     [Flags]
     public enum ArgumentationTag

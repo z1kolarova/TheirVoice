@@ -1,4 +1,4 @@
-using Assets.Classes;
+using Assets.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -78,12 +78,14 @@ public static class Utils
         => v3 == null || v3.Equals(Vector3.zero);
     public static bool IsApproximately(this Vector3 v1, Vector3 v2, float precision = 2f, bool ignoreY = true)
     {
-        return Mathf.Abs(v1.x - v2.x) <= precision 
-            && (ignoreY || Mathf.Abs(v1.y - v2.y) <= precision) 
+        return Mathf.Abs(v1.x - v2.x) <= precision
+            && (ignoreY || Mathf.Abs(v1.y - v2.y) <= precision)
             && Mathf.Abs(v1.z - v2.z) <= precision;
     }
 
     #endregion Borders and vectors
+
+    public static IEnumerable<string> NoYesSelectOptions => new string[] {"No", "Yes"};
 
     public static List<TEnum> ValueList<TEnum>() => Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();
 
@@ -92,7 +94,7 @@ public static class Utils
     public static string GetDisplayedTextOfDropdown(this TMP_Dropdown dropdown)
         => dropdown.options[dropdown.value].text;
 
-    public static void PopulateDropdownAndPreselect(this TMP_Dropdown dropdown, List<string> options,
+    public static void PopulateDropdownAndPreselect(this TMP_Dropdown dropdown, IEnumerable<string> options,
         string selectedOptionText = "")
     {
         dropdown.options.Clear();
