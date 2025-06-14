@@ -130,6 +130,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\File.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\AssetBrowser\SketchfabModelWindow.cs" />
     <Compile Include="Assets\Scripts\Utilities\RngUtils.cs" />
+    <Compile Include="Assets\Scripts\SQLite.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionResult.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\ServerManagePromptsModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Usage.cs" />
