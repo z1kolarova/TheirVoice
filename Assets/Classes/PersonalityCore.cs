@@ -4,7 +4,7 @@ using System;
 public class PersonalityCore
 {
     public PromptLabel PromptLabel;
-    public Prompt Prompt;
+    public OriginalPrompt Prompt;
     public Traits Traits;
     public AnimalExploitationsInDiet Diet;
 

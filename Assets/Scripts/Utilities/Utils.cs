@@ -30,6 +30,14 @@ public static class Utils
 
     #region Files
 
+    public static void EnsureDirectoryExists(string dirPath)
+    {
+        if (!Directory.Exists(dirPath))
+        {
+            Directory.CreateDirectory(dirPath);
+        }
+    }
+
     public static string EnsureFileExists(string dirPath, string fileName)
     {
         var filePath = Path.Combine(dirPath, fileName);
@@ -37,10 +45,7 @@ public static class Utils
         {
             if (!File.Exists(filePath))
             {
-                if (!Directory.Exists(dirPath))
-                {
-                    Directory.CreateDirectory(dirPath);
-                }
+                EnsureDirectoryExists(dirPath);
                 File.Create(filePath).Close();
             }
             return filePath;

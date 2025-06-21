@@ -68,7 +68,7 @@ public static class ConvoUtilsGPT
         }
     }
 
-    public static Prompt CreatePrompt(string promptText, EndConvoAbility endConvoAbility, int chanceIfSometimes = 50)
+    public static OriginalPrompt CreatePrompt(string promptText, EndConvoAbility endConvoAbility, int chanceIfSometimes = 50)
     {
         bool willBeAbleToEndConvo = false;
         switch (endConvoAbility)
@@ -88,14 +88,14 @@ public static class ConvoUtilsGPT
                 break;
         }
 
-        return new Prompt { 
+        return new OriginalPrompt { 
             GeneralConvoEndingAbility = endConvoAbility,
             CanEndConvoThisTime = willBeAbleToEndConvo,
             Text = promptText
         };
     }
 
-    public static Prompt CreateNotInterestedPrompt()
+    public static OriginalPrompt CreateNotInterestedPrompt()
     {
         var text = GetPromptTextByLabel(notInterestedPromptLabel);
         return CreatePrompt(text, notInterestedPromptLabel.EndConvoAbility);

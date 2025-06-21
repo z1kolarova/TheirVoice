@@ -95,6 +95,7 @@
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabLogger.cs" />
     <Compile Include="Assets\Classes\PromptLabel.cs" />
     <Compile Include="Assets\Scripts\Utilities\Constants.cs" />
+    <Compile Include="Assets\Scripts\SQLite\DBService.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\ImageSize.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\VirtualInputs\UIVirtualJoystick.cs" />
     <Compile Include="Assets\Scripts\NPCs\PasserbyModelManager.cs" />
@@ -109,9 +110,11 @@
     <Compile Include="Assets\StarterAssets\FirstPersonController\Scripts\BasicRigidBodyPush.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\ImageResponseFormat.cs" />
+    <Compile Include="Assets\Scripts\SQLite\Prompt.cs" />
     <Compile Include="Assets\Scripts\AudioInputManager.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatRequest.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\IFilesEndpoint.cs" />
+    <Compile Include="Assets\Scripts\SQLite\PromptLoc.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\EndpointBase.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\Resizer.cs" />
     <Compile Include="Assets\Enums\EndConvoAbility.cs" />
@@ -131,6 +134,7 @@
     <Compile Include="Assets\Sketchfab For Unity\Scripts\AssetBrowser\SketchfabModelWindow.cs" />
     <Compile Include="Assets\Scripts\Utilities\RngUtils.cs" />
     <Compile Include="Assets\Scripts\SQLite.cs" />
+    <Compile Include="Assets\Classes\OriginalPrompt.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionResult.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\ServerManagePromptsModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Usage.cs" />
@@ -143,7 +147,6 @@
     <Compile Include="Assets\Scripts\AudioUtilsWhisper.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\IModelsEndpoint.cs" />
     <Compile Include="Assets\Enums\ArgumentationTag.cs" />
-    <Compile Include="Assets\Classes\Prompt.cs" />
     <Compile Include="Assets\Scripts\UI\ConversationUIChatGPT.cs" />
     <Compile Include="Assets\Scripts\NPCs\AISensor.cs" />
     <Compile Include="Assets\Enums\ConversationModes.cs" />
@@ -151,6 +154,7 @@
     <Compile Include="Assets\Scripts\UI\MainMenuManager.cs" />
     <Compile Include="Assets\Scripts\SpeechBubbleManager.cs" />
     <Compile Include="Assets\Enums\PasserbyStates.cs" />
+    <Compile Include="Assets\Scripts\SQLite\Meta.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionEndpoint.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\Utilities\Utils.cs" />
@@ -164,6 +168,7 @@
     <Compile Include="Assets\Structs\LangPrompt.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\JustCloseModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\APIAuthentication.cs" />
+    <Compile Include="Assets\Scripts\SQLite\Language.cs" />
     <Compile Include="Assets\StarterAssets\FirstPersonController\Scripts\FirstPersonController.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatMessage.cs" />
     <Compile Include="Assets\StarterAssets\InputSystem\StarterAssetsInputs.cs" />

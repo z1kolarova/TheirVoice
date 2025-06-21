@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Assets.Classes
 {
-    public class Prompt
+    public class OriginalPrompt
     {
         public EndConvoAbility GeneralConvoEndingAbility { get; set; }
         //public int? ChaceToEndConvoAutonomously {  get; set; } //null ... use default value

@@ -2,6 +2,8 @@ using Assets.Enums;
 
 public static class Constants
 {
+    public static string DBName = "TheirVoiceServer.db";
+    public static string DBBackUpDir = "./Assets/Prompts/";
     public static string PromptsDir = "./Assets/Prompts/";
     public static string PromptBankFileName = "_PromptBank.json";
     public static int USER_MSG_CHAR_LIMIT = 500;

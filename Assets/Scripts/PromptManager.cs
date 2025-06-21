@@ -45,6 +45,7 @@ public class PromptManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            InitDB();
         }
         else
         {
@@ -164,4 +165,18 @@ public class PromptManager : MonoBehaviour
         return false;
     }
     #endregion Fulltext
+
+    #region SQLite
+    private void InitDB()
+    {
+        Debug.Log("začátek initDB");
+
+        var prompts = DBService.I.Prompts.ToList();
+        foreach (var prompt in prompts)
+        {
+            Debug.Log(prompt);
+        }
+    }
+
+    #endregion SQLite
 }
