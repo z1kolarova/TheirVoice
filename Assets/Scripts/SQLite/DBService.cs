@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -58,9 +59,43 @@ public class DBService
         //    Debug.Log("Migration 3 complete.");
         //}
     };
-
-    public IQueryable<Prompt> Prompts => _connection.Table<Prompt>().AsQueryable();
     
+    #region table accesses
+
+    public IQueryable<Language> Languages => _connection.Table<Language>().AsQueryable();
+    public IQueryable<Prompt> Prompts => _connection.Table<Prompt>().AsQueryable();
+
+    /// <summary>
+    /// Attempts to retrieve an object with the given primary key from the table
+    /// associated with the specified type. Use of this method requires that
+    /// the given type have a designated PrimaryKey (using the PrimaryKeyAttribute).
+    /// </summary>
+    /// <param name="pk">
+    /// The primary key.
+    /// </param>
+    /// <returns>
+    /// The object with the given primary key or null
+    /// if the object is not found.
+    /// </returns>
+    public T Find<T, U>(U pk) where T : new()
+        => _connection.Find<T>(pk);
+
+    /// <summary>
+    /// Attempts to retrieve the first object that matches the predicate from the table
+    /// associated with the specified type. 
+    /// </summary>
+    /// <param name="predicate">
+    /// A predicate for which object to find.
+    /// </param>
+    /// <returns>
+    /// The object that matches the given predicate or null
+    /// if the object is not found.
+    /// </returns>
+    public T Find<T>(Expression<Func<T, bool>> predicate) where T : new()
+        => _connection.Find<T>(predicate);
+
+    #endregion table accesses
+
     #region ctor
     public DBService(string databaseName)
     {
@@ -237,4 +272,35 @@ public class DBService
     }
 
     #endregion backups
+
+    #region conversion of old prompts
+
+    public void InsertMainPromptBank()
+    {
+        Debug.Log("start of insert");
+        var engLangId = _connection.Find<Language>(l => l.Name == "English").Id;
+        foreach (var item in PromptManager.I.MainBankPrompts)
+        {
+            Debug.Log(item.Name);
+            Prompt prompt = new Prompt() { 
+                Name = item.Name,
+                EndConvoAbility = item.EndConvoAbility,
+                ActiveIfAvailable = false,
+            };
+            _connection.Insert(prompt);
+            
+            var x = PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, "English", out string promptText);
+            Debug.Log(x.ToString() + promptText);
+
+            PromptLoc promptLoc = new PromptLoc() {
+                PromptId = prompt.Id,
+                LangId = engLangId,
+                Available = true,
+                Text = promptText
+            };
+            _connection.Insert(promptLoc);
+        }
+    }
+
+    #endregion conversion of old prompts
 }
