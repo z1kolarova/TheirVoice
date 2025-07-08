@@ -175,8 +175,27 @@ public class DBService
 
     public string ChooseBackUpDirectoryForDB()
     {
-        string path = EditorUtility.OpenFolderPanel("Select directory for backing up DB", "", "");
+        var defaultPathObj = _connection.Find<Meta>(Meta.DBBackUpDirKey);
+        var defaultPath = Directory.Exists(defaultPathObj?.Value) 
+            ? defaultPathObj?.Value 
+            : "";
+
+        string path = EditorUtility.OpenFolderPanel("Select directory for backing up DB", defaultPath , "");
         // currently if the dialogue is closed without selecting, I back up the DB anyway just in the default location
+        if (!string.IsNullOrWhiteSpace(path) && path != defaultPath)
+        {
+            if (defaultPathObj == null)
+            {
+                defaultPathObj = new Meta() { Key = Meta.DBBackUpDirKey, Value = path };
+                _connection.Insert(defaultPathObj);
+            }
+            else
+            {
+                defaultPathObj.Value = path;
+                _connection.Update(defaultPathObj);
+            }
+        }
+
         return string.IsNullOrWhiteSpace(path)
             ? Constants.DBBackUpDir 
             : path;
