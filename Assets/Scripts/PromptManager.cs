@@ -11,30 +11,45 @@ public class PromptManager : MonoBehaviour
     public static PromptManager I => instance;
     static PromptManager instance;
 
-    private List<string> languages = null;
-    public List<string> Languages
+    private Dictionary<string, int> promptIdDic = null;
+    public Dictionary<string, int> PromptIdDic
     {
         get
         {
-            if (languages == null)
+            if (promptIdDic == null)
             {
-                LoadLanguages();
+                promptIdDic = DBService.I.Prompts.ToDictionary(p => p.Name, p => p.Id);
             }
-            return languages;
+            return promptIdDic;
         }
     }
 
-    private List<PromptInMainBank> mainBankPrompts = null;
-    public List<PromptInMainBank> MainBankPrompts
-    { 
-        get {
-            if (mainBankPrompts == null)
+    private List<string> promptNames = null;
+    public List<string> PromptNames
+    {
+        get
+        {
+            if (promptNames == null)
             {
-                LoadMainPromptBank();
+                promptNames = PromptIdDic.Keys.ToList();
+                promptNames.Sort();
             }
-            return mainBankPrompts;
-        } 
+            return promptNames;
+        }
     }
+
+    //private List<PromptInMainBank> mainBankPrompts = null;
+    //public List<PromptInMainBank> MainBankPrompts
+    //{ 
+    //    get 
+    //    {
+    //        if (mainBankPrompts == null)
+    //        {
+    //            LoadMainPromptBank();
+    //        }
+    //        return mainBankPrompts;
+    //    } 
+    //}
 
     private Dictionary<LangPrompt, bool> langPromptAvailabilityDic = new Dictionary<LangPrompt, bool>();
     private Dictionary<LangPrompt, string> langPromptCachedTextDic = new Dictionary<LangPrompt, string>();
@@ -53,93 +68,125 @@ public class PromptManager : MonoBehaviour
         }
     }
 
-    #region Languages
-    private void LoadLanguages()
-    {
-        languages = Directory.GetDirectories(Constants.PromptsDir)
-            .Select(d => Path.GetFileName(d))
-            .ToList();
-
-        languages.Remove("Plaintext");
-        languages.Sort();
-    }
-
-    #endregion Languages
-
     #region MainBank
-    private void LoadMainPromptBank()
-    {
-        var promptBankFilePath = Utils.EnsureFileExists(Constants.PromptsDir, Constants.PromptBankFileName);
+    //private void LoadMainPromptBank()
+    //{
+    //    var promptBankFilePath = Utils.EnsureFileExists(Constants.PromptsDir, Constants.PromptBankFileName);
 
-        using (StreamReader sr = new StreamReader(promptBankFilePath))
-        using (JsonReader jr = new JsonTextReader(sr))
-        {
-            mainBankPrompts = Utils.Serializer.Deserialize<List<PromptInMainBank>>(jr) ?? new List<PromptInMainBank>();
-        }
-    }
+    //    using (StreamReader sr = new StreamReader(promptBankFilePath))
+    //    using (JsonReader jr = new JsonTextReader(sr))
+    //    {
+    //        mainBankPrompts = Utils.Serializer.Deserialize<List<PromptInMainBank>>(jr) ?? new List<PromptInMainBank>();
+    //    }
+    //}
     #endregion MainBank
 
     #region Availability
-    public void EnsureAvailabilitiesLoaded(string language)
+    //public void EnsureAvailabilitiesLoaded(string language)
+    //{
+    //    var langKey = new LangPrompt { Language = language, PromptFileName = language };
+    //    if (!langPromptAvailabilityDic.ContainsKey(langKey))
+    //    {
+    //        var langDir = Path.Combine(Constants.PromptsDir, language);
+    //        var langPromptBank = Path.Combine(langDir, Constants.PromptBankFileName);
+    //        List<string> langAvailablePromptNames;
+
+    //        Utils.EnsureFileExists(langDir, Constants.PromptBankFileName);
+    //        using (StreamReader sr = new StreamReader(langPromptBank))
+    //        using (JsonReader jr = new JsonTextReader(sr))
+    //        {
+    //            langAvailablePromptNames = Utils.Serializer.Deserialize<List<string>>(jr) ?? new List<string>();
+    //        }
+
+    //        foreach (var name in langAvailablePromptNames)
+    //        {
+    //            langPromptAvailabilityDic.Add(new LangPrompt { Language = language, PromptFileName = name }, true);
+    //        }
+
+    //        langPromptAvailabilityDic.Add(langKey, true);
+    //    }
+    //}
+
+    public bool EnsureAvailabilitiesLoaded(int langId)
     {
-        var langKey = new LangPrompt { Language = language, PromptFileName = language };
-        if (!langPromptAvailabilityDic.ContainsKey(langKey))
+        var langKey = new LangPrompt { LangId = langId, PromptId = 0 };
+        var alreadyLoaded = langPromptAvailabilityDic.ContainsKey(langKey);
+        if (!alreadyLoaded)
         {
-            var langDir = Path.Combine(Constants.PromptsDir, language);
-            var langPromptBank = Path.Combine(langDir, Constants.PromptBankFileName);
-            List<string> langAvailablePromptNames;
+            var availablePromptLocs = DBService.I.PromptLocs
+                .Where(pl => pl.LangId == langId)
+                .ToList();
 
-            Utils.EnsureFileExists(langDir, Constants.PromptBankFileName);
-            using (StreamReader sr = new StreamReader(langPromptBank))
-            using (JsonReader jr = new JsonTextReader(sr))
+            foreach (var promptLoc in availablePromptLocs)
             {
-                langAvailablePromptNames = Utils.Serializer.Deserialize<List<string>>(jr) ?? new List<string>();
-            }
-
-            foreach (var name in langAvailablePromptNames)
-            {
-                langPromptAvailabilityDic.Add(new LangPrompt { Language = language, PromptFileName = name }, true);
+                langPromptAvailabilityDic.Add(new LangPrompt { 
+                    LangId = langId, 
+                    PromptId = promptLoc.PromptId 
+                }, true);
             }
 
             langPromptAvailabilityDic.Add(langKey, true);
         }
+
+        return alreadyLoaded;
     }
 
-    public bool GetPromptAvailabilityInLang(string promptFileName, string language)
+    public bool GetPromptAvailabilityInLang(string promptName, string language)
     {
-        EnsureAvailabilitiesLoaded(language);
-        var key = new LangPrompt(language, promptFileName);
+        var langId = LanguageManager.I.LangIdDic[language];
+        EnsureAvailabilitiesLoaded(langId);
+        var key = new LangPrompt(langId, PromptManager.I.PromptIdDic[promptName]);
         langPromptAvailabilityDic.TryGetValue(key, out bool available);
         return available;
     }
 
-    public void SetPromptAvailabilityInLang(string promptFileName, string language, bool newAvailability)
+    public void SetPromptAvailabilityInLang(PromptLoc promptLoc, bool newAvailability)
     {
-        EnsureAvailabilitiesLoaded(language);
-        var key = new LangPrompt(language, promptFileName);
-        langPromptAvailabilityDic[key] = newAvailability;
+        promptLoc.Available = newAvailability;
+        DBService.I.Update(promptLoc);
+
+        if (EnsureAvailabilitiesLoaded(promptLoc.LangId))
+        {
+            var key = LangPrompt.FromPromptLoc(promptLoc);
+            langPromptAvailabilityDic[key] = newAvailability;
+        }
     }
 
-    public void SaveLangAvailabilitiesFile(string language)
-    {
-        langPromptAvailabilityDic.Where(de => de.Key.Language == language && de.Value)
-            .Select(de => de.Key.PromptFileName).ToList();
-    }
+    //public void SaveLangAvailabilitiesFile(string language)
+    //{
+    //    langPromptAvailabilityDic.Where(de => de.Key.Language == language && de.Value)
+    //        .Select(de => de.Key.PromptName).ToList();
+    //}
     #endregion Availability
 
     #region Fulltext
+    //public bool TryGetPromptTextInLanguage(string promptName, string language, out string fullPromptText)
+    //{
+    //    var fileName = promptName + ".txt";
+    //    fullPromptText = "";
+
+    //    var key = new LangPrompt { Language = language, PromptFileName = fileName };
+    //    if (langPromptCachedTextDic.TryGetValue(key, out fullPromptText))
+    //        return true;
+
+    //    if (TryReadPromptTextInLanguageFromFile(fileName, language, out fullPromptText))
+    //    {
+    //        langPromptCachedTextDic.Add(key, fullPromptText);
+    //        return true;
+    //    }
+    //    return false;
+    //}
     public bool TryGetPromptTextInLanguage(string promptName, string language, out string fullPromptText)
     {
-        var fileName = promptName + ".txt";
         fullPromptText = "";
 
-        var key = new LangPrompt { Language = language, PromptFileName = fileName };
+        var key = new LangPrompt { LangId = LanguageManager.I.LangIdDic[language], PromptId = PromptManager.I.PromptIdDic[promptName] };
         if (langPromptCachedTextDic.TryGetValue(key, out fullPromptText))
             return true;
 
-        if (TryReadPromptTextInLanguageFromFile(fileName, language, out fullPromptText))
+        if (TryGetPromptLocFromDB(promptName, language, out PromptLoc promptLoc))
         {
-            langPromptCachedTextDic.Add(key, fullPromptText);
+            langPromptCachedTextDic.Add(key, promptLoc.Text);
             return true;
         }
         return false;
@@ -147,22 +194,30 @@ public class PromptManager : MonoBehaviour
 
     public bool DropPromptTextInLanguageFromCache(string promptName, string language)
     {
-        var fileName = promptName + ".txt";
-        var key = new LangPrompt { Language = language, PromptFileName = fileName };
+        var key = new LangPrompt { LangId = LanguageManager.I.LangIdDic[language], PromptId = PromptManager.I.PromptIdDic[promptName] };
         return langPromptCachedTextDic.Remove(key);
     }
 
-    public bool TryReadPromptTextInLanguageFromFile(string fileName, string language, out string fullPromptText)
-    {
-        fullPromptText = "";
-        var filePath = Path.Combine(Constants.PromptsDir, language, fileName);
+    //public bool TryReadPromptTextInLanguageFromFile(string fileName, string language, out string fullPromptText)
+    //{
+    //    fullPromptText = "";
+    //    var filePath = Path.Combine(Constants.PromptsDir, language, fileName);
 
-        if (File.Exists(filePath))
-        {
-            fullPromptText = File.ReadAllText(filePath);
-            return true;
-        }
-        return false;
+    //    if (File.Exists(filePath))
+    //    {
+    //        fullPromptText = File.ReadAllText(filePath);
+    //        return true;
+    //    }
+    //    return false;
+    //}
+
+    public bool TryGetPromptLocFromDB(string promptName, string language, out PromptLoc promptLoc)
+    {
+        promptLoc = DBService.I.PromptLocs.FirstOrDefault(pl 
+            => pl.PromptId == PromptManager.I.PromptIdDic[promptName] 
+            && pl.LangId == LanguageManager.I.LangIdDic[language]);
+
+        return promptLoc != null;
     }
     #endregion Fulltext
 

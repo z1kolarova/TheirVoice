@@ -24,7 +24,7 @@ public class ServerEditPromptModal : JustCloseModal
     [SerializeField] private Button saveChangesBtn;
 
     private MinimalPromptSkeleton prompt;
-    private string originalFileName;
+    private string originalPromptName;
     private string originalPromptText;
     private string currentlySelectedLanguage = "English";
 
@@ -49,7 +49,7 @@ public class ServerEditPromptModal : JustCloseModal
         base.Start();
 
         endConvoAbilityDropdown.PopulateDropdownAndPreselect(Utils.ValueList<EndConvoAbility>().Select(x => x.ToString()));
-        languageSelectionDropdown.PopulateDropdownAndPreselect(PromptManager.I.Languages, currentlySelectedLanguage);
+        languageSelectionDropdown.PopulateDropdownAndPreselect(LanguageManager.I.LanguageNames, currentlySelectedLanguage);
         promptReadyDropdown.PopulateDropdownAndPreselect(Utils.NoYesSelectOptions);
     }
 
@@ -61,7 +61,7 @@ public class ServerEditPromptModal : JustCloseModal
     public void Populate(MinimalPromptSkeleton promptSkeleton, string language)
     {
         prompt = promptSkeleton;
-        originalFileName = prompt.Name;
+        originalPromptName = prompt.Name;
         fileNameInput.text = prompt.Name;
 
         var lbl = prompt.EndConvoAbility.ToString();
@@ -75,28 +75,33 @@ public class ServerEditPromptModal : JustCloseModal
         if (prompt == null)
             return;
 
-        var fileExists = PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, language, out originalPromptText);
+        PromptManager.I.TryGetPromptLocFromDB(prompt.Name, language, out var promptLoc);
 
-        fileExistsLabel.text = fileExists.YesOrNo();
-        promptTextInput.text = originalPromptText;
+        //var fileExists = PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, language, out originalPromptText);
+
+        fileExistsLabel.text = (promptLoc?.Available ?? false).YesOrNo();
+        promptTextInput.text = promptLoc?.Text ?? "";
     }
 
     private void SaveChangesInPrompt()
     {
-        if (fileNameInput.text != originalFileName)
+        var hasPromptChange = false;
+        if (fileNameInput.text != originalPromptName)
         {
+            hasPromptChange = true;
+
             //TODO: handle file name change
             // - rename plaintext file of each language
             // - rename it in all prompt bank files
 
             // - or maybe just give them IDs...
         }
-        if (fileNameInput.text == originalFileName && promptTextInput.text != originalPromptText)
-        {
-            var dirPath = Path.Combine(Constants.PromptsDir, currentlySelectedLanguage);
-            Utils.WriteFileContents(dirPath, fileNameInput.text + ".txt", promptTextInput.text);
-            PromptManager.I.DropPromptTextInLanguageFromCache(prompt.Name, currentlySelectedLanguage);
-            fileExistsLabel.text = PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, currentlySelectedLanguage, out _).YesOrNo();
-        }
+        //if (fileNameInput.text == originalPromptName && promptTextInput.text != originalPromptText)
+        //{
+        //    var dirPath = Path.Combine(Constants.PromptsDir, currentlySelectedLanguage);
+        //    Utils.WriteFileContents(dirPath, fileNameInput.text + ".txt", promptTextInput.text);
+        //    PromptManager.I.DropPromptTextInLanguageFromCache(prompt.Name, currentlySelectedLanguage);
+        //    fileExistsLabel.text = PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, currentlySelectedLanguage, out _).YesOrNo();
+        //}
     }
 }

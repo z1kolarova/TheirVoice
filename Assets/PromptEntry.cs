@@ -1,4 +1,5 @@
 using Assets.Classes;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -47,6 +48,24 @@ public class PromptEntry : MonoBehaviour
         promptNameLabel.text = pec.Name;
         endConvoAbilityLabel.text = pec.EndConvoAbility.ToString();
         SetDisplayedAvailablity(PromptManager.I.GetPromptAvailabilityInLang(mps.Name, language));
+    }
+
+    public void Populate(Prompt prompt, string language)
+    {
+        pec = new PromptEntryContent
+        {
+            Active = true,
+            Name = prompt.Name,
+            EndConvoAbility = prompt.EndConvoAbility,
+        };
+
+        active.isOn = pec.Active;
+        promptNameLabel.text = pec.Name;
+        endConvoAbilityLabel.text = pec.EndConvoAbility.ToString();
+
+        var langId = DBService.I.Languages.First(l => l.Name == language).Id;
+        SetDisplayedAvailablity(DBService.I.PromptLocs.Any(pl => pl.PromptId == prompt.Id && pl.LangId == langId));
+        //SetDisplayedAvailablity(PromptManager.I.GetPromptAvailabilityInLang(prompt.Name, language));
     }
 
     public void UpdatePromptAvailability(string language)

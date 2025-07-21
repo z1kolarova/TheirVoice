@@ -1,5 +1,6 @@
 using Assets.Classes;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,13 +61,14 @@ public class ServerManagePromptsModal : JustCloseModal
     public override void Display()
     {
         base.Display();
-        languageSelectionDropdown.PopulateDropdownAndPreselect(PromptManager.I.Languages, CurrentlySelectedLanguage);
+        languageSelectionDropdown.PopulateDropdownAndPreselect(LanguageManager.I.LanguageNames, CurrentlySelectedLanguage);
         ResizePromptDisplay();
     }
 
     private void LoadPromptEntries()
     {
-        foreach (var prompt in PromptManager.I.MainBankPrompts)
+        //foreach (var prompt in PromptManager.I.MainBankPrompts)
+        foreach (var prompt in DBService.I.Prompts.ToList())
         {
             CreateAndAddPromptEntry(prompt);
         }
@@ -93,6 +95,13 @@ public class ServerManagePromptsModal : JustCloseModal
     }
 
     private void CreateAndAddPromptEntry(PromptInMainBank mainPrompt)
+    {
+        GameObject newEntry = Instantiate(promptEntryTemplate);
+        newEntry.GetComponent<PromptEntry>().Populate(mainPrompt, CurrentlySelectedLanguage);
+        newEntry.transform.SetParent(promptDisplayArea.transform, false);
+        displayedPromptEntries.Add(newEntry);
+    }
+    private void CreateAndAddPromptEntry(Prompt mainPrompt)
     {
         GameObject newEntry = Instantiate(promptEntryTemplate);
         newEntry.GetComponent<PromptEntry>().Populate(mainPrompt, CurrentlySelectedLanguage);

@@ -2,13 +2,16 @@
 {
     public struct LangPrompt
     {
-        public string Language;
-        public string PromptFileName;
+        public int LangId;
+        public int PromptId;
 
-        public LangPrompt(string language, string promptFileName)
+        public LangPrompt(int langId, int promptId)
         {
-            Language = language;
-            PromptFileName = promptFileName;
+            LangId = langId;
+            PromptId = promptId;
         }
+
+        public static LangPrompt FromPromptLoc(PromptLoc promptLoc)
+            => new LangPrompt(promptLoc.LangId, promptLoc.PromptId);
     }
 }

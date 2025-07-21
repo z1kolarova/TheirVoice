@@ -150,6 +150,7 @@
     <Compile Include="Assets\Scripts\UI\ConversationUIChatGPT.cs" />
     <Compile Include="Assets\Scripts\NPCs\AISensor.cs" />
     <Compile Include="Assets\Enums\ConversationModes.cs" />
+    <Compile Include="Assets\Scripts\LanguageManager.cs" />
     <Compile Include="Assets\Scripts\ServerConnectivity\RelayManager.cs" />
     <Compile Include="Assets\Scripts\UI\MainMenuManager.cs" />
     <Compile Include="Assets\Scripts\SpeechBubbleManager.cs" />

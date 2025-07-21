@@ -59,10 +59,11 @@ public class DBService
         //    Debug.Log("Migration 3 complete.");
         //}
     };
-    
+
     #region table accesses
 
     public IQueryable<Language> Languages => _connection.Table<Language>().AsQueryable();
+    public IQueryable<PromptLoc> PromptLocs => _connection.Table<PromptLoc>().AsQueryable();
     public IQueryable<Prompt> Prompts => _connection.Table<Prompt>().AsQueryable();
 
     /// <summary>
@@ -93,6 +94,33 @@ public class DBService
     /// </returns>
     public T Find<T>(Expression<Func<T, bool>> predicate) where T : new()
         => _connection.Find<T>(predicate);
+
+    /// <summary>
+    /// Inserts the given object and retrieves its
+    /// auto incremented primary key if it has one.
+    /// </summary>
+    /// <param name="obj">
+    /// The object to insert.
+    /// </param>
+    /// <returns>
+    /// The number of rows added to the table.
+    /// </returns>
+    public int Insert<T>(T obj) where T : new()
+        => _connection.Insert(obj);
+
+    /// <summary>
+    /// Updates all of the columns of a table using the specified object
+    /// except for its primary key.
+    /// The object is required to have a primary key.
+    /// </summary>
+    /// <param name="obj">
+    /// The object to update. It must have a primary key designated using the PrimaryKeyAttribute.
+    /// </param>
+    /// <returns>
+    /// The number of rows updated.
+    /// </returns>
+    public int Update<T>(T obj) where T: new()
+        => _connection.Update(obj);
 
     #endregion table accesses
 
@@ -275,32 +303,30 @@ public class DBService
 
     #region conversion of old prompts
 
-    public void InsertMainPromptBank()
-    {
-        Debug.Log("start of insert");
-        var engLangId = _connection.Find<Language>(l => l.Name == "English").Id;
-        foreach (var item in PromptManager.I.MainBankPrompts)
-        {
-            Debug.Log(item.Name);
-            Prompt prompt = new Prompt() { 
-                Name = item.Name,
-                EndConvoAbility = item.EndConvoAbility,
-                ActiveIfAvailable = false,
-            };
-            _connection.Insert(prompt);
+    //public void InsertMainPromptBank()
+    //{
+    //    var engLangId = _connection.Find<Language>(l => l.Name == "English").Id;
+    //    foreach (var item in PromptManager.I.MainBankPrompts)
+    //    {
+    //        Debug.Log(item.Name);
+    //        Prompt prompt = new Prompt() { 
+    //            Name = item.Name,
+    //            EndConvoAbility = item.EndConvoAbility,
+    //            ActiveIfAvailable = false,
+    //        };
+    //        _connection.Insert(prompt);
             
-            var x = PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, "English", out string promptText);
-            Debug.Log(x.ToString() + promptText);
+    //        PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, "English", out string promptText);
 
-            PromptLoc promptLoc = new PromptLoc() {
-                PromptId = prompt.Id,
-                LangId = engLangId,
-                Available = true,
-                Text = promptText
-            };
-            _connection.Insert(promptLoc);
-        }
-    }
+    //        PromptLoc promptLoc = new PromptLoc() {
+    //            PromptId = prompt.Id,
+    //            LangId = engLangId,
+    //            Available = true,
+    //            Text = promptText
+    //        };
+    //        _connection.Insert(promptLoc);
+    //    }
+    //}
 
     #endregion conversion of old prompts
 }
