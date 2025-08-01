@@ -131,6 +131,7 @@ public class PromptManager : MonoBehaviour
         return alreadyLoaded;
     }
 
+    // TODO: figure out a better way to do caching (and clearing cache when updating)
     public bool GetPromptAvailabilityInLang(string promptName, string language)
     {
         var langId = LanguageManager.I.LangIdDic[language];

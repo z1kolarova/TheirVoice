@@ -1,4 +1,5 @@
 using Assets.Classes;
+using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -6,77 +7,57 @@ using UnityEngine.UI;
 
 public class PromptEntry : MonoBehaviour
 {
-    [SerializeField] Toggle active;
+    [SerializeField] Toggle activeIfAvailable;
     [SerializeField] TMP_Text promptNameLabel;
     [SerializeField] TMP_Text endConvoAbilityLabel;
     [SerializeField] TMP_Text availableInThisLanguageLabel;
     [SerializeField] Button editPromptBtn;
 
-    //private PromptSettingsLabel psl;
-    private PromptEntryContent pec;
+    private Prompt pePrompt;
 
     // Start is called before the first frame update
     void Start()
     {
+        activeIfAvailable.onValueChanged.AddListener((value) =>
+        {
+            UpdateActiveIfAvailable(value);
+        });
+
         editPromptBtn.onClick.AddListener(() => {
             ServerEditPromptModal.I.Display();
-            ServerEditPromptModal.I.Populate(pec, ServerManagePromptsModal.I.CurrentlySelectedLanguage);
+            ServerEditPromptModal.I.Populate(pePrompt, ServerManagePromptsModal.I.CurrentlySelectedLanguage);
         });
     }
 
-    public string GetPromptName() => pec.Name;
-
-    public void AssignLabel(PromptEntryContent promptEntryContent)
-    {
-        pec = promptEntryContent;
-        active.isOn = pec.Active;
-        promptNameLabel.text = pec.Name;
-        endConvoAbilityLabel.text = pec.EndConvoAbility.ToString();
-        SetDisplayedAvailablity(pec.AvailableInCurrentLanguage);
-    }
-
-    public void Populate(MinimalPromptSkeleton mps, string language)
-    {
-        pec = new PromptEntryContent
-        {
-            Active = false,
-            Name = mps.Name,
-            EndConvoAbility = mps.EndConvoAbility,
-        };
-
-        active.isOn = pec.Active;
-        promptNameLabel.text = pec.Name;
-        endConvoAbilityLabel.text = pec.EndConvoAbility.ToString();
-        SetDisplayedAvailablity(PromptManager.I.GetPromptAvailabilityInLang(mps.Name, language));
-    }
+    public string GetPromptName() => pePrompt.Name;
 
     public void Populate(Prompt prompt, string language)
     {
-        pec = new PromptEntryContent
-        {
-            Active = true,
-            Name = prompt.Name,
-            EndConvoAbility = prompt.EndConvoAbility,
-        };
+        pePrompt = prompt;
 
-        active.isOn = pec.Active;
-        promptNameLabel.text = pec.Name;
-        endConvoAbilityLabel.text = pec.EndConvoAbility.ToString();
+        activeIfAvailable.isOn = prompt.ActiveIfAvailable;
+        promptNameLabel.text = prompt.Name;
+        endConvoAbilityLabel.text = prompt.EndConvoAbility.ToString();
 
         var langId = DBService.I.Languages.First(l => l.Name == language).Id;
         SetDisplayedAvailablity(DBService.I.PromptLocs.Any(pl => pl.PromptId == prompt.Id && pl.LangId == langId));
         //SetDisplayedAvailablity(PromptManager.I.GetPromptAvailabilityInLang(prompt.Name, language));
     }
 
-    public void UpdatePromptAvailability(string language)
+    public void UpdateActiveIfAvailable(bool newValue)
     {
-        var newAvailability = PromptManager.I.GetPromptAvailabilityInLang(pec.Name, language);
+        pePrompt.ActiveIfAvailable = newValue;
+        DBService.I.Update(pePrompt);
+    }
+
+    public void RefreshForLanguage(string language)
+    {
+        var newAvailability = PromptManager.I.GetPromptAvailabilityInLang(pePrompt.Name, language);
         SetDisplayedAvailablity(newAvailability);
     }
 
     public void SetDisplayedAvailablity(bool newAvailable)
     {
-        pec.AvailableInCurrentLanguage = newAvailable;
         availableInThisLanguageLabel.text = newAvailable.YesOrNo();
     }
 }

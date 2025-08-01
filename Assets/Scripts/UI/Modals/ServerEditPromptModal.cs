@@ -1,6 +1,5 @@
-using Assets.Classes;
 using Assets.Enums;
-using System.IO;
+using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -11,11 +10,11 @@ public class ServerEditPromptModal : JustCloseModal
     public static ServerEditPromptModal I => instance;
     static ServerEditPromptModal instance;
 
-    [SerializeField] TMP_InputField fileNameInput;
-    [SerializeField] TMP_Text fileExistsLabel;
+    [SerializeField] TMP_InputField promptNameCodeInput;
     [SerializeField] TMP_Dropdown endConvoAbilityDropdown;
+    [SerializeField] TMP_Dropdown promptCanBeUsedDropdown;
     [SerializeField] TMP_Dropdown languageSelectionDropdown;
-    [SerializeField] TMP_Dropdown promptReadyDropdown;
+    [SerializeField] TMP_Dropdown promptLocReadyDropdown;
 
     [SerializeField] TMP_InputField promptTextInput;
 
@@ -23,10 +22,19 @@ public class ServerEditPromptModal : JustCloseModal
     [SerializeField] private Button testPromptBtn;
     [SerializeField] private Button saveChangesBtn;
 
-    private MinimalPromptSkeleton prompt;
-    private string originalPromptName;
-    private string originalPromptText;
+    private Prompt dbPrompt;
+    private PromptLoc dbPromptLoc;
     private string currentlySelectedLanguage = "English";
+
+    //TODO: warn before language switch with unsaved changes
+    private bool HasPromptChange()
+        => dbPrompt.Name != promptNameCodeInput.text
+        || dbPrompt.EndConvoAbility.ToString() != endConvoAbilityDropdown.GetDisplayedTextOfDropdown()
+        || dbPrompt.ActiveIfAvailable.YesOrNo() != promptCanBeUsedDropdown.GetDisplayedTextOfDropdown();
+
+    private bool HasPromptLocChange()
+        => dbPromptLoc.Text != promptTextInput.text
+        || dbPromptLoc.Available.YesOrNo() != promptLocReadyDropdown.GetDisplayedTextOfDropdown();
 
     protected override void Awake()
     {
@@ -34,7 +42,11 @@ public class ServerEditPromptModal : JustCloseModal
 
         saveChangesBtn.onClick.AddListener(() =>
         {
-            SaveChangesInPrompt();
+            if (HasPromptChange())
+                SaveChangesInPrompt();
+
+            if (HasPromptLocChange())
+                SaveChangesInPromptLoc();
         });
 
         languageSelectionDropdown.onValueChanged.AddListener(newValue =>
@@ -49,8 +61,9 @@ public class ServerEditPromptModal : JustCloseModal
         base.Start();
 
         endConvoAbilityDropdown.PopulateDropdownAndPreselect(Utils.ValueList<EndConvoAbility>().Select(x => x.ToString()));
+        promptCanBeUsedDropdown.PopulateDropdownAndPreselect(Utils.NoYesSelectOptions);
         languageSelectionDropdown.PopulateDropdownAndPreselect(LanguageManager.I.LanguageNames, currentlySelectedLanguage);
-        promptReadyDropdown.PopulateDropdownAndPreselect(Utils.NoYesSelectOptions);
+        promptLocReadyDropdown.PopulateDropdownAndPreselect(Utils.NoYesSelectOptions);
     }
 
     public override void Display()
@@ -58,50 +71,41 @@ public class ServerEditPromptModal : JustCloseModal
         base.Display();
     }
 
-    public void Populate(MinimalPromptSkeleton promptSkeleton, string language)
+    public void Populate(Prompt prompt, string language)
     {
-        prompt = promptSkeleton;
-        originalPromptName = prompt.Name;
-        fileNameInput.text = prompt.Name;
+        dbPrompt = prompt;
+        promptNameCodeInput.text = dbPrompt.Name;
+        endConvoAbilityDropdown.SelectLabelInDropdown(dbPrompt.EndConvoAbility.ToString());
+        promptCanBeUsedDropdown.SelectLabelInDropdown(dbPrompt.ActiveIfAvailable.YesOrNo());
 
-        var lbl = prompt.EndConvoAbility.ToString();
-        endConvoAbilityDropdown.SelectLabelInDropdown(lbl);
-        languageSelectionDropdown.SelectLabelInDropdown(language);
         RefreshForLanguage(language);
     }
 
     private void RefreshForLanguage(string language)
     {
-        if (prompt == null)
+        if (dbPrompt == null)
             return;
 
-        PromptManager.I.TryGetPromptLocFromDB(prompt.Name, language, out var promptLoc);
+        PromptManager.I.TryGetPromptLocFromDB(dbPrompt.Name, language, out dbPromptLoc);
 
-        //var fileExists = PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, language, out originalPromptText);
-
-        fileExistsLabel.text = (promptLoc?.Available ?? false).YesOrNo();
-        promptTextInput.text = promptLoc?.Text ?? "";
+        promptLocReadyDropdown.SelectLabelInDropdown((dbPromptLoc?.Available ?? false).YesOrNo());
+        promptTextInput.text = dbPromptLoc?.Text ?? "";
     }
 
     private void SaveChangesInPrompt()
     {
-        var hasPromptChange = false;
-        if (fileNameInput.text != originalPromptName)
-        {
-            hasPromptChange = true;
+        dbPrompt.Name = promptNameCodeInput.text;
+        dbPrompt.EndConvoAbility = Enum.Parse<EndConvoAbility>(endConvoAbilityDropdown.GetDisplayedTextOfDropdown());
+        dbPrompt.ActiveIfAvailable = promptCanBeUsedDropdown.GetDisplayedTextOfDropdown().IsYes();
 
-            //TODO: handle file name change
-            // - rename plaintext file of each language
-            // - rename it in all prompt bank files
+        DBService.I.Update(dbPrompt);
+    }
 
-            // - or maybe just give them IDs...
-        }
-        //if (fileNameInput.text == originalPromptName && promptTextInput.text != originalPromptText)
-        //{
-        //    var dirPath = Path.Combine(Constants.PromptsDir, currentlySelectedLanguage);
-        //    Utils.WriteFileContents(dirPath, fileNameInput.text + ".txt", promptTextInput.text);
-        //    PromptManager.I.DropPromptTextInLanguageFromCache(prompt.Name, currentlySelectedLanguage);
-        //    fileExistsLabel.text = PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, currentlySelectedLanguage, out _).YesOrNo();
-        //}
+    private void SaveChangesInPromptLoc()
+    {
+        dbPromptLoc.Text = promptTextInput.text;
+        dbPromptLoc.Available = promptLocReadyDropdown.GetDisplayedTextOfDropdown().IsYes();
+
+        DBService.I.Update(dbPromptLoc);
     }
 }

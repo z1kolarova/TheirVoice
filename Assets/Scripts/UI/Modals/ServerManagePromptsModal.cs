@@ -41,7 +41,7 @@ public class ServerManagePromptsModal : JustCloseModal
         addNewPromptBtn.onClick.AddListener(() =>
         {
             ServerEditPromptModal.I.Display();
-            ServerEditPromptModal.I.Populate(new MinimalPromptSkeleton(), ServerManagePromptsModal.I.CurrentlySelectedLanguage);
+            ServerEditPromptModal.I.Populate(new Prompt(), ServerManagePromptsModal.I.CurrentlySelectedLanguage);
         });
 
         languageSelectionDropdown.onValueChanged.AddListener(newValue =>
@@ -90,17 +90,10 @@ public class ServerManagePromptsModal : JustCloseModal
         foreach (var peGameObject in displayedPromptEntries)
         {
             var promptEntry = peGameObject.GetComponent<PromptEntry>();
-            promptEntry.UpdatePromptAvailability(language);
+            promptEntry.RefreshForLanguage(language);
         }
     }
 
-    private void CreateAndAddPromptEntry(PromptInMainBank mainPrompt)
-    {
-        GameObject newEntry = Instantiate(promptEntryTemplate);
-        newEntry.GetComponent<PromptEntry>().Populate(mainPrompt, CurrentlySelectedLanguage);
-        newEntry.transform.SetParent(promptDisplayArea.transform, false);
-        displayedPromptEntries.Add(newEntry);
-    }
     private void CreateAndAddPromptEntry(Prompt mainPrompt)
     {
         GameObject newEntry = Instantiate(promptEntryTemplate);

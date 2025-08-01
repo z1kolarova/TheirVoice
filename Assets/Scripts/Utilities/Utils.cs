@@ -122,6 +122,7 @@ public static class Utils
     #endregion Dropdowns
 
     public static string YesOrNo(this bool isItYes) => isItYes ? "Yes" : "No";
+    public static bool IsYes(this string yesOrNo) => yesOrNo == "Yes";
 }
 
 public struct Borders {

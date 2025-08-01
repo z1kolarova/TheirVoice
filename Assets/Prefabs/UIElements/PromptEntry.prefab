@@ -753,7 +753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5baf67b58a9918d469791d2d72395eed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  active: {fileID: 1654108023509799065}
+  activeIfAvailable: {fileID: 1654108023509799065}
   promptNameLabel: {fileID: 7871661489221367693}
   endConvoAbilityLabel: {fileID: 7295205555440540112}
   availableInThisLanguageLabel: {fileID: 7819779399025038158}
