@@ -82,12 +82,6 @@ public class ConversationManager : MonoBehaviour
         return SelectUpToFromCollection(4, responsePool);
     }
 
-    public string GetResponseTo(IConversationBlock conversationBlock)
-    {
-        return ConversationConsts.RevealDiet(talkingTo.personality);
-        //return $"{conversationBlock.Text}? What's that supposed to mean?";
-    }
-
     public void TriggerEndDialogue()
     {
         talkingTo.EndConversation();

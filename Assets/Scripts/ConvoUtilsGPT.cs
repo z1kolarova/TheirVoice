@@ -14,8 +14,7 @@ public static class ConvoUtilsGPT
 {
     public static PromptLabel notInterestedPromptLabel = new PromptLabel() { 
         Name = NOT_INTERESTED_PROMPT_NAME,
-        EndConvoAbility = EndConvoAbility.Always,
-        Tags = ArgumentationTag.None
+        EndConvoAbility = EndConvoAbility.Always
     };
 
     private static ChatMessage safetyNetMessage = new ChatMessage() { 

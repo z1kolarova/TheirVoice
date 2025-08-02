@@ -10,7 +10,6 @@
     public class PlayerConvoBlock : IConversationBlock
     {
         public string Text { get; set; }
-        public Traits Impact { get; set; }
         public string ResponsePoolName { get; set; }
         public bool EndsConvo { get; set; } = false;
     }

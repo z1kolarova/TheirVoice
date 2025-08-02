@@ -38,19 +38,6 @@ public class PromptManager : MonoBehaviour
         }
     }
 
-    //private List<PromptInMainBank> mainBankPrompts = null;
-    //public List<PromptInMainBank> MainBankPrompts
-    //{ 
-    //    get 
-    //    {
-    //        if (mainBankPrompts == null)
-    //        {
-    //            LoadMainPromptBank();
-    //        }
-    //        return mainBankPrompts;
-    //    } 
-    //}
-
     private Dictionary<LangPrompt, bool> langPromptAvailabilityDic = new Dictionary<LangPrompt, bool>();
     private Dictionary<LangPrompt, string> langPromptCachedTextDic = new Dictionary<LangPrompt, string>();
 
@@ -67,19 +54,6 @@ public class PromptManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    #region MainBank
-    //private void LoadMainPromptBank()
-    //{
-    //    var promptBankFilePath = Utils.EnsureFileExists(Constants.PromptsDir, Constants.PromptBankFileName);
-
-    //    using (StreamReader sr = new StreamReader(promptBankFilePath))
-    //    using (JsonReader jr = new JsonTextReader(sr))
-    //    {
-    //        mainBankPrompts = Utils.Serializer.Deserialize<List<PromptInMainBank>>(jr) ?? new List<PromptInMainBank>();
-    //    }
-    //}
-    #endregion MainBank
 
     #region Availability
     //public void EnsureAvailabilitiesLoaded(string language)

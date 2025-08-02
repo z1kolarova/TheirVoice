@@ -63,7 +63,6 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\IOpenAIAPI.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Moderation\IModerationEndpoint.cs" />
     <Compile Include="Assets\Scripts\APIKeyManager.cs" />
-    <Compile Include="Assets\Scripts\ConversationConsts.cs" />
     <Compile Include="Assets\Classes\EventArgs.cs" />
     <Compile Include="Assets\Scripts\NPCs\PersonalityGenerator.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\AudioInputSettingsModal.cs" />
@@ -86,7 +85,6 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\OpenAIAPI.cs" />
     <Compile Include="Assets\Scripts\NPCs\PasserbyAI.cs" />
     <Compile Include="Assets\ThirdParty\CalvinRien\SaveWav.cs" />
-    <Compile Include="Assets\PromptEntry.cs" />
     <Compile Include="Assets\Scripts\ServerConnectivity\LoggingManager.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\ICompletionEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Embedding\EmbeddingRequest.cs" />
@@ -159,7 +157,6 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionEndpoint.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\Utilities\Utils.cs" />
-    <Compile Include="Assets\Scripts\ConversationNPC.cs" />
     <Compile Include="Assets\Scripts\PlayerPrefabRpcs.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\Utilities\MobileDisableAutoSwitchControls.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\ApiResultBase.cs" />
@@ -175,6 +172,7 @@
     <Compile Include="Assets\StarterAssets\InputSystem\StarterAssetsInputs.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\FilesEndpoint.cs" />
     <Compile Include="Assets\Scripts\ServerConnectivity\ClientSideManager.cs" />
+    <Compile Include="Assets\Scripts\UI\Templates\PromptEntry.cs" />
     <Compile Include="Assets\Scripts\Utilities\UserInterfaceUtilities.cs" />
     <Compile Include="Assets\Scripts\ScreenControl.cs" />
   </ItemGroup>

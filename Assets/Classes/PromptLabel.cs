@@ -6,16 +6,14 @@ namespace Assets.Classes
     {
         public string Name { get; set; }
         public EndConvoAbility EndConvoAbility { get; set; }
-        public ArgumentationTag Tags { get; set; } = ArgumentationTag.None;
 
         public PromptLabel()
         {
         }
-        public PromptLabel(string name, EndConvoAbility endConvoAbility, ArgumentationTag tags)
+        public PromptLabel(string name, EndConvoAbility endConvoAbility)
         {
             Name = name;
             EndConvoAbility = endConvoAbility;
-            Tags = tags;
         }
     }
 }
