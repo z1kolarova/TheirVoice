@@ -72,6 +72,7 @@
     <Compile Include="Assets\Scripts\UI\Modals\InfoModal.cs" />
     <Compile Include="Assets\Scripts\ConvoUtils.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabUI.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\StandaloneFileBrowserLinux.cs" />
     <Compile Include="Assets\Scripts\UI\ConversationUI.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\IChatEndpoint.cs" />
     <Compile Include="Assets\Classes\PersonalityCore.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Assets\Scripts\SpeechBubble.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\OpenAIAPI.cs" />
     <Compile Include="Assets\Scripts\NPCs\PasserbyAI.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\Sample\CanvasSampleOpenFileText.cs" />
     <Compile Include="Assets\ThirdParty\CalvinRien\SaveWav.cs" />
     <Compile Include="Assets\Scripts\ServerConnectivity\LoggingManager.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\ICompletionEndpoint.cs" />
@@ -97,6 +99,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\ImageSize.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\VirtualInputs\UIVirtualJoystick.cs" />
     <Compile Include="Assets\Scripts\NPCs\PasserbyModelManager.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\StandaloneFileBrowserMac.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\LobbyNotFoundModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Embedding\EmbeddingResult.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Moderation\ModerationEndpoint.cs" />
@@ -119,7 +122,9 @@
     <Compile Include="Assets\Scripts\UI\Modals\HowItWorksModal.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabApi.cs" />
     <Compile Include="Assets\Scripts\NPCs\PasserbySpawnManager.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\Sample\CanvasSampleOpenFileTextMultiple.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\ModelsEndpoint.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\Sample\BasicSample.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\ImageGenerationEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Moderation\ModerationResult.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionRequest.cs" />
@@ -128,11 +133,13 @@
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabPlugin.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\ServerEditPromptModal.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabImporterWindow.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\IStandaloneFileBrowser.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\File.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\AssetBrowser\SketchfabModelWindow.cs" />
     <Compile Include="Assets\Scripts\Utilities\RngUtils.cs" />
     <Compile Include="Assets\Scripts\SQLite.cs" />
     <Compile Include="Assets\Classes\OriginalPrompt.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\Sample\CanvasSampleSaveFileText.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionResult.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\ServerManagePromptsModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Usage.cs" />
@@ -142,6 +149,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatResult.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\IImageGenerationEndpoint.cs" />
     <Compile Include="Assets\Scripts\ConvoUtilsGPT.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\StandaloneFileBrowser.cs" />
     <Compile Include="Assets\Scripts\AudioUtilsWhisper.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\IModelsEndpoint.cs" />
     <Compile Include="Assets\Enums\ArgumentationTag.cs" />
@@ -160,9 +168,11 @@
     <Compile Include="Assets\Scripts\PlayerPrefabRpcs.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\Utilities\MobileDisableAutoSwitchControls.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\ApiResultBase.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\StandaloneFileBrowserWindows.cs" />
     <Compile Include="Assets\Scripts\PromptManager.cs" />
     <Compile Include="Assets\Scripts\UI\ServerSideManagerUI.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\Model.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\Sample\CanvasSampleOpenFileImage.cs" />
     <Compile Include="Assets\Structs\LangPrompt.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\JustCloseModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\APIAuthentication.cs" />
@@ -171,7 +181,9 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatMessage.cs" />
     <Compile Include="Assets\StarterAssets\InputSystem\StarterAssetsInputs.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\FilesEndpoint.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\Sample\CanvasSampleSaveFileImage.cs" />
     <Compile Include="Assets\Scripts\ServerConnectivity\ClientSideManager.cs" />
+    <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\StandaloneFileBrowserEditor.cs" />
     <Compile Include="Assets\Scripts\UI\Templates\PromptEntry.cs" />
     <Compile Include="Assets\Scripts\Utilities\UserInterfaceUtilities.cs" />
     <Compile Include="Assets\Scripts\ScreenControl.cs" />
@@ -204,6 +216,7 @@
     <None Include="Assets\Prompts\spiritual_all_life_has_value.txt" />
     <None Include="Assets\Prompts\Plaintext\plants_and_animals_are_equal.txt" />
     <None Include="Assets\Sketchfab For Unity\Dependencies\Libraries\Newtonsoft.Json.dll" />
+    <None Include="Assets\ThirdParty\StandaloneFileBrowser\Plugins\Ookii.Dialogs.dll" />
     <None Include="Assets\Prompts\Plaintext\_wasnt_watching_footage.txt" />
     <None Include="Assets\Prompts\troll_too_cool_for_this.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
@@ -229,6 +242,7 @@
     <None Include="Assets\Import\license.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\Prompts\_wasnt_watching_footage.txt" />
+    <None Include="Assets\ThirdParty\StandaloneFileBrowser\Plugins\Windows\System.Windows.Forms.dll" />
     <None Include="Assets\Sketchfab For Unity\Dependencies\Libraries\Ionic.Zip.Unity.dll" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\Prompts\insect_protein_is_the_future.txt" />
@@ -505,6 +519,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.2.1\Runtime\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Ookii.Dialogs">
+      <HintPath>Assets\ThirdParty\StandaloneFileBrowser\Plugins\Ookii.Dialogs.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.1\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
     </Reference>
@@ -513,6 +530,9 @@
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@1.11.4\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>Assets\ThirdParty\StandaloneFileBrowser\Plugins\Windows\System.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip.Unity">
       <HintPath>Assets\Sketchfab For Unity\Dependencies\Libraries\Ionic.Zip.Unity.dll</HintPath>

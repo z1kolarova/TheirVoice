@@ -1,5 +1,6 @@
 using Assets.Enums;
 using Newtonsoft.Json;
+using SFB;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,6 +30,11 @@ public static class Utils
     #endregion Serialization
 
     #region Files
+    public static string OpenFolderDialog(string title, string directory = "")
+    {
+        var paths = StandaloneFileBrowser.OpenFolderPanel(title, directory, false);
+        return paths.Length > 0 ? paths[0] : null;
+    }
 
     public static void EnsureDirectoryExists(string dirPath)
     {

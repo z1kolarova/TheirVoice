@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using UnityEditor;
 using UnityEngine;
 
 public class DBService
@@ -243,7 +242,8 @@ public class DBService
             ? defaultPathObj?.Value 
             : "";
 
-        string path = EditorUtility.OpenFolderPanel("Select directory for backing up DB", defaultPath , "");
+        //string path = EditorUtility.OpenFolderPanel("Select directory for backing up DB", defaultPath , "");
+        string path = Utils.OpenFolderDialog("Select directory for backing up DB", defaultPath);
         // currently if the dialogue is closed without selecting, I back up the DB anyway just in the default location
         if (!string.IsNullOrWhiteSpace(path) && path != defaultPath)
         {
