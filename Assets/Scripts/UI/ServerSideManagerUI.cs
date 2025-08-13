@@ -2,6 +2,7 @@ using Assets.Classes;
 using System;
 using TMPro;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,6 +39,7 @@ public class ServerSideManagerUI : MonoBehaviour
         {
             _logText = value;
             outputTMP.text = _logText.Substring(subStringIndex);
+            outputTMP.ForceMeshUpdate();
             if (outputTMP.textInfo.meshInfo[0].vertices.Length > 64000)
             {
                 subStringIndex += (int)(outputTMP.text.Length * 0.5f);
@@ -58,38 +60,28 @@ public class ServerSideManagerUI : MonoBehaviour
         });
 
         publicServerBtn.onClick.AddListener(() => {
-            logText += "Server button was clicked\n";
-            SetKeySelectionInteractable(false);
+            ServerSideManagerUI.I.WriteCyanLineToOutput("Public server button was clicked");
+            LockBeforeServerLaunch();
             ServerStartProcess(false);
-            logText += "NetworkManager.Singleton.StartServer happened\n";
-            publicServerBtn.enabled = false;
-            publicServerBtn.gameObject.SetActive(false);
-            privateServerBtn.enabled = false;
-            privateServerBtn.gameObject.SetActive(false);
-            shutdownBtn.gameObject.SetActive(true);
-            shutdownBtn.enabled = true;
+            ServerSideManagerUI.I.WriteLineToOutput("NetworkManager.Singleton.StartServer happened");
+            ShowAfterServerLaunch();
         });
 
         privateServerBtn.onClick.AddListener(() => {
-            logText += "Private server button was clicked\n";
-            SetKeySelectionInteractable(false);
+            ServerSideManagerUI.I.WriteCyanLineToOutput("Private server button was clicked");
+            LockBeforeServerLaunch();
             ServerStartProcess(true);
-            logText += "NetworkManager.Singleton.ServerStartProcess happened\n";
-            publicServerBtn.enabled = false;
-            publicServerBtn.gameObject.SetActive(false);
-            privateServerBtn.enabled = false;
-            privateServerBtn.gameObject.SetActive(false);
-            shutdownBtn.gameObject.SetActive(true);
-            shutdownBtn.enabled = true;
+            ServerSideManagerUI.I.WriteLineToOutput("NetworkManager.Singleton.StartServer happened");
+            ShowAfterServerLaunch();
         });
 
         shutdownBtn.onClick.AddListener(() => {
-            logText += "Shutdown button was clicked\n";
+            ServerSideManagerUI.I.WriteCyanLineToOutput("Shutdown button was clicked");
 
             ServerSideManager.I.ShutDownHostLobby();
             NetworkManager.Singleton.Shutdown();
 
-            logText += "NetworkManager.Singleton.Shutdown happened\n";
+            ServerSideManagerUI.I.WriteLineToOutput("NetworkManager.Singleton.Shutdown happened");
 
             publicServerBtn.gameObject.SetActive(true);
             publicServerBtn.enabled = true;
@@ -97,11 +89,11 @@ public class ServerSideManagerUI : MonoBehaviour
             privateServerBtn.enabled = true;
             shutdownBtn.enabled = false;
             shutdownBtn.gameObject.SetActive(false);
-            SetKeySelectionInteractable(APIKeyManager.I.IsKeySelected);
+            ServerSideManagerUI.I.SetKeySelectionInteractable(APIKeyManager.I.IsKeySelected);
         });
 
         managePromptsBtn.onClick.AddListener(() => {
-            logText += "ManagePrompts button was clicked\n";
+            ServerSideManagerUI.I.WriteCyanLineToOutput("ManagePrompts button was clicked");
             ServerManagePromptsModal.I.Display();
         });
 
@@ -115,11 +107,37 @@ public class ServerSideManagerUI : MonoBehaviour
         var lineContent = timestamp ? $"{DateTime.Now.ToString("HH:mm:ss")}: {text}" : text;
         logText += $"{lineContent}\n";
     }
-    
+    public void WriteCyanLineToOutput(string text, bool timestamp = true)
+    {
+        var lineContent = timestamp ? $"{DateTime.Now.ToString("HH:mm:ss")} {text}" : text;
+        logText += $"<color=#00FFFF>{lineContent}</color>\n";
+    }
+
+    public void WriteYellowLineToOutput(string text, bool timestamp = true)
+    {
+        var lineContent = timestamp ? $"{DateTime.Now.ToString("HH:mm:ss")} {text}" : text;
+        logText += $"<color=#FFFF00>{lineContent}</color>\n";
+    }
+
     public void WriteBadLineToOutput(string text, bool timestamp = true)
     {
         var lineContent = timestamp ? $"{DateTime.Now.ToString("HH:mm:ss")} ERROR: {text}" : text;
-        logText += $"<color=#FF0000>{lineContent}\n</color>";
+        logText += $"<color=#FF0000>{lineContent}</color>\n";
+    }
+
+    public void WriteLineToOutputWithColor(string text, Color color, bool timestamp = true)
+    {
+        var lineContent = timestamp ? $"{DateTime.Now.ToString("HH:mm:ss")} {text}" : text;
+        logText += $"<color=#{color.ToHexString()}>{lineContent}</color>\n";
+        // Color.yellow is not #FFFF00 but #FFEB04 so I don't like using this for yellow
+        // white    is #FFFFFF, as it should be, and looks good
+        // magenta  is #FF00FF, as it should be, and looks good
+        // cyan     is #00FFFF, as it should be, and looks good
+        // red      is #FF0000, as it should be, but is too dark
+        // green    is #00FF00, as it should be, but I like the chosen default shade #67FF01 better
+        // blue     is #0000FF, as it should be, but is too dark
+        // black    is #000000, as it should be, and surprisingly still readable
+        // gray and clear are not worth using here
     }
 
     public void EmptyOutput()
@@ -132,7 +150,7 @@ public class ServerSideManagerUI : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(lobbyCode))
         {
-            WriteLineToOutput($"There is a new private lobby code: {lobbyCode}");
+            I.WriteLineToOutputWithColor($"There is a new private lobby code: {lobbyCode}", Color.white);
         }
         lobbyCodeLabel.gameObject.SetActive(!string.IsNullOrEmpty(lobbyCode));
         lobbyCodeTMP.text = lobbyCode;
@@ -146,6 +164,27 @@ public class ServerSideManagerUI : MonoBehaviour
 
         currentPlayersTMP.text = e.newTotalCount.ToString();
     }
+
+    private void LockBeforeServerLaunch()
+    {
+        SetKeySelectionInteractable(false);
+        if (!APIKeyManager.I.IsKeySelected)
+        {
+            CommunicateKeySelection();
+        }
+
+        publicServerBtn.enabled = false;
+        publicServerBtn.gameObject.SetActive(false);
+        privateServerBtn.enabled = false;
+        privateServerBtn.gameObject.SetActive(false);
+    }
+
+    private void ShowAfterServerLaunch()
+    {
+        shutdownBtn.gameObject.SetActive(true);
+        shutdownBtn.enabled = true;
+    }
+
     private void PopulateDropdownWithKeyOptions()
     {
         keySelectionDropdown.options.Clear();
