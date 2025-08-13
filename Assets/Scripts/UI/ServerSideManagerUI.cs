@@ -86,7 +86,7 @@ public class ServerSideManagerUI : MonoBehaviour
         shutdownBtn.onClick.AddListener(() => {
             logText += "Shutdown button was clicked\n";
 
-            ServerSideManager.I.StopLobbyHeartBeat();
+            ServerSideManager.I.ShutDownHostLobby();
             NetworkManager.Singleton.Shutdown();
 
             logText += "NetworkManager.Singleton.Shutdown happened\n";

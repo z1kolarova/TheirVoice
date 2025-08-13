@@ -1,5 +1,6 @@
 using Assets.Classes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,10 +16,12 @@ public class ServerSideManager : MonoBehaviour
     static ServerSideManager instance;
 
     private Lobby hostLobby;
-    private float heartbeatTimerMax = 20;
-    private float heartbeatTimer;
-    private float lobbyPollTimerMax = 1.1f;
-    private float lobbyPollTimer;
+
+    private float heartbeatSeconds = 20;
+    private Coroutine heartbeatCoroutine;
+
+    private float lobbyPollingSeconds = 1.1f;
+    private Coroutine lobbyPollingCoroutine;
 
     public const string RELAY_KEY = "RelayKey";
     public const string TRIGGER_CREATE_RELAY_KEY = "PlsStartRelay";
@@ -43,17 +46,15 @@ public class ServerSideManager : MonoBehaviour
 
     private void Update()
     {
-        HandleLobbyHeartBeat();
-        HandleLobbyPolling();
-        HandlePseudoEvents();
+        I.HandlePseudoEvents();
     }
 
     public async Task StartServer(bool privateLobby)
     {
-        await AuthenticateServer();
+        await I.AuthenticateServer();
 
         var lobbyName = $"initial{(privateLobby ? "Private" : "Public")}Lobby";
-        CreateLobby(lobbyName, 50, privateLobby);
+        I.CreateLobby(lobbyName, 50, privateLobby);
     }
 
     private async Task AuthenticateServer()
@@ -74,55 +75,65 @@ public class ServerSideManager : MonoBehaviour
         }
     }
 
-    private async void HandleLobbyHeartBeat()
+    private void InitHostLobby(Lobby lobby)
     {
-        if (hostLobby != null)
-        {
-            heartbeatTimer -= Time.deltaTime;
-            if (heartbeatTimer < 0f)
-            {
-                heartbeatTimer = heartbeatTimerMax;
-                ServerSideManagerUI.I.WriteLineToOutput("heartbeat for lobby " + hostLobby.Id);
-                try
-                {
-                    await LobbyService.Instance.SendHeartbeatPingAsync(hostLobby.Id);
-                }
-                catch (LobbyServiceException e)
-                {
-                    ServerSideManagerUI.I.WriteLineToOutput($"{e.Reason}: {e.Message}");
-                }
-                catch (Exception e)
-                {
-                    ServerSideManagerUI.I.WriteLineToOutput(e.ToString());
-                }
-            }
-        }
+        hostLobby = lobby;
+        currentLobbyIsPrivate = hostLobby.IsPrivate;
+        heartbeatCoroutine = StartCoroutine(I.KeepHearbeat());
+        lobbyPollingCoroutine = StartCoroutine(I.RegularlyPollLobby());
     }
 
-    public void StopLobbyHeartBeat()
-    {        
+    #region Coroutines
+    private IEnumerator KeepHearbeat()
+    {
+        var wait = new WaitForSeconds(heartbeatSeconds);
+        while (hostLobby != null)
+        {
+            ServerSideManagerUI.I.WriteLineToOutput("heartbeat for lobby " + hostLobby.Id);
+            var task = LobbyService.Instance.SendHeartbeatPingAsync(hostLobby.Id);
+            yield return new WaitUntil(() => task.IsCompleted); // wait for async to finish
+            if (task.Exception != null)
+            {
+                ServerSideManagerUI.I.WriteLineToOutput(task.Exception.ToString());
+            }
+            yield return wait;
+        }
+    }
+    private IEnumerator RegularlyPollLobby()
+    {
+        var wait = new WaitForSeconds(lobbyPollingSeconds);
+        while (hostLobby != null)
+        {
+            var task = LobbyService.Instance.GetLobbyAsync(hostLobby.Id);
+            yield return new WaitUntil(() => task.IsCompleted); // wait for async to finish
+            if (task.Exception != null)
+            {
+                ServerSideManagerUI.I.WriteLineToOutput(task.Exception.ToString());
+            }
+            if (playersInLobbyCount != hostLobby.MaxPlayers - hostLobby.AvailableSlots - 1)
+            {
+                lobbyPlayerCountChanged = true;
+            }
+            yield return wait;
+        }
+    }
+    #endregion Coroutines
+
+    public void ShutDownHostLobby()
+    {
+        if (heartbeatCoroutine != null)
+        {
+            StopCoroutine(heartbeatCoroutine);
+            heartbeatCoroutine = null;
+        }
+        if (lobbyPollingCoroutine != null)
+        {
+            StopCoroutine(lobbyPollingCoroutine);
+            lobbyPollingCoroutine = null;
+        }
+
         hostLobby = null;
         ServerSideManagerUI.I.UpdateDisplayedLobbyCode("");
-    }
-
-    private async void HandleLobbyPolling()
-    {
-        if (hostLobby != null)
-        {
-            lobbyPollTimer -= Time.deltaTime;
-            if (lobbyPollTimer < 0f)
-            {
-                lobbyPollTimer = lobbyPollTimerMax;
-
-                hostLobby = await LobbyService.Instance.GetLobbyAsync(hostLobby.Id);
-
-                
-                if (playersInLobbyCount != hostLobby.MaxPlayers - hostLobby.AvailableSlots - 1)
-                {
-                    lobbyPlayerCountChanged = true;
-                }
-            }
-        }
     }
 
     private void HandlePseudoEvents()
@@ -141,7 +152,7 @@ public class ServerSideManager : MonoBehaviour
             {
                 ServerSideManagerUI.I.WriteLineToOutput($"lobby is freshly created, at least 1 player is already present but relay key is not available");
                 ServerSideManagerUI.I.WriteLineToOutput(hostLobby.Data.ToString());
-                StartRelayAndUpdateLobby();
+                I.StartRelayAndUpdateLobby();
             }
         }
         if (lobbyPlayerCountChanged)
@@ -166,7 +177,7 @@ public class ServerSideManager : MonoBehaviour
         if (changes.LobbyDeleted)
         {
             ServerSideManagerUI.I.WriteBadLineToOutput($"lobby got deleted");
-            ReplaceNonfunctionalLobby("re-created lobby", 50, currentLobbyIsPrivate);
+            I.ReplaceNonfunctionalLobby("re-created lobby", 50, currentLobbyIsPrivate);
         }
         else
         {
@@ -193,7 +204,7 @@ public class ServerSideManager : MonoBehaviour
                     }
 
                     //NetworkManagerUI.I.WriteLineToOutput(changes.PlayerData.Value.FirstOrDefault().Value.LastUpdatedChanged.Value.ToString());
-                    StartRelayAndUpdateLobby();
+                    I.StartRelayAndUpdateLobby();
                 }
             }
         }
@@ -204,20 +215,20 @@ public class ServerSideManager : MonoBehaviour
         ServerSideManagerUI.I.WriteLineToOutput("lobby connection state changed to: " + state.ToString());
         if (state == LobbyEventConnectionState.Error)
         {
-            ReplaceNonfunctionalLobby("lobby after error state", 50, currentLobbyIsPrivate);
+            I.ReplaceNonfunctionalLobby("lobby after error state", 50, currentLobbyIsPrivate);
         }
     }
     private void OnKickedFromLobby()
     {
         ServerSideManagerUI.I.WriteBadLineToOutput("somehow the server got kicked from lobby");
-        ReplaceNonfunctionalLobby("got kicked so new lobby", 50, currentLobbyIsPrivate);
+        I.ReplaceNonfunctionalLobby("got kicked so new lobby", 50, currentLobbyIsPrivate);
     }
 
     private void ReplaceNonfunctionalLobby(string newLobbyName, int newMaxPlayers, bool privateLobby = false)
     {
         ServerSideManagerUI.I.EmptyOutput();
-        StopLobbyHeartBeat();
-        CreateLobby(newLobbyName, newMaxPlayers, privateLobby);
+        I.ShutDownHostLobby();
+        I.CreateLobby(newLobbyName, newMaxPlayers, privateLobby);
     }
 
     public async void CreateLobby(string lobbyName, int maxPlayers, bool privateLobby = false)
@@ -238,9 +249,9 @@ public class ServerSideManager : MonoBehaviour
 
             Lobby lobby = await Lobbies.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
             var callbacks = new LobbyEventCallbacks();
-            callbacks.LobbyChanged += OnLobbyChanged;
-            callbacks.LobbyEventConnectionStateChanged += OnConnectionStateChanged;
-            callbacks.KickedFromLobby += OnKickedFromLobby;
+            callbacks.LobbyChanged += I.OnLobbyChanged;
+            callbacks.LobbyEventConnectionStateChanged += I.OnConnectionStateChanged;
+            callbacks.KickedFromLobby += I.OnKickedFromLobby;
             try
             {
                 lobbyEvents = await Lobbies.Instance.SubscribeToLobbyEventsAsync(lobby.Id, callbacks);
@@ -272,8 +283,7 @@ public class ServerSideManager : MonoBehaviour
             }
 
             lobbyFreshlyCreated = true;
-            hostLobby = lobby;
-            currentLobbyIsPrivate = hostLobby.IsPrivate;
+            I.InitHostLobby(lobby);
             ServerSideManagerUI.I.WriteLineToOutput("End of CreateLobby, name: " + lobbyName + ", success: " + (hostLobby != null).ToString());
         }
         catch (LobbyServiceException e)
