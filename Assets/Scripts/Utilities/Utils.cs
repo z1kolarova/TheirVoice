@@ -1,10 +1,12 @@
 using Assets.Enums;
 using Newtonsoft.Json;
+using OpenAI;
 using SFB;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -96,8 +98,6 @@ public static class Utils
 
     #endregion Borders and vectors
 
-    public static IEnumerable<string> NoYesSelectOptions => new string[] {"No", "Yes"};
-
     public static List<TEnum> ValueList<TEnum>() => Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();
 
     #region Dropdowns
@@ -127,8 +127,47 @@ public static class Utils
 
     #endregion Dropdowns
 
+    #region Yes and no
+    public static IEnumerable<string> NoYesSelectOptions => new string[] { "No", "Yes" };
     public static string YesOrNo(this bool isItYes) => isItYes ? "Yes" : "No";
     public static bool IsYes(this string yesOrNo) => yesOrNo == "Yes";
+    #endregion Yes and no
+
+    #region Chunking
+    public static void ChunkData(string textData, ref List<string> chunksToProcess, int maxChunkSize = 4000)
+    {
+        var utf8Bytes = Encoding.UTF8.GetBytes(textData);
+        ChunkData(utf8Bytes, ref chunksToProcess, maxChunkSize);
+    }
+    public static void ChunkData(byte[] utf8Bytes, ref List<string> chunksLocation, int maxChunkSize = 4000)
+    {
+        chunksLocation.Clear();
+        for (int i = 0; i < utf8Bytes.Length; i += maxChunkSize)
+        {
+            int length = Math.Min(maxChunkSize, utf8Bytes.Length - i);
+            byte[] chunk = new byte[length];
+            Array.Copy(utf8Bytes, i, chunk, 0, length);
+            chunksLocation.Add(Convert.ToBase64String(chunk));
+        }
+    }
+    public static string DechunkStringChunks(this List<string> chunks)
+    {
+        List<byte> dataAsBytes = new List<byte>();
+        for (int i = 0; i < chunks.Count; i++)
+        {
+            byte[] chunk = Convert.FromBase64String(chunks[i]);
+            dataAsBytes.AddRange(chunk);
+        }
+        return System.Text.Encoding.UTF8.GetString(dataAsBytes.ToArray());
+    }
+    #endregion Chunking
+
+    #region API
+    public static bool IsError(this CreateChatCompletionResponse response)
+    {
+        return response.Error != null;
+    }
+    #endregion API
 }
 
 public struct Borders {

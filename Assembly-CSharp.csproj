@@ -70,6 +70,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Embedding\EmbeddingEndpoint.cs" />
     <Compile Include="Assets\Scripts\ConversationManager.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\InfoModal.cs" />
+    <Compile Include="Assets\Scripts\ClientDataManager.cs" />
     <Compile Include="Assets\Scripts\ConvoUtils.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabUI.cs" />
     <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\StandaloneFileBrowserLinux.cs" />
@@ -88,12 +89,12 @@
     <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\Sample\CanvasSampleOpenFileText.cs" />
     <Compile Include="Assets\ThirdParty\CalvinRien\SaveWav.cs" />
     <Compile Include="Assets\Scripts\ServerConnectivity\LoggingManager.cs" />
+    <Compile Include="Assets\Scripts\UI\Modals\LanguageSelectionModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\ICompletionEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Embedding\EmbeddingRequest.cs" />
     <Compile Include="Assets\StarterAssets\Mobile\Scripts\VirtualInputs\UIVirtualButton.cs" />
     <Compile Include="Assets\Classes\ConversationBlock.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\SketchfabLogger.cs" />
-    <Compile Include="Assets\Classes\PromptLabel.cs" />
     <Compile Include="Assets\Scripts\Utilities\Constants.cs" />
     <Compile Include="Assets\Scripts\SQLite\DBService.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\ImageSize.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\IFilesEndpoint.cs" />
     <Compile Include="Assets\Scripts\SQLite\PromptLoc.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\EndpointBase.cs" />
+    <Compile Include="Assets\Classes\EnrichedPromptLocText.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\Resizer.cs" />
     <Compile Include="Assets\Enums\EndConvoAbility.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\HowItWorksModal.cs" />
@@ -138,7 +140,6 @@
     <Compile Include="Assets\Sketchfab For Unity\Scripts\AssetBrowser\SketchfabModelWindow.cs" />
     <Compile Include="Assets\Scripts\Utilities\RngUtils.cs" />
     <Compile Include="Assets\Scripts\SQLite.cs" />
-    <Compile Include="Assets\Classes\OriginalPrompt.cs" />
     <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\Sample\CanvasSampleSaveFileText.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionResult.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\ServerManagePromptsModal.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\IImageGenerationEndpoint.cs" />
     <Compile Include="Assets\Scripts\ConvoUtilsGPT.cs" />
     <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\StandaloneFileBrowser.cs" />
+    <Compile Include="Assets\Scripts\DBServiceUtils.cs" />
     <Compile Include="Assets\Scripts\AudioUtilsWhisper.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\IModelsEndpoint.cs" />
     <Compile Include="Assets\Enums\ArgumentationTag.cs" />
@@ -174,6 +176,9 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\Model.cs" />
     <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\Sample\CanvasSampleOpenFileImage.cs" />
     <Compile Include="Assets\Structs\LangPrompt.cs" />
+    <Compile Include="Assets\Scripts\ClientDataUtils.cs" />
+    <Compile Include="Assets\Scripts\ServerDataUtils.cs" />
+    <Compile Include="Assets\Scripts\UserSettingsManager.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\JustCloseModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\APIAuthentication.cs" />
     <Compile Include="Assets\Scripts\SQLite\Language.cs" />
@@ -181,6 +186,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatMessage.cs" />
     <Compile Include="Assets\StarterAssets\InputSystem\StarterAssetsInputs.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\FilesEndpoint.cs" />
+    <Compile Include="Assets\Classes\DataRequester.cs" />
     <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\Sample\CanvasSampleSaveFileImage.cs" />
     <Compile Include="Assets\Scripts\ServerConnectivity\ClientSideManager.cs" />
     <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\StandaloneFileBrowserEditor.cs" />

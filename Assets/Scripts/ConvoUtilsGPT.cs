@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using OpenAI;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Unity.Collections;
 using UnityEngine;
@@ -12,7 +11,12 @@ using static Constants;
 
 public static class ConvoUtilsGPT
 {
-    public static PromptLabel notInterestedPromptLabel = new PromptLabel() { 
+    public static int GetNotInterestedPromptId() 
+        => ClientDataManager.I.SystemPromptNameIdDic[NOT_INTERESTED_PROMPT_NAME];
+
+    public static Prompt CreateNotInterestedPrompt() => new Prompt()
+    {
+        Id = GetNotInterestedPromptId(),
         Name = NOT_INTERESTED_PROMPT_NAME,
         EndConvoAbility = EndConvoAbility.Always
     };
@@ -31,14 +35,7 @@ public static class ConvoUtilsGPT
     private static FixedString4096Bytes chatRequestToProcess = "";
     public static FixedString4096Bytes GetChatRequestToProcess() => chatRequestToProcess;
 
-    private static bool currentlyWaitingForServerResponse = false;
-    public static bool IsWaitingForResponse() => currentlyWaitingForServerResponse;
-
-    private static bool hasNewChatRequestToProcess = false;
-    public static bool HasNewChatRequestToProcess() => hasNewChatRequestToProcess;
-    public static void UpdateChatRequestBeganProcessing() { hasNewChatRequestToProcess = false; }
-
-    //public static event EventHandler<FixedString4096Bytes> OnNewChatRequestToProcess;
+    public static DataRequester ChatGPTResponseRequester = new DataRequester();
 
     private static OpenAIApi api;
     public static OpenAIApi API
@@ -67,7 +64,10 @@ public static class ConvoUtilsGPT
         }
     }
 
-    public static OriginalPrompt CreatePrompt(string promptText, EndConvoAbility endConvoAbility, int chanceIfSometimes = 50)
+    public static EnrichedPromptLocText ProduceEnrichedLocText(this PromptLoc promptLoc, EndConvoAbility endConvoAbility, int chanceIfSometimes = 50)
+        => promptLoc.Text.ProduceEnrichedLocText(endConvoAbility, chanceIfSometimes);
+
+    public static EnrichedPromptLocText ProduceEnrichedLocText(this string promptText, EndConvoAbility endConvoAbility, int chanceIfSometimes = 50)
     {
         bool willBeAbleToEndConvo = false;
         switch (endConvoAbility)
@@ -78,81 +78,40 @@ public static class ConvoUtilsGPT
                 if (RngUtils.RollWithinLimitCheck(chanceIfSometimes))
                 {
                     willBeAbleToEndConvo = true;
-                    promptText += CONVO_END_INSTRUCTION;
+                    promptText += GetConvoEndInstruction();
                 }
                 break;
             case EndConvoAbility.Always:
                 willBeAbleToEndConvo = true;
-                promptText += CONVO_END_INSTRUCTION;
+                promptText += GetConvoEndInstruction();
                 break;
         }
 
-        return new OriginalPrompt { 
-            GeneralConvoEndingAbility = endConvoAbility,
+        return new EnrichedPromptLocText
+        {
             CanEndConvoThisTime = willBeAbleToEndConvo,
-            Text = promptText
+            FullyAssembledText = promptText
         };
     }
 
-    public static OriginalPrompt CreateNotInterestedPrompt()
+    public static EnrichedPromptLocText GetNotInterestedEnrichedText()
     {
-        var text = GetPromptTextByLabel(notInterestedPromptLabel);
-        return CreatePrompt(text, notInterestedPromptLabel.EndConvoAbility);
+        var text = GetPromptTextInCurrentLanguage(GetNotInterestedPromptId());
+        return text.ProduceEnrichedLocText(EndConvoAbility.Always);
+    }
+
+    public static string GetConvoEndInstruction()
+    {
+        string localisedText = GetPromptTextInCurrentLanguage(
+            promptId: ClientDataUtils.GetSystemPromptId(CAN_END_CONVO_PROMPT_NAME));
+
+        return string.Format(localisedText, CONVO_END_STRING);
     }
 
     public static void InitNewConvoWithPrompt(string prompt)
     {
         Messages.Clear();
         Messages.Add(new ChatMessage() { Role = "system", Content = prompt });
-    }
-
-    public static async Task<string> GetResponseTo(string msgText)
-    {
-        if (string.IsNullOrWhiteSpace(msgText))
-        {
-            return "";
-        }
-
-        ChatMessage userMessage = new ChatMessage() { 
-            Role = "user", 
-            Content = msgText.Trim() 
-        };
-
-        if (userMessage.Content.Length > USER_MSG_CHAR_LIMIT)
-        {
-            userMessage.Content = userMessage.Content.Substring(0, USER_MSG_CHAR_LIMIT);
-        }
-
-        Debug.Log(string.Format("{0}: {1}", userMessage.Role, userMessage.Content));
-
-        Messages.Add(userMessage);
-
-
-        var chatResult = await API.CreateChatCompletion(new CreateChatCompletionRequest()
-        {
-            Model = _model,
-            Temperature = _temperature,
-            MaxTokens = _maxTokens,
-            Messages = messages,
-            FrequencyPenalty = _frequencyPenalty,
-            PresencePenalty = _presencePenalty
-        });
-
-        if (chatResult.Choices.Count == 0)
-        {
-            Debug.Log("ChatGPT didn't give back chatResult");
-        }
-
-        ChatMessage responseMessage = new ChatMessage()
-        {
-            Role = chatResult.Choices[0].Message.Role,
-            Content = chatResult.Choices[0].Message.Content
-        };
-
-        messages.Add(responseMessage);
-
-        Debug.Log(responseMessage.Content);
-        return responseMessage.Content;
     }
 
     public static void GetServerResponseTo(string msgText)
@@ -162,13 +121,12 @@ public static class ConvoUtilsGPT
         if (request.HasValue)
         {
             chatRequestToProcess = request.Value;
-            hasNewChatRequestToProcess = true;
-            currentlyWaitingForServerResponse = true;
+            ChatGPTResponseRequester.RequestData();
         }
         else
         {
             ConversationUIChatGPT.I.SetNewDialogueToDisplay(safetyNetMessage.Content);
-            currentlyWaitingForServerResponse = false;
+            ChatGPTResponseRequester.UpdateDataReceivedAndProcessed();
         }
     }
 
@@ -201,6 +159,8 @@ public static class ConvoUtilsGPT
 
         if (userMessage.Content.Length > USER_MSG_CHAR_LIMIT)
         {
+            var cutCharCount = userMessage.Content.Length - USER_MSG_CHAR_LIMIT;
+            Debug.Log($"Cut {cutCharCount} characters because message was too long");
             userMessage.Content = userMessage.Content.Substring(0, USER_MSG_CHAR_LIMIT);
         }
 
@@ -233,12 +193,22 @@ public static class ConvoUtilsGPT
         }
     }
 
+    #region only done on server
     public static async Task<string> GetResponseAsServer(string serialisedChatRequest)
     {
+        //ServerSideManagerUI.I.WriteLineToOutput(serialisedChatRequest);
         var chatRequest = JsonConvert.DeserializeObject<CreateChatCompletionRequest>(serialisedChatRequest.ToString());
+        //ServerSideManagerUI.I.WriteLineToOutput(chatRequest.ToString());
         try
         {
             var chatResult = await API.CreateChatCompletion(chatRequest);
+            //ServerSideManagerUI.I.WriteLineToOutput(JsonConvert.SerializeObject(chatResult));
+            if (chatResult.IsError())
+            {
+                ServerSideManagerUI.I.WriteBadLineToOutput("ERROR: " + chatResult.Error.Message);
+                return JsonConvert.SerializeObject(safetyNetMessage);
+            }
+
             ChatMessage responseMessage = new ChatMessage()
             {
                 Role = chatResult.Choices[0].Message.Role,
@@ -246,15 +216,15 @@ public static class ConvoUtilsGPT
             };
 
             var serialisedChatMessage = JsonConvert.SerializeObject(responseMessage);
-
             return serialisedChatMessage;
         }
         catch (Exception e)
         {
-            Debug.Log(e);
+            ServerSideManagerUI.I.WriteBadLineToOutput(e.ToString());
             return JsonConvert.SerializeObject(safetyNetMessage);
         }
     }
+    #endregion only done on server
 
     public static void ProcessResponseMessage(string serialisedResponseMessage)
     {
@@ -271,7 +241,7 @@ public static class ConvoUtilsGPT
         messages.Add(responseMessage);
 
         ConversationUIChatGPT.I.SetNewDialogueToDisplay(responseMessage.Content);
-        currentlyWaitingForServerResponse = false;
+        ChatGPTResponseRequester.UpdateDataReceivedAndProcessed();
     }
 
     public static Task<string> FakeGettingResponseTo(string msgText)
@@ -318,50 +288,13 @@ public static class ConvoUtilsGPT
         return result;
     }
 
-    public static List<PromptLabel> GetPromptBank()
+    public static string GetPromptTextInCurrentLanguage(int promptId)
     {
-        var path = Path.Combine(PromptsDir, PromptBankFileName);
-        List<PromptLabel> result = new List<PromptLabel>();
-
-        using (StreamReader sr = new StreamReader(path))
-        using (JsonReader jr = new JsonTextReader(sr))
-        {
-            result = Utils.Serializer.Deserialize<List<PromptLabel>>(jr);
+        if (!ClientDataManager.I.PromptLocTextDic.TryGetValue((promptId, UserSettingsManager.I.ConversationLanguage.Id), out var promptText))
+        { 
+            promptText = $"Something went wrong getting text for promptId {promptId} in language {UserSettingsManager.I.ConversationLanguage.Name}.";
+            //TODO: if it wasn't cached, get it from the server
         }
-
-        return result;
-    }
-
-    public static string GetPromptTextByLabel(PromptLabel label)
-    {
-        var path = Path.Combine(PromptsDir, $"{label.Name}.txt");
-
-        if (!File.Exists(path))
-        {
-            return null;
-        }
-
-        string text = File.ReadAllText(path);
-        return text;
-    }
-
-    public static void SerializePromptBank(List<PromptLabel> promptLabels)
-    {
-        var filePath = Path.Combine(PromptsDir, PromptBankFileName);
-        
-        using (StreamWriter sw = new StreamWriter(filePath))
-        using (JsonWriter writer = new JsonTextWriter(sw))
-        {
-            Utils.Serializer.Serialize(writer, promptLabels);
-        }
-    }
-    public static void SerializePrompt<T>(T prompt, string fileName)
-    {
-        var filePath = Path.Combine(PromptsDir, $"{fileName}.json");
-        using (StreamWriter sw = new StreamWriter(filePath))
-        using (JsonWriter writer = new JsonTextWriter(sw))
-        {
-            Utils.Serializer.Serialize(writer, prompt);
-        }
+        return promptText;
     }
 }

@@ -26,6 +26,7 @@ public class ServerEditPromptModal : JustCloseModal
     private PromptLoc dbPromptLoc;
     private string currentlySelectedLanguage = "English";
 
+    //TODO: warn before closing editor with unsaved changes
     //TODO: warn before language switch with unsaved changes
     private bool HasPromptChange()
         => dbPrompt.Name != promptNameCodeInput.text

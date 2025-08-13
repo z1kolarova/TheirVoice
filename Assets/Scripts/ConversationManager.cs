@@ -19,21 +19,6 @@ public class ConversationManager : MonoBehaviour
     {
         instance = this;
         rng = new System.Random();
-        //EstablishNeededConnections();
-    }
-
-    private async void EstablishNeededConnections()
-    {
-        var authenticated = await ClientSideManager.I.AuthenticateClient();
-        if (authenticated)
-        {
-            await ClientSideManager.I.JoinPublicLobbyAndRelay();
-        }
-        else
-        {
-            Debug.Log("Authentication failed miserably and we have a problem...");
-            //NetworkManagerUI.I.WriteLineToOutput("Authentication failed miserably and we have a problem...");
-        }
     }
 
     public void TriggerStartDialogue(PasserbyAI passerby)
@@ -42,9 +27,9 @@ public class ConversationManager : MonoBehaviour
         talkingTo = passerby;
         passerbyWasWatching = passerby.State == PasserbyStates.Watching;
         talkingTo.BeApproached(PlayerController.I.transform.gameObject);
-
-        var promptLabelToUse = passerbyWasWatching ? talkingTo.personality.PromptLabel : ConvoUtilsGPT.notInterestedPromptLabel;
+        
         var promptToUse = passerbyWasWatching ? talkingTo.personality.Prompt : ConvoUtilsGPT.CreateNotInterestedPrompt();
+        var enrichedText = passerbyWasWatching ? talkingTo.personality.EnrichedText : ConvoUtilsGPT.GetNotInterestedEnrichedText();
 
         Debug.Log($"Has all needed connections: {ClientSideManager.I.HasAllNeededConnections}");
         if (!ClientSideManager.I.HasAllNeededConnections || Utils.ConversationMode == ConversationModes.Premade)
@@ -54,12 +39,21 @@ public class ConversationManager : MonoBehaviour
         else
         {
             PersonalityInfoUI.I.SetActive(true);
-            PersonalityInfoUI.I.GetAttributesForDisplay(promptLabelToUse.Name, promptToUse.GeneralConvoEndingAbility, promptToUse.CanEndConvoThisTime);
-            ConvoUtilsGPT.InitNewConvoWithPrompt(promptToUse.Text);
+            PersonalityInfoUI.I.FillAttributesForDisplay(promptToUse.Name, promptToUse.EndConvoAbility, enrichedText.CanEndConvoThisTime);
+            ConvoUtilsGPT.InitNewConvoWithPrompt(enrichedText.FullyAssembledText);
             ConversationUIChatGPT.I.StartDialogue(npcInterested: passerbyWasWatching);
         }
     }
+    public void TriggerEndDialogue()
+    {
+        talkingTo.EndConversation();
+        talkingTo = null;
+        IsInDialogue = false;
 
+        PersonalityInfoUI.I.SetActive(false);
+    }
+
+    #region conversation blocks
     public List<PlayerConvoBlock> GetFirstPlayerOptions(bool npcInterested = true)
     {
         //return SelectUpToFromCollection<PlayerConvoBlock>(4, ConversationConsts.P_OpeningLines);
@@ -80,15 +74,6 @@ public class ConversationManager : MonoBehaviour
     {
         var responsePool = ConvoUtils.GetResponsePoolByName<PlayerConvoBlock>(conversationBlock.ResponsePoolName);
         return SelectUpToFromCollection(4, responsePool);
-    }
-
-    public void TriggerEndDialogue()
-    {
-        talkingTo.EndConversation();
-        talkingTo = null;
-        IsInDialogue = false;
-
-        PersonalityInfoUI.I.SetActive(false);
     }
 
     private List<T> SelectUpToFromCollection<T>(int amount, List<T> collection)
@@ -117,4 +102,5 @@ public class ConversationManager : MonoBehaviour
         }
         return result;
     }
+    #endregion conversation blocks
 }

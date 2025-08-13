@@ -15,4 +15,6 @@ public class Prompt
             $", {nameof(EndConvoAbility)}={EndConvoAbility}" +
             $", {nameof(ActiveIfAvailable)}={ActiveIfAvailable}" +
             $"]";
+
+    public bool IsSystemPrompt => Name.StartsWith("_");
 }

@@ -49,7 +49,6 @@ public class ServerManagePromptsModal : JustCloseModal
             CurrentlySelectedLanguage = languageSelectionDropdown.options[newValue].text;
             GetLangAvailabilities(CurrentlySelectedLanguage);
         });
-
     }
 
     protected override void Start()
@@ -68,7 +67,7 @@ public class ServerManagePromptsModal : JustCloseModal
     private void LoadPromptEntries()
     {
         //foreach (var prompt in PromptManager.I.MainBankPrompts)
-        foreach (var prompt in DBService.I.Prompts.ToList())
+        foreach (var prompt in DBService.I.Prompts.OrderBy(p => p.Name).ToList())
         {
             CreateAndAddPromptEntry(prompt);
         }

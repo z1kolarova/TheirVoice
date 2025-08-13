@@ -3,8 +3,6 @@ using OpenAI;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Xml.Schema;
-using Unity.Collections;
 using UnityEngine;
 
 public static class AudioUtilsWhisper
@@ -15,23 +13,12 @@ public static class AudioUtilsWhisper
 
     private static List<string> chunksToProcess = new List<string>();
     public static List<string> GetAllChunks() => chunksToProcess;
-    private static FixedString4096Bytes chunkToProcess = "";
-    public static FixedString4096Bytes GetTranscriptChunk() => chunkToProcess;
-    private static bool hasNewChunkToProcess = false;
-    public static bool HasNewChunkToProcess() => hasNewChunkToProcess;
-    
-    private static bool needsNewChunkToProcess = false;
-    public static bool NeedsNewChunkToProcess() => needsNewChunkToProcess;
-
-    private static FixedString4096Bytes transcriptionRequestToProcess = "";
-    public static FixedString4096Bytes GetTranscriptRequest() => transcriptionRequestToProcess;
 
     private static bool currentlyWaitingForServerResponse = false;
     public static bool IsWaitingForResponse() => currentlyWaitingForServerResponse;
 
     private static bool hasNewRequestToProcess = false;
     public static bool HasNewRequestToProcess() => hasNewRequestToProcess;
-    public static bool NeedsMoreChunks() => hasNewRequestToProcess;
     public static void UpdateRequestBeganProcessing() { hasNewRequestToProcess = false; }
 
     private static OpenAIApi api;

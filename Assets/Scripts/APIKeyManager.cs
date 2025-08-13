@@ -13,7 +13,10 @@ public class APIKeyManager : MonoBehaviour
     public List<string> KeyNameOptions { get; set; }
     public string SelectedKeyName { get; private set; }
     public void SetSelectedKeyName(string keyName)
-        => SelectedKeyName = keyName;
+    {
+        SelectedKeyName = keyName;
+        ServerSideManagerUI.I.WriteLineToOutput("Selected API key: " + SelectedKeyName);
+    }
 
     public bool IsKeySelected => !string.IsNullOrEmpty(SelectedKeyName);
 

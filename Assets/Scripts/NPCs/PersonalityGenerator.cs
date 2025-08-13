@@ -1,4 +1,3 @@
-using Assets.Classes;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,58 +9,57 @@ public class PersonalityGenerator : MonoBehaviour
 
     [Range(0, 100)] public int EndingConversationAbilityChance;
 
-    private int rangeMax = 100;
-    private List<PromptLabel> promptBank;
-    private List<PromptLabel> availablePool = new List<PromptLabel>();
     private Dictionary<string, int> currentlyInScene;
+
+    private List<Prompt> promptBank;
+    private List<Prompt> availablePool;
 
     private void Start()
     {
         instance = this;
 
-        promptBank = ConvoUtilsGPT.GetPromptBank();
+        promptBank = ClientDataManager.I.LangIdPromptDic[UserSettingsManager.I.ConversationLanguage.Id];
 
         currentlyInScene = new Dictionary<string, int>();
-        foreach (var promptLabel in promptBank)
+        foreach (var prompt in promptBank)
         {
-            currentlyInScene.Add(promptLabel.Name, 0);
+            currentlyInScene.Add(prompt.Name, 0);
         }
 
-        availablePool = new List<PromptLabel>(promptBank);
+        availablePool = new List<Prompt>(promptBank);
     }
 
+    #region reworked prompts
     public PersonalityCore GetNewPersonality()
     {
-        var promptLabel = availablePool.Count > 0 
-            ? availablePool[RngUtils.Rng.Next(availablePool.Count)] 
+        var prompt = availablePool.Count > 0
+            ? availablePool[RngUtils.Rng.Next(availablePool.Count)]
             : promptBank[RngUtils.Rng.Next(promptBank.Count)];
 
-        var promptText = ConvoUtilsGPT.GetPromptTextByLabel(promptLabel);
+        var promptText = ConvoUtilsGPT.GetPromptTextInCurrentLanguage(prompt.Id);
 
-        var prompt = ConvoUtilsGPT.CreatePrompt(promptText, promptLabel.EndConvoAbility, EndingConversationAbilityChance);
-        
         var pc = new PersonalityCore()
         {
-            PromptLabel = promptLabel,
-            Prompt = prompt,
+            Prompt = prompt
         };
 
         if (availablePool.Count > 0)
         {
-            availablePool.Remove(promptLabel);
+            availablePool.Remove(prompt);
         }
 
-        currentlyInScene[promptLabel.Name]++;
+        currentlyInScene[prompt.Name]++;
 
         return pc;
     }
 
-    public void RemoveFromPromptLabelsInScene(PromptLabel promptLabel)
+    public void RemoveFromPromptsInScene(Prompt prompt)
     {
-        currentlyInScene[promptLabel.Name]--;
-        if (currentlyInScene[promptLabel.Name] == 0)
+        currentlyInScene[prompt.Name]--;
+        if (currentlyInScene[prompt.Name] == 0)
         {
-            availablePool.Add(promptLabel);
+            availablePool.Add(prompt);
         }
     }
+    #endregion reworked prompts
 }

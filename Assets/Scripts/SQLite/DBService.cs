@@ -129,7 +129,6 @@ public class DBService
         var dbPath = GetSystemSpecificPathToDBFile(databaseName);
         _connection = new SQLiteConnection(dbPath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
         _connection.Execute("PRAGMA foreign_keys = ON;");
-        Debug.Log("Final PATH: " + dbPath);
     }
 
     private string GetSystemSpecificPathToDBFile(string databaseName)
@@ -183,6 +182,11 @@ public class DBService
 #endif
     }
     #endregion ctor
+
+    public void PrintPathToDB()
+    {
+        ServerSideManagerUI.I.WriteLineToOutput("Final DB path: " + _connection?.DatabasePath);
+    }
 
     #region migrating
 
@@ -280,7 +284,7 @@ public class DBService
     {
         try
         {
-            var dbPath = GetSystemSpecificPathToDBFile(databaseName);
+            var dbPath = _connection.DatabasePath;
             if (!File.Exists(dbPath))
             {
                 Debug.Log("no DB to back up");
@@ -298,35 +302,5 @@ public class DBService
             return false;
         }
     }
-
     #endregion backups
-
-    #region conversion of old prompts
-
-    //public void InsertMainPromptBank()
-    //{
-    //    var engLangId = _connection.Find<Language>(l => l.Name == "English").Id;
-    //    foreach (var item in PromptManager.I.MainBankPrompts)
-    //    {
-    //        Debug.Log(item.Name);
-    //        Prompt prompt = new Prompt() { 
-    //            Name = item.Name,
-    //            EndConvoAbility = item.EndConvoAbility,
-    //            ActiveIfAvailable = false,
-    //        };
-    //        _connection.Insert(prompt);
-            
-    //        PromptManager.I.TryGetPromptTextInLanguage(prompt.Name, "English", out string promptText);
-
-    //        PromptLoc promptLoc = new PromptLoc() {
-    //            PromptId = prompt.Id,
-    //            LangId = engLangId,
-    //            Available = true,
-    //            Text = promptText
-    //        };
-    //        _connection.Insert(promptLoc);
-    //    }
-    //}
-
-    #endregion conversion of old prompts
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -14,6 +15,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] Button exitButton;
 
     [Header("Modals")]
+    [SerializeField] LanguageSelectionModal languageSelectionModal;
     [SerializeField] JustCloseModal howItWorksModal;
     [SerializeField] JustCloseModal creditsModal;
 
@@ -41,7 +43,8 @@ public class MainMenuManager : MonoBehaviour
             ExitSimulator();
         });
 
-        SetStartButtonInteractable(ClientSideManager.I.HasAllNeededConnections);
+        SetStartButtonInteractable(ClientSideManager.I.HasAllNeededConnections 
+            && ClientDataManager.I.Languages?.Count > 0);
     }
 
     private void LoadCubeOfTruth()
@@ -57,5 +60,24 @@ public class MainMenuManager : MonoBehaviour
     public void SetStartButtonInteractable(bool interactable)
     {
         startButton.interactable = interactable;
+    }
+
+    private IEnumerator DisplayLanguageSelectionModal()
+    {
+        if (ClientDataManager.I.Languages == null)
+        {
+            if (!ClientDataUtils.AvailableLangsRequester.IsCurrentlyWaiting())
+            {
+                ClientDataUtils.AvailableLangsRequester.RequestData();
+            }
+            yield return new WaitWhile(ClientDataUtils.AvailableLangsRequester.IsCurrentlyWaiting);
+        }
+
+        languageSelectionModal.SetActive(true);
+    }
+
+    public void ProceedToLanguageSelectionDialogue()
+    {
+        StartCoroutine(DisplayLanguageSelectionModal());
     }
 }

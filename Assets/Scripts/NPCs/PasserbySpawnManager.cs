@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PasserBySpawnManager : MonoBehaviour
+public class PasserbySpawnManager : MonoBehaviour
 {
-    public static PasserBySpawnManager I => instance;
-    static PasserBySpawnManager instance;
+    public static PasserbySpawnManager I => instance;
+    static PasserbySpawnManager instance;
 
     private List<PasserbyAI> passerbyList;
 
@@ -39,7 +39,7 @@ public class PasserBySpawnManager : MonoBehaviour
     }
 
     public void Remove(PasserbyAI passerbyAI) {
-        PersonalityGenerator.I.RemoveFromPromptLabelsInScene(passerbyAI.personality.PromptLabel);
+        PersonalityGenerator.I.RemoveFromPromptsInScene(passerbyAI.personality.Prompt);
         passerbyList.Remove(passerbyAI);
     }
 }

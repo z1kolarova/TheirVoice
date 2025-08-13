@@ -1,4 +1,5 @@
 using Assets.Classes;
+using System.Collections;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -52,6 +53,7 @@ public class PasserbyAI : MonoBehaviour
         animator.SetTrigger("StartWalking");
 
         personality = PersonalityGenerator.I.GetNewPersonality();
+        CompletePersonality();
     }
 
     // Update is called once per frame
@@ -76,6 +78,34 @@ public class PasserbyAI : MonoBehaviour
                 break;
         }
     }
+
+    #region Personality
+
+    public void CompletePersonality()
+    {
+        StartCoroutine(GetPromptLocText(personality.Prompt.Id, UserSettingsManager.I.ConversationLanguage.Id));
+    }
+
+    private IEnumerator GetPromptLocText(int promptId, int langId)
+    {
+        Debug.Log($"start of GetPromptLocText {promptId}, {langId}");
+        var idTuple = (promptId, langId);
+        if (!ClientDataManager.I.PromptLocTextDic.TryGetValue(idTuple, out string promptLocText))
+        {
+            if (!ClientDataUtils.PromptLocRequester.IsCurrentlyWaiting(idTuple))
+            {
+                Debug.Log($"calls GetPromptLoc for {promptId}, {langId}");
+                ClientDataUtils.PromptLocRequester.RequestData(idTuple);
+            }
+            yield return new WaitWhile(() => { 
+                return ClientDataUtils.PromptLocRequester.IsCurrentlyWaiting(idTuple);
+            });
+            ClientDataManager.I.PromptLocTextDic.TryGetValue(idTuple, out promptLocText);
+        }
+
+        personality.EnrichedText = promptLocText.ProduceEnrichedLocText(personality.Prompt.EndConvoAbility, PersonalityGenerator.I.EndingConversationAbilityChance);
+    }
+    #endregion Personality
 
     private void EvaluateStateChange()
     {
@@ -154,7 +184,7 @@ public class PasserbyAI : MonoBehaviour
             return;
         }
 
-        PasserBySpawnManager.I.Remove(this);
+        PasserbySpawnManager.I.Remove(this);
         PasserbyModelManager.I.RemoveFromModelsInScene(npcModel);
         Destroy(transform.gameObject);
     }

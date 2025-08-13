@@ -1,7 +1,4 @@
 ﻿using Assets.Enums;
-using Assets.Scripts;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,7 +22,7 @@ public class PersonalityInfoUI : MonoBehaviour
         transform.gameObject.SetActive(false);
     }
 
-    public void GetAttributesForDisplay(string name, EndConvoAbility endConvoDesc, bool canEndConvo)
+    public void FillAttributesForDisplay(string name, EndConvoAbility endConvoDesc, bool canEndConvo)
     {
         personalityDesc.text = name;
         endConvoAbilityDesc.text = endConvoDesc switch {

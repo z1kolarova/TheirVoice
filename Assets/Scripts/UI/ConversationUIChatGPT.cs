@@ -81,10 +81,9 @@ public class ConversationUIChatGPT : MonoBehaviour
         if (realGPT)
         {
             ConvoUtilsGPT.GetServerResponseTo(msgText);
-            yield return new WaitWhile(ConvoUtilsGPT.IsWaitingForResponse);
+            yield return new WaitWhile(ConvoUtilsGPT.ChatGPTResponseRequester.IsCurrentlyWaiting);
             yield return StartCoroutine(ContinueDialogue(newDialogueToDisplay));
             sendBtn.enabled = true;
-
         }
         else
         {
