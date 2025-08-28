@@ -83,6 +83,18 @@ public class PlayerPrefabRpcs : NetworkBehaviour
             }
         }
 
+        #region moderation
+        if (ModerationUtils.ModerationRequester.NeedsData())
+        {
+            ModerationUtils.ModerationRequester.UpdateBeganProcessing();
+            Debug.Log($"HasModerationRequestToProcess");
+            var request = ModerationUtils.GetInputToProcess();
+            Debug.Log($"{request.Value}");
+
+            InitModerationServerRpc(OwnerClientId, request.Value.ToString());
+        }
+        #endregion moderation
+
         #region GPT response
         if (ConvoUtilsGPT.ChatGPTResponseRequester.NeedsData())
         {
@@ -278,6 +290,37 @@ public class PlayerPrefabRpcs : NetworkBehaviour
     }
     #endregion PromptLocRpcs
     #endregion client-host data exchange
+
+    #region moderation
+    [ServerRpc]
+    private void InitModerationServerRpc(ulong clientId, string textToModerate)
+    {
+        HandleModeration(clientId, textToModerate);
+    }
+
+    private async void HandleModeration(ulong clientId, string textToModerate)
+    {
+        if (IsServer)
+        {
+            try
+            {
+                var res = await ModerationUtils.PassesModeration(textToModerate);
+                ReceiveModerationClientRpc(res, SingleTarget(clientId));
+            }
+            catch (Exception e)
+            {
+                ServerSideManagerUI.I.WriteBadLineToOutput(e.ToString());
+            }
+        }
+    }
+
+    [ClientRpc]
+    private void ReceiveModerationClientRpc(bool passed, ClientRpcParams clientRpcParams = default)
+    {
+        Debug.Log("I am in the ClientRpc.");
+        ModerationUtils.ProcessModerationResult(passed);
+    }
+    #endregion moderation
 
     #region ChatGPT
     [ServerRpc]

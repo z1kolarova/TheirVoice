@@ -80,9 +80,21 @@ public class ConversationUIChatGPT : MonoBehaviour
 
         if (realGPT)
         {
-            ConvoUtilsGPT.GetServerResponseTo(msgText);
-            yield return new WaitWhile(ConvoUtilsGPT.ChatGPTResponseRequester.IsCurrentlyWaiting);
-            yield return StartCoroutine(ContinueDialogue(newDialogueToDisplay));
+            ModerationUtils.InitiateModeration(msgText);
+            yield return new WaitWhile(ModerationUtils.ModerationRequester.IsCurrentlyWaiting);
+
+            if (ModerationUtils.LastInputPassed == true)
+            {
+                ConvoUtilsGPT.GetServerResponseTo(msgText);
+                yield return new WaitWhile(ConvoUtilsGPT.ChatGPTResponseRequester.IsCurrentlyWaiting);
+                yield return StartCoroutine(ContinueDialogue(newDialogueToDisplay));
+            }
+            else
+            {
+                //TODO: indicate to user that moderation flagged the message
+                inputField.text = "Message was flagged by moderation.";
+            }
+            
             sendBtn.enabled = true;
         }
         else

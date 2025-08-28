@@ -156,6 +156,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Model\IModelsEndpoint.cs" />
     <Compile Include="Assets\Enums\ArgumentationTag.cs" />
     <Compile Include="Assets\Scripts\UI\ConversationUIChatGPT.cs" />
+    <Compile Include="Assets\Scripts\ModerationUtils.cs" />
     <Compile Include="Assets\Scripts\NPCs\AISensor.cs" />
     <Compile Include="Assets\Enums\ConversationModes.cs" />
     <Compile Include="Assets\Scripts\LanguageManager.cs" />
