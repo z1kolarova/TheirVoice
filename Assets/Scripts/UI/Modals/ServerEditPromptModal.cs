@@ -41,6 +41,14 @@ public class ServerEditPromptModal : JustCloseModal
     {
         instance = this;
 
+        testPromptBtn.onClick.AddListener(() =>
+        {
+            testPromptBtn.enabled = false;
+            ServerSideManagerUI.I.WriteCyanLineToOutput("Test prompt button was clicked");
+            if (PrepareForTestStart())
+                PromptTestingManager.I.StartTestingPrompt(promptNameCodeInput.text);
+        });
+
         saveChangesBtn.onClick.AddListener(() =>
         {
             if (HasPromptChange())
@@ -108,5 +116,42 @@ public class ServerEditPromptModal : JustCloseModal
         dbPromptLoc.Available = promptLocReadyDropdown.GetDisplayedTextOfDropdown().IsYes();
 
         DBService.I.Update(dbPromptLoc);
+    }
+
+    private bool PrepareForTestStart()
+    {
+        var canStart = PromptManager.I.TryGetPromptLocFromDB(
+                promptName: Constants.TESTING_PROMPT_NAME, currentlySelectedLanguage,
+                out var testPromptLoc);
+
+        if (canStart && PromptManager.I.TryGetPromptTextInLanguage(
+            Constants.CAN_END_CONVO_PROMPT_NAME, currentlySelectedLanguage, 
+            out string convoEndingInstruction))
+        {
+            convoEndingInstruction = convoEndingInstruction.FormatInConvoEndString();
+
+            var outreacherSystemMessage = testPromptLoc.Text
+                .EnrichText(EndConvoAbility.Always, convoEndingInstruction)
+                .FullyAssembledText;
+
+            var passerbySystemMessage = promptTextInput.text
+                .EnrichText(
+                    Enum.Parse<EndConvoAbility>(endConvoAbilityDropdown.GetDisplayedTextOfDropdown()),
+                    convoEndingInstruction)
+                .FullyAssembledText;
+
+            TestingUtilsGPT.InitTestConversations(outreacherSystemMessage, passerbySystemMessage);
+        }
+        else
+        {
+            SetTestButtonActive(true);
+        }
+
+        return canStart;
+    }
+
+    public void SetTestButtonActive(bool active)
+    { 
+        testPromptBtn.enabled = active; 
     }
 }

@@ -5,11 +5,17 @@ public static class Constants
     public static string DBName = "TheirVoiceServer.db";
     public static string DBBackUpDir = "./Assets/Prompts/";
     public static string PromptsDir = "./Assets/Prompts/";
+    public static string TestConvoOutputDir = "./TestResults/";
     public static string PromptBankFileName = "_PromptBank.json";
     public static int USER_MSG_CHAR_LIMIT = 500;
     public static string CONVO_END_STRING = "#END_OF_CONVO#";
     public static string CONVO_END_INSTRUCTION = $"\r\nYou can choose to end the conversation whenever you decide (to end the conversation, append \"{CONVO_END_STRING}\" to the last message).";
+
+    #region prompt names
     public static string NOT_INTERESTED_PROMPT_NAME = "_was_not_watching_footage";
     public static string CAN_END_CONVO_PROMPT_NAME = "_instructions_to_end_conversation";
+    public static string TESTING_PROMPT_NAME = "_test_outreacher";
+    #endregion prompt names
+
     public static ConversationModes ConversationMode = ConversationModes.RealGPT;
 }

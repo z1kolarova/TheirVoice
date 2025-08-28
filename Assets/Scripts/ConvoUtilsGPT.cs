@@ -105,8 +105,11 @@ public static class ConvoUtilsGPT
         string localisedText = GetPromptTextInCurrentLanguage(
             promptId: ClientDataUtils.GetSystemPromptId(CAN_END_CONVO_PROMPT_NAME));
 
-        return string.Format(localisedText, CONVO_END_STRING);
+        return localisedText.FormatInConvoEndString();
     }
+
+    public static string FormatInConvoEndString(this string localisedText)
+        => string.Format(localisedText, CONVO_END_STRING);
 
     public static void InitNewConvoWithPrompt(string prompt)
     {
@@ -117,7 +120,7 @@ public static class ConvoUtilsGPT
     public static void GetServerResponseTo(string msgText)
     {
         Debug.Log(msgText);
-        var request = ConvoUtilsGPT.GetSerialisedChatRequest(msgText);
+        var request = messages.GetSerialisedChatRequest(msgText);
         if (request.HasValue)
         {
             chatRequestToProcess = request.Value;
@@ -135,7 +138,7 @@ public static class ConvoUtilsGPT
         if (TryAddUserResponse(msgText))
         {
             Debug.Log("after tryAddUserResponse");
-            var serialised = ProduceSerialisedChatRequest();
+            var serialised = messages.ProduceSerialisedChatRequest();
             if (serialised.Length < 4093)
             {
                 return serialised;
@@ -144,7 +147,28 @@ public static class ConvoUtilsGPT
         return null;
     }
 
+
+    public static FixedString4096Bytes? GetSerialisedChatRequest(this List<OpenAI.ChatMessage> conversationHistory,
+        string newMsgText)
+    {
+        if (conversationHistory.TryAddUserResponse(newMsgText))
+        {
+            Debug.Log("after tryAddUserResponse");
+            var serialised = conversationHistory.ProduceSerialisedChatRequest();
+            if (serialised.Length < 4093)
+            {
+                return serialised;
+            }
+        }
+        return null;
+    }
+
     public static bool TryAddUserResponse(string msgText)
+    {
+        return messages.TryAddUserResponse(msgText);
+    }
+
+    public static bool TryAddUserResponse(this List<OpenAI.ChatMessage> toMessages, string msgText)
     {
         if (string.IsNullOrWhiteSpace(msgText))
         {
@@ -164,27 +188,27 @@ public static class ConvoUtilsGPT
             userMessage.Content = userMessage.Content.Substring(0, USER_MSG_CHAR_LIMIT);
         }
 
-        messages.Add(userMessage);
+        toMessages.Add(userMessage);
 
         return true;
     }
 
-    public static CreateChatCompletionRequest ProduceChatRequest() =>
+    public static CreateChatCompletionRequest ProduceChatRequest(this List<OpenAI.ChatMessage> withMessages) =>
         new CreateChatCompletionRequest()
         {
             Model = _model,
             Temperature = _temperature,
             MaxTokens = _maxTokens,
-            Messages = messages,
+            Messages = withMessages,
             FrequencyPenalty = _frequencyPenalty,
             PresencePenalty = _presencePenalty
         };
 
-    public static string ProduceSerialisedChatRequest()
+    public static string ProduceSerialisedChatRequest(this List<ChatMessage> fromMessages)
     {
         try
         {
-            var chatRequest = ProduceChatRequest();
+            var chatRequest = fromMessages.ProduceChatRequest();
             return JsonConvert.SerializeObject(chatRequest);
         }
         catch (Exception)
@@ -201,12 +225,26 @@ public static class ConvoUtilsGPT
         //ServerSideManagerUI.I.WriteLineToOutput(chatRequest.ToString());
         try
         {
+            var responseMessage = await GetResponseAsServer(chatRequest);
+            var serialisedChatMessage = JsonConvert.SerializeObject(responseMessage);
+            return serialisedChatMessage;
+        }
+        catch (Exception e)
+        {
+            ServerSideManagerUI.I.WriteBadLineToOutput(e.ToString());
+            return JsonConvert.SerializeObject(safetyNetMessage);
+        }
+    }
+
+    public static async Task<ChatMessage> GetResponseAsServer(CreateChatCompletionRequest chatRequest)
+    {
+        try
+        {
             var chatResult = await API.CreateChatCompletion(chatRequest);
-            //ServerSideManagerUI.I.WriteLineToOutput(JsonConvert.SerializeObject(chatResult));
             if (chatResult.IsError())
             {
                 ServerSideManagerUI.I.WriteBadLineToOutput("ERROR: " + chatResult.Error.Message);
-                return JsonConvert.SerializeObject(safetyNetMessage);
+                return safetyNetMessage;
             }
 
             ChatMessage responseMessage = new ChatMessage()
@@ -215,13 +253,12 @@ public static class ConvoUtilsGPT
                 Content = chatResult.Choices[0].Message.Content
             };
 
-            var serialisedChatMessage = JsonConvert.SerializeObject(responseMessage);
-            return serialisedChatMessage;
+            return responseMessage;
         }
         catch (Exception e)
         {
             ServerSideManagerUI.I.WriteBadLineToOutput(e.ToString());
-            return JsonConvert.SerializeObject(safetyNetMessage);
+            return safetyNetMessage;
         }
     }
     #endregion only done on server

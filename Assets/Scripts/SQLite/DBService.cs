@@ -276,7 +276,7 @@ public class DBService
     public bool BackUpDB(string databaseName, string destinationDir)
     {
         var nameSubstring = databaseName.Substring(0, databaseName.LastIndexOf('.'));
-        var newName = $"{nameSubstring}{DateTime.Now.ToString("yyyyMMdd-HHmm")}.db";
+        var newName = $"{nameSubstring}{Utils.GetNowFileTimestamp()}.db";
         return BackUpDB(databaseName, destinationDir, newName);
     }
 

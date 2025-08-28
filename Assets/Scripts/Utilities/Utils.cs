@@ -32,6 +32,7 @@ public static class Utils
     #endregion Serialization
 
     #region Files
+
     public static string OpenFolderDialog(string title, string directory = "")
     {
         var paths = StandaloneFileBrowser.OpenFolderPanel(title, directory, false);
@@ -70,6 +71,8 @@ public static class Utils
         var filePath = EnsureFileExists(dirPath, fileName);
         File.WriteAllText(filePath, fileContents);
     }
+
+    public static string GetNowFileTimestamp() => DateTime.Now.ToString("yyyyMMdd-HHmm");
 
     #endregion Files
 
@@ -166,6 +169,34 @@ public static class Utils
     public static bool IsError(this CreateChatCompletionResponse response)
     {
         return response.Error != null;
+    }
+
+    public static string TranscribeConversation(this List<ChatMessage> conversation, bool assistantIsPasserby = true)
+    {
+        if (conversation == null || conversation.Count == 0)
+            return "";
+
+        var transcript = $"{conversation[0].Role.ReplaceRoleName(assistantIsPasserby)}: \n" +
+            $"{conversation[0].Content}\n" +
+            $"=========================\n";
+
+        for (int i = 1; i < conversation.Count; i++)
+        {
+            transcript += $"{conversation[i].Role.ReplaceRoleName(assistantIsPasserby)}: " +
+            $"{conversation[i].Content}\n\n";
+        }
+
+        return transcript;
+    }
+
+    public static string ReplaceRoleName(this string originalRoleName, bool assistantIsPasserby = true)
+    { 
+        return originalRoleName switch
+        {
+            "assistant" => assistantIsPasserby ? "passerby" : "outreacher",
+            "user" => assistantIsPasserby ? "outreacher" : "passerby",
+            _ => originalRoleName
+        };
     }
     #endregion API
 }

@@ -96,7 +96,7 @@ public class PromptManager : MonoBehaviour
                 langPromptAvailabilityDic.Add(new LangPrompt { 
                     LangId = langId, 
                     PromptId = promptLoc.PromptId 
-                }, true);
+                }, promptLoc.Available);
             }
 
             langPromptAvailabilityDic.Add(langKey, true);
@@ -161,7 +161,8 @@ public class PromptManager : MonoBehaviour
 
         if (TryGetPromptLocFromDB(promptName, language, out PromptLoc promptLoc))
         {
-            langPromptCachedTextDic.Add(key, promptLoc.Text);
+            fullPromptText = promptLoc.Text;
+            langPromptCachedTextDic.Add(key, fullPromptText);
             return true;
         }
         return false;
