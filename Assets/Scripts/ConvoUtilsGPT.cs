@@ -37,6 +37,8 @@ public static class ConvoUtilsGPT
 
     public static DataRequester ChatGPTResponseRequester = new DataRequester();
 
+    public static int ConvoEndOddsIfSometimes = 50;
+
     private static OpenAIApi api;
     public static OpenAIApi API
     {

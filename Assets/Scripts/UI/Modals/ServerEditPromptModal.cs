@@ -1,3 +1,4 @@
+using Assets.Classes;
 using Assets.Enums;
 using System;
 using System.Linq;
@@ -34,8 +35,11 @@ public class ServerEditPromptModal : JustCloseModal
         || dbPrompt.ActiveIfAvailable.YesOrNo() != promptCanBeUsedDropdown.GetDisplayedTextOfDropdown();
 
     private bool HasPromptLocChange()
-        => dbPromptLoc.Text != promptTextInput.text
+        => HasTextChange()
         || dbPromptLoc.Available.YesOrNo() != promptLocReadyDropdown.GetDisplayedTextOfDropdown();
+
+    private bool HasTextChange()
+        => dbPromptLoc.Text != promptTextInput.text;
 
     protected override void Awake()
     {
@@ -45,8 +49,11 @@ public class ServerEditPromptModal : JustCloseModal
         {
             testPromptBtn.enabled = false;
             ServerSideManagerUI.I.WriteCyanLineToOutput("Test prompt button was clicked");
-            if (PrepareForTestStart())
-                PromptTestingManager.I.StartTestingPrompt(promptNameCodeInput.text);
+
+            if (TryPrepareForTestStart(out var testingConvo))
+            {
+                PromptTestingManager.I.StartTestingConversation(testingConvo);
+            }
         });
 
         saveChangesBtn.onClick.AddListener(() =>
@@ -99,6 +106,8 @@ public class ServerEditPromptModal : JustCloseModal
 
         promptLocReadyDropdown.SelectLabelInDropdown((dbPromptLoc?.Available ?? false).YesOrNo());
         promptTextInput.text = dbPromptLoc?.Text ?? "";
+
+        ReflectRunningTestsInUI();
     }
 
     private void SaveChangesInPrompt()
@@ -118,14 +127,15 @@ public class ServerEditPromptModal : JustCloseModal
         DBService.I.Update(dbPromptLoc);
     }
 
-    private bool PrepareForTestStart()
+    private bool TryPrepareForTestStart(out TestingConvo testingConvo)
     {
+        testingConvo = null;
         var canStart = PromptManager.I.TryGetPromptLocFromDB(
                 promptName: Constants.TESTING_PROMPT_NAME, currentlySelectedLanguage,
                 out var testPromptLoc);
 
         if (canStart && PromptManager.I.TryGetPromptTextInLanguage(
-            Constants.CAN_END_CONVO_PROMPT_NAME, currentlySelectedLanguage, 
+            Constants.CAN_END_CONVO_PROMPT_NAME, currentlySelectedLanguage,
             out string convoEndingInstruction))
         {
             convoEndingInstruction = convoEndingInstruction.FormatInConvoEndString();
@@ -140,7 +150,14 @@ public class ServerEditPromptModal : JustCloseModal
                     convoEndingInstruction)
                 .FullyAssembledText;
 
-            TestingUtilsGPT.InitTestConversations(outreacherSystemMessage, passerbySystemMessage);
+            testingConvo = new TestingConvo(promptNameCodeInput.text,
+                Enum.Parse<EndConvoAbility>(endConvoAbilityDropdown.GetDisplayedTextOfDropdown()),
+                Constants.TESTING_PROMPT_NAME);
+
+            testingConvo.Prepare(currentlySelectedLanguage, outreacherSystemMessage, 
+                passerbySystemMessage, HasTextChange());
+
+            testingConvo.ExportOutreacherIfNeeded();
         }
         else
         {
@@ -153,5 +170,14 @@ public class ServerEditPromptModal : JustCloseModal
     public void SetTestButtonActive(bool active)
     { 
         testPromptBtn.enabled = active; 
+    }
+
+    public void ReflectRunningTestsInUI()
+    {
+        var isCurrentlyTested = PromptTestingManager.I.OngoingTests.Any(ot
+            => ot.TestedPromptName == promptNameCodeInput.text
+            && ot.TestedLanguage == currentlySelectedLanguage);
+
+        SetTestButtonActive(!isCurrentlyTested);
     }
 }

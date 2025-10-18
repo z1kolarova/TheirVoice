@@ -1,3 +1,5 @@
+using Assets.Interfaces;
+using Assets.Scripts.SQLite;
 using SQLite4Unity3d;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,8 @@ public class DBService
 
     private SQLiteConnection _connection;
 
+    // SQLite4Unity3d uses SQLite 3.6.23.1 from 2010(!) so a lot of QoL features are missing, notably:
+    // - "ON CONFLICT" is not available
     private List<Action<SQLiteConnection>> migrations = new List<Action<SQLiteConnection>>
     {
         // Version 1
@@ -40,16 +44,58 @@ public class DBService
                     LangId INTEGER,
                     Text TEXT,
                     Available INTEGER,
-                    FOREIGN KEY(PromptId) REFERENCES Prompt(Id)
+                    FOREIGN KEY(PromptId) REFERENCES Prompt(Id),
                     FOREIGN KEY(LangId) REFERENCES Language(Id)
-                );");
+                );
+            ");
         },
 
-        //// Version 2
-        //db =>
-        //{
-        //    db.CreateTable<Logs>();
-        //},
+        // Version 2
+        db =>
+        {
+            // PromptTestLogging
+            db.Execute(@"
+                CREATE TABLE IF NOT EXISTS PromptTestLogging (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    PromptId INTEGER NOT NULL,
+                    LangId INTEGER NOT NULL,
+                    FullLogNextTime INTEGER,
+                    FOREIGN KEY(PromptId) REFERENCES Prompt(Id),
+                    FOREIGN KEY(LangId) REFERENCES Language(Id)
+                );
+            ");
+
+            db.CreateOrReplaceTrigger("trigger_update_text_promptloc",
+                @$"
+                CREATE TRIGGER IF NOT EXISTS trigger_update_text_promptloc
+                AFTER UPDATE OF Text ON PromptLoc
+                FOR EACH ROW
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM Prompt p
+                    WHERE p.Id = NEW.PromptId
+                      AND p.Name = '{Constants.TESTING_PROMPT_NAME}'
+                )
+                BEGIN
+                  -- Step 1: update if exists and needs change
+                  UPDATE PromptTestLogging
+                     SET FullLogNextTime = 1
+                   WHERE PromptId = NEW.PromptId
+                     AND LangId   = NEW.LangId
+                     AND FullLogNextTime <> 1;
+
+                  -- Step 2: insert if no row exists
+                  INSERT INTO PromptTestLogging (PromptId, LangId, FullLogNextTime)
+                    SELECT NEW.PromptId, NEW.LangId, 1
+                     WHERE NOT EXISTS (
+                        SELECT 1
+                          FROM PromptTestLogging
+                         WHERE PromptId = NEW.PromptId
+                           AND LangId   = NEW.LangId
+                       );
+                END;
+            ");
+        },
 
         //// Version 3
         //db =>
@@ -64,6 +110,7 @@ public class DBService
     public IQueryable<Language> Languages => _connection.Table<Language>().AsQueryable();
     public IQueryable<PromptLoc> PromptLocs => _connection.Table<PromptLoc>().AsQueryable();
     public IQueryable<Prompt> Prompts => _connection.Table<Prompt>().AsQueryable();
+    public IQueryable<PromptTestLogging> PromptTestLoggings => _connection.Table<PromptTestLogging>().AsQueryable();
 
     /// <summary>
     /// Attempts to retrieve an object with the given primary key from the table
@@ -121,6 +168,61 @@ public class DBService
     public int Update<T>(T obj) where T: new()
         => _connection.Update(obj);
 
+    /// <summary>
+    /// My own, potentially an abomination...
+    /// If the specified object exists,
+    /// the method updates all of the columns of a table using the specified object
+    /// except for its primary key.
+    /// The object is required to have a primary key.
+    /// </summary>
+    /// <param name="obj">
+    /// The object to update. It must have its primary key returned by the GetPrimaryKey() method.
+    /// </param>
+    /// <returns>
+    /// The number of rows updated.
+    /// </returns>
+    public int Upsert<T>(T obj) where T: IHasPrimaryKey, new()
+    {
+        var existing = _connection.Find<T>(obj.GetPrimaryKey());
+        if (existing != null)
+            return _connection.Update(obj);
+        else
+            return _connection.Insert(obj);
+    }
+
+    /// <summary>
+    /// My own, potentially an abomination...
+    /// If the specified object exists,
+    /// the method updates all columns of its table record
+    /// except for its primary key.
+    /// The object is required to have a primary key.
+    /// </summary>
+    /// <param name="obj">
+    /// The object to update. It must have a composite primary key and the corresponding predicate 
+    /// specified in the function GetCompositeKeyPredicate.
+    /// </param>
+    /// <returns>
+    /// The number of rows updated.
+    /// </returns>
+    public int UpsertComposite<T>(T obj) where T: IPseudoCompositeKey<T>, new()
+    {
+        var existing = _connection.Find<T>(obj.GetCompositeKeyPredicate());
+        if (existing != null)
+            return _connection.Update(obj);
+        else
+            return _connection.Insert(obj);
+    }
+
+    // Maybe the custom Upserts are not needed after all?
+    // I guess they will be there if I change my mind later...
+    public int InsertOrReplace(object obj)
+    {
+        if (obj == null)
+        {
+            return 0;
+        }
+        return _connection.Insert(obj, "OR REPLACE", obj.GetType());
+    }
     #endregion table accesses
 
     #region ctor
@@ -205,9 +307,11 @@ public class DBService
             try
             {
                 Debug.Log($"starting migration to DB version {i + 1}");
-                migrations[i](_connection);
-                SetSchemaVersion(i + 1); // schema version is 1-based
-                Debug.Log($"Migrated to version {i + 1}");
+                _connection.RunInTransaction(() => {
+                    migrations[i](_connection);
+                    SetSchemaVersion(i + 1); // schema version is 1-based
+                    Debug.Log($"Migrated to version {i + 1}");
+                });
             }
             catch (Exception e)
             {

@@ -14,5 +14,6 @@ public static class RngUtils
     }
 
     public static bool CoinFlip() => Rng.Next(2) % 2 == 0;
-    public static bool RollWithinLimitCheck(int limit, int maxValueForRoll = 100) => Rng.Next(maxValueForRoll) < limit;  
+    public static bool RollWithinLimitCheck(int limit, int maxValueForRoll = 100) 
+        => Rng.Next(maxValueForRoll) < limit;  
 }

@@ -1,14 +1,17 @@
-﻿using SQLite4Unity3d;
+﻿using Assets.Interfaces;
+using SQLite4Unity3d;
 
-public class Language
+public class Language : IHasPrimaryKey
 {
-
     [PrimaryKey, AutoIncrement]
     public int Id { get; set; }
+
     public string Name { get; set; }
 
+    public object GetPrimaryKey()
+        => Id;
     public override string ToString()
-    {
-        return string.Format("[Language: Id={0}, Name={1}]", Id, Name);
-    }
+        => $"[{nameof(Language)}: {nameof(Id)}={Id}" +
+            $", {nameof(Name)}={Name}" +
+            $"]";
 }

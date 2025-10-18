@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\APIKeyManager.cs" />
     <Compile Include="Assets\Classes\EventArgs.cs" />
     <Compile Include="Assets\Scripts\NPCs\PersonalityGenerator.cs" />
+    <Compile Include="Assets\Scripts\SQLite\PromptTestLogging.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\AudioInputSettingsModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Embedding\EmbeddingEndpoint.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Assets\ThirdParty\StandaloneFileBrowser\StandaloneFileBrowserMac.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\LobbyNotFoundModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Embedding\EmbeddingResult.cs" />
+    <Compile Include="Assets\Scripts\SQLite\MigrationHelpers.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Moderation\ModerationEndpoint.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\ImageGenerationRequest.cs" />
     <Compile Include="Assets\Sketchfab For Unity\Scripts\AssetBrowser\SketchfabBrowserManager.cs" />
@@ -115,6 +117,7 @@
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Images\ImageResponseFormat.cs" />
     <Compile Include="Assets\Scripts\SQLite\Prompt.cs" />
     <Compile Include="Assets\Scripts\AudioInputManager.cs" />
+    <Compile Include="Assets\Interfaces\IPseudoCompositeKey.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatRequest.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Files\IFilesEndpoint.cs" />
     <Compile Include="Assets\Scripts\SQLite\PromptLoc.cs" />
@@ -165,6 +168,7 @@
     <Compile Include="Assets\Scripts\ServerConnectivity\RelayManager.cs" />
     <Compile Include="Assets\Scripts\UI\MainMenuManager.cs" />
     <Compile Include="Assets\Scripts\SpeechBubbleManager.cs" />
+    <Compile Include="Assets\Interfaces\IHasPrimaryKey.cs" />
     <Compile Include="Assets\Enums\PasserbyStates.cs" />
     <Compile Include="Assets\Scripts\SQLite\Meta.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Completions\CompletionEndpoint.cs" />
@@ -185,6 +189,7 @@
     <Compile Include="Assets\Scripts\UserSettingsManager.cs" />
     <Compile Include="Assets\Scripts\UI\Modals\JustCloseModal.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\APIAuthentication.cs" />
+    <Compile Include="Assets\Classes\TestingConvo.cs" />
     <Compile Include="Assets\Scripts\SQLite\Language.cs" />
     <Compile Include="Assets\StarterAssets\FirstPersonController\Scripts\FirstPersonController.cs" />
     <Compile Include="Assets\ThirdParty\OkGoDoIt\OpenAI_API\Chat\ChatMessage.cs" />

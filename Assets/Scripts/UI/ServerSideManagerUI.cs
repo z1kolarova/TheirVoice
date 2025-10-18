@@ -158,7 +158,7 @@ public class ServerSideManagerUI : MonoBehaviour
 
     public void UpdatePlayerCounter(PlayerCountEventArgs e) 
     {
-        WriteLineToOutput($"Changing player counter from {e.originalCount} to {e.newTotalCount}");
+        I.WriteLineToOutput($"Changing player counter from {e.originalCount} to {e.newTotalCount}");
         if (e == null)
             return;
 

@@ -1,8 +1,5 @@
-﻿using Assets.Classes;
-using Assets.Structs;
-using Newtonsoft.Json;
+﻿using Assets.Structs;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -23,6 +20,12 @@ public class PromptManager : MonoBehaviour
             return promptIdDic;
         }
     }
+
+    public static bool PromptNameExists(string promptName)
+        => I.PromptIdDic.ContainsKey(promptName);
+
+    public static int GetPromptId(string promptName)
+        => PromptNameExists(promptName) ? I.PromptIdDic[promptName] : -1;
 
     private List<string> promptNames = null;
     public List<string> PromptNames
@@ -47,7 +50,6 @@ public class PromptManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            InitDB();
         }
         else
         {
@@ -108,9 +110,9 @@ public class PromptManager : MonoBehaviour
     // TODO: figure out a better way to do caching (and clearing cache when updating)
     public bool GetPromptAvailabilityInLang(string promptName, string language)
     {
-        var langId = LanguageManager.I.LangIdDic[language];
+        var langId = LanguageManager.GetLangId(language);
         EnsureAvailabilitiesLoaded(langId);
-        var key = new LangPrompt(langId, PromptManager.I.PromptIdDic[promptName]);
+        var key = new LangPrompt(langId, PromptManager.GetPromptId(promptName));
         langPromptAvailabilityDic.TryGetValue(key, out bool available);
         return available;
     }
@@ -155,7 +157,7 @@ public class PromptManager : MonoBehaviour
     {
         fullPromptText = "";
 
-        var key = new LangPrompt { LangId = LanguageManager.I.LangIdDic[language], PromptId = PromptManager.I.PromptIdDic[promptName] };
+        var key = new LangPrompt { LangId = LanguageManager.GetLangId(language), PromptId = PromptManager.GetPromptId(promptName) };
         if (langPromptCachedTextDic.TryGetValue(key, out fullPromptText))
             return true;
 
@@ -170,7 +172,7 @@ public class PromptManager : MonoBehaviour
 
     public bool DropPromptTextInLanguageFromCache(string promptName, string language)
     {
-        var key = new LangPrompt { LangId = LanguageManager.I.LangIdDic[language], PromptId = PromptManager.I.PromptIdDic[promptName] };
+        var key = new LangPrompt { LangId = LanguageManager.GetLangId(language), PromptId = PromptManager.GetPromptId(promptName) };
         return langPromptCachedTextDic.Remove(key);
     }
 
@@ -190,24 +192,10 @@ public class PromptManager : MonoBehaviour
     public bool TryGetPromptLocFromDB(string promptName, string language, out PromptLoc promptLoc)
     {
         promptLoc = DBService.I.PromptLocs.FirstOrDefault(pl 
-            => pl.PromptId == PromptManager.I.PromptIdDic[promptName] 
-            && pl.LangId == LanguageManager.I.LangIdDic[language]);
+            => pl.PromptId == PromptManager.GetPromptId(promptName) 
+            && pl.LangId == LanguageManager.GetLangId(language));
 
         return promptLoc != null;
     }
     #endregion Fulltext
-
-    #region SQLite
-    private void InitDB()
-    {
-        Debug.Log("začátek initDB");
-
-        var prompts = DBService.I.Prompts.ToList();
-        foreach (var prompt in prompts)
-        {
-            Debug.Log(prompt);
-        }
-    }
-
-    #endregion SQLite
 }

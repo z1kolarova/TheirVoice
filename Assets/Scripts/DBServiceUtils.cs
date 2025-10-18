@@ -56,4 +56,17 @@ public static class DBServiceUtils
 
         return promptLoc?.Text ?? $"Something went wrong getting PromptLoc text for prompt with Id {promptId} and language with Id {langId}.";
     }
+
+    // currently only used for outreacher, but maybe in the future could be used for others too
+    public static bool NeedsToLogFull(int promptId, int langId)
+        => DBService.I.PromptTestLoggings.Any(ptl
+            => ptl.PromptId == promptId
+            && ptl.LangId == langId
+            && ptl.FullLogNextTime);
+
+    public static void ToggleNeedToLogFull(PromptTestLogging promptTestLogging)
+    {
+        promptTestLogging.FullLogNextTime = !promptTestLogging.FullLogNextTime;
+        DBService.I.InsertOrReplace(promptTestLogging);
+    }
 }

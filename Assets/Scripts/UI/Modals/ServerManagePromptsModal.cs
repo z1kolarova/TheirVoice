@@ -71,6 +71,7 @@ public class ServerManagePromptsModal : JustCloseModal
         {
             CreateAndAddPromptEntry(prompt);
         }
+        DBService.I.PrintPathToDB();
     }
 
     private void ResizePromptDisplay()

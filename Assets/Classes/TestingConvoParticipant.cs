@@ -1,4 +1,5 @@
-﻿using OpenAI;
+﻿using Assets.Enums;
+using OpenAI;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,8 +13,22 @@ namespace Assets.Classes
         private CreateChatCompletionRequest chatRequestToProcess;
         public CreateChatCompletionRequest GetChatRequestToProcess() => chatRequestToProcess;
 
-        public void ResetWithSystemMessage(string systemMessageContent)
+        public readonly string PromptName;
+        public readonly EndConvoAbility GeneralEndConvoAbility;
+        public readonly bool CanEndConvoThisTime;
+        private bool passerbyMatchesTextInDB;
+        public bool PasserbyMatchesTextInDB { get { return passerbyMatchesTextInDB; } }
+        public TestingConvoParticipant(string promptName, EndConvoAbility generalEndConvoAbility)
         {
+            PromptName = promptName;
+            GeneralEndConvoAbility = generalEndConvoAbility;
+            CanEndConvoThisTime = generalEndConvoAbility.Decide();
+        }
+
+        public void ResetWithSystemMessage(string systemMessageContent, bool matchesSavedVersion)
+        {
+            passerbyMatchesTextInDB = matchesSavedVersion;
+
             conversationHistory.Clear();
             conversationHistory.Add(new ChatMessage()
             {
@@ -22,11 +37,11 @@ namespace Assets.Classes
             });
         }
 
-        public void ResetWithSystemMessage(ChatMessage systemMessage) 
-        {
-            conversationHistory.Clear();
-            conversationHistory.Add(systemMessage);
-        }
+        //public void ResetWithSystemMessage(ChatMessage systemMessage) 
+        //{
+        //    conversationHistory.Clear();
+        //    conversationHistory.Add(systemMessage);
+        //}
 
         public void RequestResponseTo(string msgText)
         {

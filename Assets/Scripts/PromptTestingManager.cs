@@ -1,5 +1,7 @@
 ﻿using Assets.Classes;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PromptTestingManager : MonoBehaviour
@@ -7,7 +9,18 @@ public class PromptTestingManager : MonoBehaviour
     public static PromptTestingManager I => instance;
     static PromptTestingManager instance;
 
-    private string currentlyTestPromptName;
+    private List<TestingConvo> ongoingTests = null;
+    public List<TestingConvo> OngoingTests
+    {
+        get
+        {
+            if (ongoingTests == null)
+            {
+                ongoingTests = new List<TestingConvo>();
+            }
+            return ongoingTests;
+        }
+    }
 
     private void Awake()
     {
@@ -24,16 +37,22 @@ public class PromptTestingManager : MonoBehaviour
 
     private void Update()
     {
-        if (TestingUtilsGPT.Outreacher.NeedsData())
+        if (OngoingTests.Any(t => t.Outreacher.NeedsData()))
         {
-            TestingUtilsGPT.Outreacher.UpdateBeganProcessing();
-            GetParticipantResponse(TestingUtilsGPT.Outreacher);
+            foreach (var convo in OngoingTests.Where(t => t.Outreacher.NeedsData()))
+            {
+                convo.Outreacher.UpdateBeganProcessing();
+                GetParticipantResponse(convo.Outreacher);
+            }
         }
 
-        if (TestingUtilsGPT.Passerby.NeedsData())
+        if (OngoingTests.Any(t => t.Passerby.NeedsData()))
         {
-            TestingUtilsGPT.Passerby.UpdateBeganProcessing();
-            GetParticipantResponse(TestingUtilsGPT.Passerby);
+            foreach (var convo in OngoingTests.Where(t => t.Passerby.NeedsData()))
+            {
+                convo.Passerby.UpdateBeganProcessing();
+                GetParticipantResponse(convo.Passerby);
+            }
         }
     }
 
@@ -43,72 +62,48 @@ public class PromptTestingManager : MonoBehaviour
         participant.ReceiveResponse(res);
     }
 
-    public void StartTestingPrompt(string promptName)
+    public void StartTestingConversation(TestingConvo testingConvo)
     {
-        currentlyTestPromptName = promptName;
-        TestingUtilsGPT.StartConversationAsOutreacher();
-        StartCoroutine(TestPrompt());
+        testingConvo.StartConversationAsOutreacher();
+        OngoingTests.Add(testingConvo);
+        StartCoroutine(TestPrompt(testingConvo));
     }
 
-    private IEnumerator TestPrompt()
+    private IEnumerator TestPrompt(TestingConvo testingConvo)
     {
-        while (TestingUtilsGPT.TestingInProgress)
+        while (testingConvo.TestingInProgress)
         {
-            yield return OneConversationExchange();
+            yield return OneConversationExchange(testingConvo);
         }
 
-        ServerSideManagerUI.I.WriteCyanLineToOutput("Finished testing the prompt.");
+        ServerSideManagerUI.I.WriteCyanLineToOutput($"Finished testing the prompt: {testingConvo.TestedPromptName} ({testingConvo.TestedLanguage})");
 
-        TestingUtilsGPT.ExportConversationToFile(TestingUtilsGPT.Passerby,
-            Constants.TestConvoOutputDir, currentlyTestPromptName + Utils.GetNowFileTimestamp() + ".txt");
+        OngoingTests.Remove(testingConvo);
+        testingConvo.ExportPasserbyReportFile();
 
-        ServerEditPromptModal.I.SetTestButtonActive(true);
+        ServerEditPromptModal.I.ReflectRunningTestsInUI();
     }
 
-    private IEnumerator OneConversationExchange()
+    private IEnumerator OneConversationExchange(TestingConvo testingConvo)
     {
-        yield return new WaitWhile(TestingUtilsGPT.Outreacher.IsCurrentlyWaiting);
+        yield return new WaitWhile(testingConvo.Outreacher.IsCurrentlyWaiting);
 
-        var outreacherSaid = TestingUtilsGPT.Outreacher.GetLastMessageInConvo();
+        var outreacherSaid = testingConvo.Outreacher.GetLastMessageInConvo();
         ServerSideManagerUI.I.WriteLineToOutput("outreacher said: " + outreacherSaid.Content);
-        TestingUtilsGPT.TestingInProgress = !outreacherSaid.Content.WillEndConvo(out _);
+        testingConvo.TestingInProgress = !outreacherSaid.Content.WillEndConvo(out _);
 
-        if (TestingUtilsGPT.TestingInProgress)
+        if (testingConvo.TestingInProgress)
         {
-            TestingUtilsGPT.Passerby.RequestResponseTo(outreacherSaid.Content);
-            yield return new WaitWhile(TestingUtilsGPT.Passerby.IsCurrentlyWaiting);
-            var passerbySaid = TestingUtilsGPT.Passerby.GetLastMessageInConvo();
+            testingConvo.Passerby.RequestResponseTo(outreacherSaid.Content);
+            yield return new WaitWhile(testingConvo.Passerby.IsCurrentlyWaiting);
+            var passerbySaid = testingConvo.Passerby.GetLastMessageInConvo();
             ServerSideManagerUI.I.WriteLineToOutput("passerby said: " + passerbySaid.Content);
-            TestingUtilsGPT.TestingInProgress = !passerbySaid.Content.WillEndConvo(out _);
+            testingConvo.TestingInProgress = !passerbySaid.Content.WillEndConvo(out _);
 
-            if (TestingUtilsGPT.TestingInProgress)
+            if (testingConvo.TestingInProgress)
             {
-                TestingUtilsGPT.Outreacher.RequestResponseTo(passerbySaid.Content);
+                testingConvo.Outreacher.RequestResponseTo(passerbySaid.Content);
             }
-        }
-    }
-
-    private IEnumerator OutreacherSide()
-    {
-        yield return new WaitWhile(TestingUtilsGPT.Outreacher.IsCurrentlyWaiting);
-
-        var outreacherSaid = TestingUtilsGPT.Outreacher.GetLastMessageInConvo();
-        TestingUtilsGPT.TestingInProgress = !outreacherSaid.Content.WillEndConvo(out _);
-
-        if (TestingUtilsGPT.TestingInProgress)
-        {
-            TestingUtilsGPT.Passerby.RequestResponseTo(outreacherSaid.Content);
-        }
-    }
-    private IEnumerator PasserbySide()
-    {
-        yield return new WaitWhile(TestingUtilsGPT.Passerby.IsCurrentlyWaiting);
-
-        var passerbySaid = TestingUtilsGPT.Outreacher.GetLastMessageInConvo();
-        TestingUtilsGPT.TestingInProgress = !passerbySaid.Content.WillEndConvo(out _);
-        if (TestingUtilsGPT.TestingInProgress)
-        {
-            TestingUtilsGPT.Passerby.RequestResponseTo(passerbySaid.Content);
         }
     }
 }

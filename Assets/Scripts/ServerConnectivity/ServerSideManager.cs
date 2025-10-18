@@ -110,8 +110,14 @@ public class ServerSideManager : MonoBehaviour
             {
                 ServerSideManagerUI.I.WriteLineToOutput(task.Exception.ToString());
             }
+            if (hostLobby.AvailableSlots != task.Result.AvailableSlots)
+            {
+                ServerSideManagerUI.I.WriteLineToOutput($"old available slots(?): {hostLobby.AvailableSlots}\n" +
+                    $"new available slots: {task.Result.AvailableSlots}");
+            }
             if (playersInLobbyCount != hostLobby.MaxPlayers - hostLobby.AvailableSlots - 1)
             {
+                ServerSideManagerUI.I.WriteLineToOutputWithColor("condition triggered", Color.white);
                 lobbyPlayerCountChanged = true;
             }
             yield return wait;

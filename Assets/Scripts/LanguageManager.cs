@@ -19,6 +19,12 @@ public class LanguageManager : MonoBehaviour
             return langIdDic;
         }
     }
+
+    public static bool LanguageNameExists(string langName)
+        => I.LangIdDic.ContainsKey(langName);
+
+    public static int GetLangId(string langName) 
+        => LanguageNameExists(langName) ? I.LangIdDic[langName] : -1;
     
     private List<string> languageNames = null;
     public List<string> LanguageNames
