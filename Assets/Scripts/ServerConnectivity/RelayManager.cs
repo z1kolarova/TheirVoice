@@ -60,7 +60,7 @@ public class RelayManager : MonoBehaviour
 
             ServerSideManagerUI.I.WriteLineToOutput("Created relay allocation: " + joinCode);
 
-            RelayServerData rsd = new RelayServerData(currentAllocation, "dtls");
+            RelayServerData rsd = AllocationUtils.ToRelayServerData(currentAllocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(rsd);
 
             NetworkManager.Singleton.StartServer();
@@ -80,7 +80,7 @@ public class RelayManager : MonoBehaviour
         {
             JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
 
-            RelayServerData rsd = new RelayServerData(allocation, "dtls");
+            RelayServerData rsd = AllocationUtils.ToRelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(rsd);
 
             //NetworkManagerUI.I.WriteLineToOutput("After joining relay, about to start client.");

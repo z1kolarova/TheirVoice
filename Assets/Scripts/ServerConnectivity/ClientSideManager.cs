@@ -259,7 +259,7 @@ public class ClientSideManager : MonoBehaviour
     {
         try
         {
-            QueryResponse queryResponse = await Lobbies.Instance.QueryLobbiesAsync();
+            QueryResponse queryResponse = await LobbyService.Instance.QueryLobbiesAsync();
 
             Debug.Log("Found: " + queryResponse.Results.Count);
             //NetworkManagerUI.I.WriteLineToOutput("Found: " + queryResponse.Results.Count);
@@ -289,7 +289,7 @@ public class ClientSideManager : MonoBehaviour
         callbacks.LobbyChanged += OnLobbyChanged;
         try
         {
-            lobbyEvents = await Lobbies.Instance.SubscribeToLobbyEventsAsync(joinedLobby.Id, callbacks);
+            lobbyEvents = await LobbyService.Instance.SubscribeToLobbyEventsAsync(joinedLobby.Id, callbacks);
             //NetworkManagerUI.I.WriteLineToOutput("lobby events should be subscribed " + lobbyEvents.ToString());
             Debug.Log("lobby events should be subscribed " + lobbyEvents.ToString());
             return true;
@@ -369,20 +369,7 @@ public class ClientSideManager : MonoBehaviour
             }
 
             waitingForRelayKey = true;
-            UpdatePlayerOptions upo1 = new UpdatePlayerOptions
-            {
-                Data = new Dictionary<string, PlayerDataObject> {
-                    { ServerSideManager.TRIGGER_CREATE_RELAY_KEY, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, null)}
-                }
-            };
-            UpdatePlayerOptions upo2 = new UpdatePlayerOptions
-            {
-                Data = new Dictionary<string, PlayerDataObject> {
-                    { ServerSideManager.TRIGGER_CREATE_RELAY_KEY, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, "true")}
-                }
-            };
-            joinedLobby = await Lobbies.Instance.UpdatePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId, upo1);
-            joinedLobby = await Lobbies.Instance.UpdatePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId, upo2);
+            await TriggerLobbyAction(ServerSideManager.TRIGGER_CREATE_RELAY_KEY);
         }
         catch (Exception e)
         {
@@ -432,4 +419,23 @@ public class ClientSideManager : MonoBehaviour
 #endif
     }
     #endregion leaving
+
+    private async Task TriggerLobbyAction(string key, PlayerDataObject.VisibilityOptions pdoVo = PlayerDataObject.VisibilityOptions.Member)
+    {
+        UpdatePlayerOptions clearingUPO = new UpdatePlayerOptions
+        {
+            Data = new Dictionary<string, PlayerDataObject> {
+                { key, new PlayerDataObject(pdoVo, null) }
+            }
+        };
+        UpdatePlayerOptions settingUPO = new UpdatePlayerOptions
+        {
+            Data = new Dictionary<string, PlayerDataObject> {
+                { key, new PlayerDataObject(pdoVo, "true") }
+            }
+        };
+
+        joinedLobby = await LobbyService.Instance.UpdatePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId, clearingUPO);
+        joinedLobby = await LobbyService.Instance.UpdatePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId, settingUPO);
+    }
 }

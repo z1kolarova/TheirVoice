@@ -253,14 +253,14 @@ public class ServerSideManager : MonoBehaviour
                 }
             };
 
-            Lobby lobby = await Lobbies.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
+            Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
             var callbacks = new LobbyEventCallbacks();
             callbacks.LobbyChanged += I.OnLobbyChanged;
             callbacks.LobbyEventConnectionStateChanged += I.OnConnectionStateChanged;
             callbacks.KickedFromLobby += I.OnKickedFromLobby;
             try
             {
-                lobbyEvents = await Lobbies.Instance.SubscribeToLobbyEventsAsync(lobby.Id, callbacks);
+                lobbyEvents = await LobbyService.Instance.SubscribeToLobbyEventsAsync(lobby.Id, callbacks);
             }
             catch (LobbyServiceException ex)
             {
@@ -302,7 +302,7 @@ public class ServerSideManager : MonoBehaviour
     {
         string relayCode = await RelayManager.I.CreateRelayNewWay();
 
-        var updatedLobby = await Lobbies.Instance.UpdateLobbyAsync(hostLobby.Id, new UpdateLobbyOptions
+        var updatedLobby = await LobbyService.Instance.UpdateLobbyAsync(hostLobby.Id, new UpdateLobbyOptions
         {
             Data = new Dictionary<string, DataObject> {
                 { RELAY_KEY, new DataObject(DataObject.VisibilityOptions.Member, relayCode) }
