@@ -304,7 +304,8 @@ public class PlayerPrefabRpcs : NetworkBehaviour
         {
             try
             {
-                var res = await ModerationUtils.PassesModeration(textToModerate);
+                var res = !ServerSideManager.I.ModerationIsOn() 
+                    || await ModerationUtils.PassesModeration(textToModerate);
                 ReceiveModerationClientRpc(res, SingleTarget(clientId));
             }
             catch (Exception e)

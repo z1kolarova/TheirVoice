@@ -10,6 +10,7 @@ public class Meta : IHasPrimaryKey
 
     public static string SchemaVersionKey = "schema_version";
     public static string DBBackUpDirKey = "db_backup_dir";
+    public static string ModerationOnKey = "moderation_on";
 
     public object GetPrimaryKey()
         => Key;

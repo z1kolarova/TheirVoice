@@ -20,10 +20,14 @@ public class ServerSideManagerUI : MonoBehaviour
     [SerializeField] private Button shutdownBtn;
 
     [SerializeField] private Button managePromptsBtn;
+    [SerializeField] private Button copyLobbyCodeBtn;
+
+    [Header("Toggles")]
+    [SerializeField] private Toggle moderationToggle;
 
     [Header("Text outputs")]
     [SerializeField] private TMP_Text outputTMP;
-    
+
     [SerializeField] private TMP_Text lobbyCodeLabel;
     [SerializeField] private TMP_Text lobbyCodeTMP;
 
@@ -97,6 +101,16 @@ public class ServerSideManagerUI : MonoBehaviour
             ServerManagePromptsModal.I.Display();
         });
 
+        copyLobbyCodeBtn.onClick.AddListener(() => {
+            System.Windows.Forms.Clipboard.SetText(lobbyCodeTMP.text);
+        });
+
+        UpdateDisplayedLobbyCode("");
+        LoadModerationToggleState();
+        moderationToggle.onValueChanged.AddListener((value) => {
+            ServerSideManager.I.SetAndSaveModeration(value);
+        });
+
         ServerManagePromptsModal.I.Hide();
         ServerEditPromptModal.I.Hide();
         PopulateDropdownWithKeyOptions();
@@ -148,11 +162,13 @@ public class ServerSideManagerUI : MonoBehaviour
 
     public void UpdateDisplayedLobbyCode(string lobbyCode)
     {
-        if (!string.IsNullOrEmpty(lobbyCode))
+        var active = !string.IsNullOrEmpty(lobbyCode);
+        if (active)
         {
             I.WriteLineToOutputWithColor($"There is a new private lobby code: {lobbyCode}", Color.white);
         }
-        lobbyCodeLabel.gameObject.SetActive(!string.IsNullOrEmpty(lobbyCode));
+        lobbyCodeLabel.gameObject.SetActive(active);
+        copyLobbyCodeBtn.gameObject.SetActive(active);
         lobbyCodeTMP.text = lobbyCode;
     }
 
@@ -228,6 +244,11 @@ public class ServerSideManagerUI : MonoBehaviour
         ServerSideManagerUI.I.WriteLineToOutput("In ServerStartProcess");
         await ServerSideManager.I.StartServer(privateLobby);
         ServerSideManagerUI.I.WriteLineToOutput("Server should be started");
+    }
+
+    private void LoadModerationToggleState()
+    {
+        moderationToggle.isOn = ServerSideManager.I.ModerationIsOn();
     }
 
     public string GetFullLogText() {

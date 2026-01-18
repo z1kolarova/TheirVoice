@@ -34,6 +34,38 @@ public class ServerSideManager : MonoBehaviour
     private bool currentLobbyIsPrivate = false;
     private bool lobbyPlayerCountChanged = false;
 
+    # region moderation config
+
+    private Meta moderationMeta { get; set; }
+    private Meta GetModerationMeta()
+    {
+        if (moderationMeta == null)
+        {
+            moderationMeta = DBService.I.Find<Meta>(meta => meta.Key == Meta.ModerationOnKey)
+                ?? new Meta() { Key = Meta.ModerationOnKey, Value = "1" };
+        }
+        return moderationMeta;
+    }
+
+    private bool? moderationOn { get; set; }
+    public bool ModerationIsOn()
+    {
+        if (moderationOn == null)
+        {
+            moderationOn = GetModerationMeta().Value != "0";
+        }
+        return moderationOn.Value;
+    }
+
+    public void SetAndSaveModeration(bool isOn)
+    {
+        moderationOn = isOn;
+        moderationMeta.Value = isOn ? "1" : "0";
+        DBService.I.Upsert(moderationMeta);
+    }
+
+    #endregion moderation config
+
     private void Awake()
     {
         instance = this;

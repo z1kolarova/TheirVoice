@@ -24,8 +24,6 @@ public static class ModerationUtils
 
     public static async Task<bool> PassesModeration(string input)
     {
-        var cmr = new CreateModerationRequest() { Input = input };
-
         var response = await API.CreateModeration(input.CreateModerationRequest());
 
         ServerSideManagerUI.I.WriteLineToOutputWithColor(response.LogFromFlaggedResult(input),
