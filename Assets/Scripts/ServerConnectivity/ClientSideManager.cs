@@ -22,6 +22,9 @@ public class ClientSideManager : MonoBehaviour
     private float lobbyPollTimerMax = 1.1f;
     private float lobbyPollTimer;
 
+    private Task lobbyPollTask;
+    private Task waitForRelayJoinTask;
+
     private float quickjoinRetryTimerMax = 5f;
     private float quickjoinRetryTimer;
 
@@ -49,7 +52,6 @@ public class ClientSideManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        Debug.Log("I am using ClientSideManager");
     }
 
     #region start
@@ -60,6 +62,7 @@ public class ClientSideManager : MonoBehaviour
 
         EstablishNeededConnections();
     }
+
     private async void EstablishNeededConnections()
     {
         // 1) authenticate client - needed no matter what
@@ -79,10 +82,10 @@ public class ClientSideManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Authentication failed miserably and we have a problem...");
-            //NetworkManagerUI.I.WriteLineToOutput("Authentication failed miserably and we have a problem...");
+            Debug.LogError("Authentication failed miserably and we have a problem...");
         }
     }
+
     public async Task<bool> AuthenticateClient()
     {
         var options = new InitializationOptions();
@@ -94,7 +97,6 @@ public class ClientSideManager : MonoBehaviour
         {
             AuthenticationService.Instance.SignedIn += () =>
             {
-                //NetworkManagerUI.I.WriteLineToOutput("Signed in " + AuthenticationService.Instance.PlayerId);
                 Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
             };
 
@@ -111,6 +113,7 @@ public class ClientSideManager : MonoBehaviour
         PotentiallyTryToJoinLobby();
         HandleLobbyPolling();
     }
+
     private async void PotentiallyTryToJoinLobby()
     {
         if (joinedLobby == null && retryLobbyQuickJoin)
@@ -125,7 +128,7 @@ public class ClientSideManager : MonoBehaviour
         }
     }
 
-    private async void HandleLobbyPolling()
+    private void HandleLobbyPolling()
     {
         if (joinedLobby != null)
         {
@@ -133,24 +136,38 @@ public class ClientSideManager : MonoBehaviour
             if (lobbyPollTimer < 0f)
             {
                 lobbyPollTimer = lobbyPollTimerMax;
-
-                joinedLobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
-                OnLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+                if (!lobbyPollTask.IsWaitingForCompletion())
+                {
+                    lobbyPollTask = PollLoby();
+                }
             }
             if (waitingForRelayKey && originalKeyWasNull)
             {
                 relayRetryTimer -= Time.deltaTime;
                 if (relayRetryTimer < 0f)
                 {
-                    //NetworkManagerUI.I.WriteLineToOutput($"handle lobby polling: waitingForRelay {waitingForRelayKey} originalKeyWasNull {originalKeyWasNull}");
                     Debug.Log($"handle lobby polling: waitingForRelay {waitingForRelayKey} originalKeyWasNull {originalKeyWasNull}");
                     relayRetryTimer = relayRetryTimerMax;
 
-                    //NetworkManagerUI.I.WriteLineToOutput("Gonna retry");
-                    Debug.Log("Gonna retry");
-                    await WaitForRelayJoin();
+                    if (!waitForRelayJoinTask.IsWaitingForCompletion())
+                    {
+                        waitForRelayJoinTask = WaitForRelayJoin();
+                    }
                 }
             }
+        }
+    }
+
+    private async Task PollLoby()
+    {
+        try
+        {
+            joinedLobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
+            OnLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning(e.ToString());
         }
     }
     #endregion update
@@ -166,13 +183,15 @@ public class ClientSideManager : MonoBehaviour
         if (lobbyJoined)
         {
             retryLobbyQuickJoin = false;
-            await WaitForRelayJoin();
+
+            if (!waitForRelayJoinTask.IsWaitingForCompletion())
+            {
+                waitForRelayJoinTask = WaitForRelayJoin();
+            }
+            await waitForRelayJoinTask;
         }
         else
         {
-            // TODO: display window to let user know quickjoin didn't work out, potentially uncomment retryLobbyQuickJoin = true
-            //retryLobbyQuickJoin = true;
-
             lobbyNotFoundModal.SetActive(true);
         }
     }
@@ -184,7 +203,12 @@ public class ClientSideManager : MonoBehaviour
         {
             Debug.Log("joined private lobby");
             retryLobbyQuickJoin = false;
-            await WaitForRelayJoin();
+
+            if (!waitForRelayJoinTask.IsWaitingForCompletion())
+            {
+                waitForRelayJoinTask = WaitForRelayJoin();
+            }
+            await waitForRelayJoinTask;
         }
         else
         {
@@ -196,28 +220,23 @@ public class ClientSideManager : MonoBehaviour
     {
         try
         {
-            //NetworkManagerUI.I.WriteLineToOutput("Attempting to quick join.");
             Debug.Log("Attempting to quick join.");
             joinedLobby = await LobbyService.Instance.QuickJoinLobbyAsync();
             if (joinedLobby == null)
             {
                 return false;
             }
-            //NetworkManagerUI.I.WriteLineToOutput(joinedLobby.Id);
             Debug.Log(joinedLobby.Id);
 
             return await SubscribeToLobbyCallbacksAsync();
         }
         catch (LobbyServiceException e)
         {
-            //NetworkManagerUI.I.WriteLineToOutput(e.Reason.ToString());
             Debug.Log(e.Reason.ToString());
             if (e.Reason == LobbyExceptionReason.NoOpenLobbies)
             {
-                //NetworkManagerUI.I.WriteLineToOutput("The server must be offline.");
                 Debug.Log("The server must be offline.");
             }
-            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
             Debug.Log(e.ToString());
             return false;
         }
@@ -238,14 +257,11 @@ public class ClientSideManager : MonoBehaviour
         }
         catch (LobbyServiceException e)
         {
-            //NetworkManagerUI.I.WriteLineToOutput(e.Reason.ToString());
             Debug.Log(e.Reason.ToString());
             if (e.Reason == LobbyExceptionReason.NoOpenLobbies)
             {
-                //NetworkManagerUI.I.WriteLineToOutput("The server must be offline.");
                 Debug.Log("The server must be offline.");
             }
-            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
             Debug.Log(e.ToString());
             return false;
         }
@@ -262,11 +278,9 @@ public class ClientSideManager : MonoBehaviour
             QueryResponse queryResponse = await LobbyService.Instance.QueryLobbiesAsync();
 
             Debug.Log("Found: " + queryResponse.Results.Count);
-            //NetworkManagerUI.I.WriteLineToOutput("Found: " + queryResponse.Results.Count);
 
             foreach (var result in queryResponse.Results)
             {
-                //NetworkManagerUI.I.WriteLineToOutput("Result: " + result.Name + " " + result.MaxPlayers);
                 Debug.Log("Result: " + result.Name + " " + result.MaxPlayers);
             }
 
@@ -274,7 +288,6 @@ public class ClientSideManager : MonoBehaviour
         }
         catch (LobbyServiceException e)
         {
-            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
             Debug.Log(e.ToString());
             return false;
         }
@@ -290,13 +303,11 @@ public class ClientSideManager : MonoBehaviour
         try
         {
             lobbyEvents = await LobbyService.Instance.SubscribeToLobbyEventsAsync(joinedLobby.Id, callbacks);
-            //NetworkManagerUI.I.WriteLineToOutput("lobby events should be subscribed " + lobbyEvents.ToString());
             Debug.Log("lobby events should be subscribed " + lobbyEvents.ToString());
             return true;
         }
         catch (LobbyServiceException ex)
         {
-            //NetworkManagerUI.I.WriteLineToOutput(ex.ToString());
             Debug.Log(ex.ToString());
             switch (ex.Reason)
             {
@@ -311,23 +322,25 @@ public class ClientSideManager : MonoBehaviour
 
     private async void OnLobbyChanged(ILobbyChanges changes)
     {
-        //NetworkManagerUI.I.WriteLineToOutput("I'm in OnLobbyChanged on Client");
-        Debug.Log("I'm in OnLobbyChanged on Client");
         if (changes.LobbyDeleted)
         {
-            //NetworkManagerUI.I.WriteLineToOutput("Lobby was deleted");
-            Debug.Log("Lobby was deleted");
+            Debug.LogError("OnLobbyChanged - Lobby was deleted - PROBLEM!!!");
             // we have a problem
         }
         else
         {
+            changes.ApplyToLobby(joinedLobby);
+
             if (waitingForRelayKey)
             {
                 if (changes.Data.Changed && changes.Data.Value.ContainsKey(ServerSideManager.RELAY_KEY))
                 {
-                    //NetworkManagerUI.I.WriteLineToOutput("Calling WaitForRelayJoin another time");
                     Debug.Log("Calling WaitForRelayJoin another time");
-                    await WaitForRelayJoin();
+                    if (!waitForRelayJoinTask.IsWaitingForCompletion())
+                    {
+                        waitForRelayJoinTask = WaitForRelayJoin();
+                    }
+                    await waitForRelayJoinTask;
                 }
             }
         }
@@ -345,15 +358,12 @@ public class ClientSideManager : MonoBehaviour
             {
                 originalKeyWasNull = !(dataDic.TryGetValue(ServerSideManager.RELAY_KEY, out var originalRelayKey)
                     && originalRelayKey?.Value != null);
-                //NetworkManagerUI.I.WriteLineToOutput("originalRelayKey: " + originalRelayKey?.Value);
                 Debug.Log("originalRelayKey: " + originalRelayKey?.Value);
 
                 if (!originalKeyWasNull)
                 {
-                    //NetworkManagerUI.I.WriteLineToOutput(originalRelayKey?.Value);
                     Debug.Log(originalRelayKey?.Value);
                     var result = await RelayManager.I.JoinRelayNewWay(originalRelayKey?.Value);
-                    //NetworkManagerUI.I.WriteLineToOutput(result.ToString());
                     Debug.Log(result.ToString());
                     if (result)
                     {
@@ -369,11 +379,11 @@ public class ClientSideManager : MonoBehaviour
             }
 
             waitingForRelayKey = true;
+            Debug.Log("About to call TriggerLobbyAction");
             await TriggerLobbyAction(ServerSideManager.TRIGGER_CREATE_RELAY_KEY);
         }
         catch (Exception e)
         {
-            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
             Debug.Log(e.ToString());
         }
     }
@@ -391,7 +401,6 @@ public class ClientSideManager : MonoBehaviour
         }
         catch (LobbyServiceException e)
         {
-            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
             Debug.Log(e.ToString());
         }
     }

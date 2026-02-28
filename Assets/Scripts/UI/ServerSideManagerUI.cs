@@ -51,9 +51,21 @@ public class ServerSideManagerUI : MonoBehaviour
         }
     }
 
+    private ServerSideManager _ssm;
+
     private void Awake()
     {
         instance = this;
+        _ssm = GetComponent<ServerSideManager>();
+    }
+
+    private void OnEnable()
+    {
+        Subscribe();
+    }
+    private void OnDisable()
+    {
+        Unsubscribe();
     }
 
     public void Start()
@@ -116,6 +128,37 @@ public class ServerSideManagerUI : MonoBehaviour
         PopulateDropdownWithKeyOptions();
     }
 
+    private void OnDestroy()
+    {
+        Unsubscribe();
+    }
+
+    private void Subscribe()
+    {
+        if (_ssm == null)
+        {
+            I.WriteBadLineToOutput("ServerSideManagerUI could not subscribe to ServerSideManager events");
+        }
+        else
+        {
+            _ssm.OnPlayerJoined += HandlePlayerJoined;
+            _ssm.OnPlayerLeft += HandlePlayerLeft;
+        }
+    }
+
+    private void Unsubscribe()
+    {
+        if (_ssm == null)
+        {
+            I.WriteBadLineToOutput("ServerSideManagerUI could not unsubscribe from ServerSideManager events");
+        }
+        else
+        {
+            _ssm.OnPlayerJoined -= HandlePlayerJoined;
+            _ssm.OnPlayerLeft -= HandlePlayerLeft;
+        }
+    }
+
     public void WriteLineToOutput(string text, bool timestamp = true)
     {
         var lineContent = timestamp ? $"{DateTime.Now.ToString("HH:mm:ss")}: {text}" : text;
@@ -172,13 +215,21 @@ public class ServerSideManagerUI : MonoBehaviour
         lobbyCodeTMP.text = lobbyCode;
     }
 
-    public void UpdatePlayerCounter(PlayerCountEventArgs e) 
+    private void HandlePlayerJoined(int playerCount)
     {
-        I.WriteLineToOutput($"Changing player counter from {e.originalCount} to {e.newTotalCount}");
-        if (e == null)
-            return;
+        ServerSideManagerUI.I.WriteLineToOutput("players joined: " + playerCount.ToString());
+        UpdatePlayerCounter();
+    }
 
-        currentPlayersTMP.text = e.newTotalCount.ToString();
+    private void HandlePlayerLeft(int playerCount)
+    {
+        ServerSideManagerUI.I.WriteLineToOutput("players left: " + playerCount.ToString());
+        UpdatePlayerCounter();
+    }
+
+    public void UpdatePlayerCounter() 
+    {
+        currentPlayersTMP.text = ServerSideManager.I.CurrentPlayerCount().ToString();
     }
 
     private void LockBeforeServerLaunch()

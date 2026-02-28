@@ -12,6 +12,7 @@ public class RelayManager : MonoBehaviour
     static RelayManager instance;
 
     private Allocation currentAllocation;
+    private Task<string> creatingTask;
 
     private void Awake()
     {
@@ -24,7 +25,6 @@ public class RelayManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        Debug.Log("I am using RelayManager");
     }
 
     private void Start()
@@ -33,9 +33,22 @@ public class RelayManager : MonoBehaviour
 
     public async Task<string> CreateRelayNewWay()
     {
+        if (creatingTask.IsWaitingForCompletion())
+        {
+            ServerSideManagerUI.I.WriteLineToOutput("Already waiting for relay creation");
+            return await creatingTask;
+        }
+
+        creatingTask = CreateRelayInternal();
+        return await creatingTask;
+    }
+
+    private async Task<string> CreateRelayInternal()
+    {
         try
         {
-            if (currentAllocation != null) {
+            if (currentAllocation != null)
+            {
                 try
                 {
                     var oldJoinCode = await RelayService.Instance.GetJoinCodeAsync(currentAllocation.AllocationId);
@@ -83,16 +96,13 @@ public class RelayManager : MonoBehaviour
             RelayServerData rsd = AllocationUtils.ToRelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(rsd);
 
-            //NetworkManagerUI.I.WriteLineToOutput("After joining relay, about to start client.");
             Debug.Log("After joining relay, about to start client.");
 
             return NetworkManager.Singleton.StartClient();
         }
         catch (RelayServiceException e)
         {
-            //NetworkManagerUI.I.WriteLineToOutput(e.Reason.ToString());
             Debug.Log(e.Reason.ToString());
-            //NetworkManagerUI.I.WriteLineToOutput(e.ToString());
             Debug.Log(e.ToString());
             return false;
         }

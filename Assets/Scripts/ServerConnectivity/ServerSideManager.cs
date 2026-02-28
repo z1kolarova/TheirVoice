@@ -1,4 +1,3 @@
-using Assets.Classes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,23 +15,22 @@ public class ServerSideManager : MonoBehaviour
     static ServerSideManager instance;
 
     private Lobby hostLobby;
+    public int CurrentPlayerCount() 
+        => hostLobby?.MaxPlayers - hostLobby?.AvailableSlots - 1 ?? 0;
 
     private float heartbeatSeconds = 20;
     private Coroutine heartbeatCoroutine;
-
-    private float lobbyPollingSeconds = 1.1f;
-    private Coroutine lobbyPollingCoroutine;
 
     public const string RELAY_KEY = "RelayKey";
     public const string TRIGGER_CREATE_RELAY_KEY = "PlsStartRelay";
 
     private ILobbyEvents lobbyEvents;
 
-    private int playersInLobbyCount = 0;
-
-    private bool lobbyFreshlyCreated = false;
     private bool currentLobbyIsPrivate = false;
-    private bool lobbyPlayerCountChanged = false;
+
+    public event Action OnLobbyFreshlyCreated;
+    public event Action<int> OnPlayerJoined;
+    public event Action<int> OnPlayerLeft;
 
     # region moderation config
 
@@ -71,14 +69,24 @@ public class ServerSideManager : MonoBehaviour
         instance = this;
     }
 
-    private void Start()
+    private void OnEnable()
     {
-
+        OnLobbyFreshlyCreated += HandleLobbyFreshlyCreated;
     }
 
-    private void Update()
+    private void OnDisable()
     {
-        I.HandlePseudoEvents();
+        Unsubscribe();
+    }
+
+    private void OnDestroy()
+    {
+        Unsubscribe();
+    }
+
+    private void Unsubscribe()
+    {
+        OnLobbyFreshlyCreated -= HandleLobbyFreshlyCreated;
     }
 
     public async Task StartServer(bool privateLobby)
@@ -112,7 +120,6 @@ public class ServerSideManager : MonoBehaviour
         hostLobby = lobby;
         currentLobbyIsPrivate = hostLobby.IsPrivate;
         heartbeatCoroutine = StartCoroutine(I.KeepHearbeat());
-        lobbyPollingCoroutine = StartCoroutine(I.RegularlyPollLobby());
     }
 
     #region Coroutines
@@ -131,30 +138,6 @@ public class ServerSideManager : MonoBehaviour
             yield return wait;
         }
     }
-    private IEnumerator RegularlyPollLobby()
-    {
-        var wait = new WaitForSeconds(lobbyPollingSeconds);
-        while (hostLobby != null)
-        {
-            var task = LobbyService.Instance.GetLobbyAsync(hostLobby.Id);
-            yield return new WaitUntil(() => task.IsCompleted); // wait for async to finish
-            if (task.Exception != null)
-            {
-                ServerSideManagerUI.I.WriteLineToOutput(task.Exception.ToString());
-            }
-            if (hostLobby.AvailableSlots != task.Result.AvailableSlots)
-            {
-                ServerSideManagerUI.I.WriteLineToOutput($"old available slots(?): {hostLobby.AvailableSlots}\n" +
-                    $"new available slots: {task.Result.AvailableSlots}");
-            }
-            if (playersInLobbyCount != hostLobby.MaxPlayers - hostLobby.AvailableSlots - 1)
-            {
-                ServerSideManagerUI.I.WriteLineToOutputWithColor("condition triggered", Color.white);
-                lobbyPlayerCountChanged = true;
-            }
-            yield return wait;
-        }
-    }
     #endregion Coroutines
 
     public void ShutDownHostLobby()
@@ -164,51 +147,35 @@ public class ServerSideManager : MonoBehaviour
             StopCoroutine(heartbeatCoroutine);
             heartbeatCoroutine = null;
         }
-        if (lobbyPollingCoroutine != null)
-        {
-            StopCoroutine(lobbyPollingCoroutine);
-            lobbyPollingCoroutine = null;
-        }
 
         hostLobby = null;
         ServerSideManagerUI.I.UpdateDisplayedLobbyCode("");
     }
 
-    private void HandlePseudoEvents()
+    private void HandleLobbyFreshlyCreated()
     {
-        if (lobbyFreshlyCreated)
+        ServerSideManagerUI.I.WriteLineToOutput("Handling freshly created lobby");
+
+        if (hostLobby == null)
         {
-            lobbyFreshlyCreated = false;
-            ServerSideManagerUI.I.WriteLineToOutput("Handling freshly created lobby");
-
-            if (hostLobby.IsPrivate)
-            {
-                ServerSideManagerUI.I.UpdateDisplayedLobbyCode(hostLobby.LobbyCode);
-            }
-
-            if (hostLobby.Players.Count > 0 && !(hostLobby.Data != null && hostLobby.Data.TryGetValue(RELAY_KEY, out var relKey) && relKey != null))
-            {
-                ServerSideManagerUI.I.WriteLineToOutput($"lobby is freshly created, at least 1 player is already present but relay key is not available");
-                ServerSideManagerUI.I.WriteLineToOutput(hostLobby.Data.ToString());
-                I.StartRelayAndUpdateLobby();
-            }
+            ServerSideManagerUI.I.WriteBadLineToOutput("Host lobby is null when it should be FRESHLY CREATED...");
+            return;
         }
-        if (lobbyPlayerCountChanged)
+
+        if (hostLobby.IsPrivate)
         {
-            ServerSideManagerUI.I.WriteLineToOutput($"playercountchanged");
-            lobbyPlayerCountChanged = false;
+            ServerSideManagerUI.I.UpdateDisplayedLobbyCode(hostLobby.LobbyCode);
+        }
 
-            var pcea = new PlayerCountEventArgs { 
-                originalCount = playersInLobbyCount,
-                newTotalCount = hostLobby.MaxPlayers - hostLobby.AvailableSlots - 1
-            };
-
-            playersInLobbyCount = pcea.newTotalCount;
-            ServerSideManagerUI.I.UpdatePlayerCounter(pcea);
+        if (hostLobby.Players.Count > 0 && !(hostLobby.Data != null && hostLobby.Data.TryGetValue(RELAY_KEY, out var relKey) && relKey != null))
+        {
+            ServerSideManagerUI.I.WriteLineToOutput($"lobby is freshly created, at least 1 player is already present but relay key is not available");
+            ServerSideManagerUI.I.WriteLineToOutput(hostLobby.Data.ToString());
+            I.StartRelayAndUpdateLobby();
         }
     }
 
-    private void OnLobbyChanged(ILobbyChanges changes)
+    private void HandleLobbyChanged(ILobbyChanges changes)
     {
         ServerSideManagerUI.I.WriteLineToOutput("I'm in OnLobbyChanged on Server");
 
@@ -219,21 +186,15 @@ public class ServerSideManager : MonoBehaviour
         }
         else
         {
-
-            if (changes.PlayerJoined.Value?.Count > 0)
+            if (hostLobby != null)
             {
-                ServerSideManagerUI.I.WriteLineToOutput($"players joined: {changes.PlayerJoined.Value?.Count}");
-            }
-
-            if (changes.PlayerLeft.Value?.Count > 0)
-            {
-                ServerSideManagerUI.I.WriteLineToOutput($"players left: {changes.PlayerLeft.Value?.Count}");
+                changes.ApplyToLobby(hostLobby);
             }
 
             if (changes.PlayerData.Added || changes.PlayerData.Changed)
             {
                 if (changes.PlayerData.Value.Any(
-                    item => item.Value.ChangedData.Value.ContainsKey(TRIGGER_CREATE_RELAY_KEY)
+                    item => item.Value?.ChangedData.Value?.ContainsKey(TRIGGER_CREATE_RELAY_KEY) ?? false
                         && item.Value.ChangedData.Value[TRIGGER_CREATE_RELAY_KEY].Value.Value == "true"))
                 {
                     foreach (var dat in changes.PlayerData.Value.FirstOrDefault().Value.ChangedData.Value)
@@ -241,14 +202,28 @@ public class ServerSideManager : MonoBehaviour
                         ServerSideManagerUI.I.WriteLineToOutput($"key: {dat.Key}, value: {dat.Value.Value.Value}");
                     }
 
-                    //NetworkManagerUI.I.WriteLineToOutput(changes.PlayerData.Value.FirstOrDefault().Value.LastUpdatedChanged.Value.ToString());
+                    ServerSideManagerUI.I.WriteYellowLineToOutput("PlayerData.Added " + changes.PlayerData.Added);
+                    ServerSideManagerUI.I.WriteYellowLineToOutput("PlayerData.Changed " + changes.PlayerData.Changed);
                     I.StartRelayAndUpdateLobby();
                 }
+            } else {
+                ServerSideManagerUI.I.WriteLineToOutputWithColor($"no PlayerData added nor changed", color: Color.white);
             }
         }
     }
 
-    private void OnConnectionStateChanged(LobbyEventConnectionState state)
+    private void HandlePlayerJoined(List<LobbyPlayerJoined> list) 
+    {
+        ServerSideManagerUI.I.WriteLineToOutput("PlayerJoined should be getting invoked");
+        OnPlayerJoined?.Invoke(list.Count);
+    }
+
+    private void HandlePlayerLeft(List<int> list)
+    {
+        OnPlayerLeft?.Invoke(list.Count);
+    }
+
+    private void HandleConnectionStateChanged(LobbyEventConnectionState state)
     {
         ServerSideManagerUI.I.WriteLineToOutput("lobby connection state changed to: " + state.ToString());
         if (state == LobbyEventConnectionState.Error)
@@ -256,17 +231,39 @@ public class ServerSideManager : MonoBehaviour
             I.ReplaceNonfunctionalLobby("lobby after error state", 50, currentLobbyIsPrivate);
         }
     }
-    private void OnKickedFromLobby()
+    private void HandleBeingKickedFromLobby()
     {
         ServerSideManagerUI.I.WriteBadLineToOutput("somehow the server got kicked from lobby");
         I.ReplaceNonfunctionalLobby("got kicked so new lobby", 50, currentLobbyIsPrivate);
     }
-
     private void ReplaceNonfunctionalLobby(string newLobbyName, int newMaxPlayers, bool privateLobby = false)
     {
         ServerSideManagerUI.I.EmptyOutput();
         I.ShutDownHostLobby();
         I.CreateLobby(newLobbyName, newMaxPlayers, privateLobby);
+    }
+
+    private void HandlePlayerDataAdded(Dictionary<int, Dictionary<string, ChangedOrRemovedLobbyValue<PlayerDataObject>>> pda)
+    {
+        I.PdaLog(pda, Color.orange);
+    }
+    private void HandlePlayerDataChanged(Dictionary<int, Dictionary<string, ChangedOrRemovedLobbyValue<PlayerDataObject>>> pda)
+    {
+        I.PdaLog(pda, Color.lightPink);
+    }
+
+    private void PdaLog(Dictionary<int, Dictionary<string, ChangedOrRemovedLobbyValue<PlayerDataObject>>> pda, Color c)
+    {
+        foreach (var key in pda.Keys)
+        {
+            foreach (var innerKey in pda[key].Keys)
+            {
+                ServerSideManagerUI.I.WriteLineToOutputWithColor(
+                    "key: " + key + " innerKey: " + innerKey + " value: "
+                    + pda[key][innerKey].Value?.Value?.ToString()
+                    , c);
+            }
+        }
     }
 
     public async void CreateLobby(string lobbyName, int maxPlayers, bool privateLobby = false)
@@ -287,9 +284,14 @@ public class ServerSideManager : MonoBehaviour
 
             Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
             var callbacks = new LobbyEventCallbacks();
-            callbacks.LobbyChanged += I.OnLobbyChanged;
-            callbacks.LobbyEventConnectionStateChanged += I.OnConnectionStateChanged;
-            callbacks.KickedFromLobby += I.OnKickedFromLobby;
+            callbacks.LobbyChanged += I.HandleLobbyChanged;
+            callbacks.LobbyEventConnectionStateChanged += I.HandleConnectionStateChanged;
+            callbacks.KickedFromLobby += I.HandleBeingKickedFromLobby;
+            callbacks.PlayerJoined += I.HandlePlayerJoined;
+            callbacks.PlayerLeft += I.HandlePlayerLeft;
+            callbacks.PlayerDataAdded += I.HandlePlayerDataAdded;
+            callbacks.PlayerDataChanged += I.HandlePlayerDataChanged;
+
             try
             {
                 lobbyEvents = await LobbyService.Instance.SubscribeToLobbyEventsAsync(lobby.Id, callbacks);
@@ -320,8 +322,8 @@ public class ServerSideManager : MonoBehaviour
                 }
             }
 
-            lobbyFreshlyCreated = true;
             I.InitHostLobby(lobby);
+            OnLobbyFreshlyCreated?.Invoke();
             ServerSideManagerUI.I.WriteLineToOutput("End of CreateLobby, name: " + lobbyName + ", success: " + (hostLobby != null).ToString());
         }
         catch (LobbyServiceException e)

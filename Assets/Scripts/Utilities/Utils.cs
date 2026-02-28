@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
@@ -199,6 +200,15 @@ public static class Utils
         };
     }
     #endregion API
+
+    #region Tasks
+
+    public static bool IsWaitingForCompletion(this Task task)
+        => task != null && !task.IsCompleted;
+    public static bool IsWaitingForCompletion<T>(this Task<T> task)
+        => task != null && !task.IsCompleted;
+
+    #endregion Tasks
 }
 
 public struct Borders {
