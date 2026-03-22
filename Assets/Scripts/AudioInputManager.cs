@@ -39,7 +39,9 @@ public class AudioInputManager : MonoBehaviour
     private IEnumerator StartRecording()
     {
         ToggleRecordingState();
+#if !UNITY_WEBGL
         clip = Microphone.Start(selectedMicrophone, false, maxRecordingDuration, recordingFrequency);
+#endif
         startedClipCounter++;
         var rememberCounter = startedClipCounter;
         yield return new WaitForSeconds(maxRecordingDuration - 1);
@@ -95,6 +97,7 @@ public class AudioInputManager : MonoBehaviour
         if (isRecording)
         {
             ToggleRecordingState();
+#if !UNITY_WEBGL
             var lastSample = Microphone.GetPosition(selectedMicrophone);
             Microphone.End(selectedMicrophone);
 
@@ -102,7 +105,8 @@ public class AudioInputManager : MonoBehaviour
             clip.GetData(samples, 0);
 
             trimmedClip = AudioClip.Create(fileName, lastSample, clip.channels, clip.frequency, false);
-            trimmedClip.SetData(samples, 0);
+            trimmedClip.SetData(samples, 0);           
+#endif
         }
     }
 

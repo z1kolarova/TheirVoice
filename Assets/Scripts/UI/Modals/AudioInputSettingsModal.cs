@@ -13,6 +13,10 @@ public class AudioInputSettingsModal : MonoBehaviour
 
     void Start()
     {
+#if UNITY_WEBGL
+        gameObject.SetActive(false);
+        return;
+#else
         continueWithoutMicBtn.onClick.AddListener(() =>
         {
             UseSelectedMicrophoneChoice(false);
@@ -26,12 +30,16 @@ public class AudioInputSettingsModal : MonoBehaviour
         });
 
         SetActive(true);
+#endif
     }
 
     private void PopulateDropdownWithMicOptions()
     {
         microphoneSelectionDropdown.options.Clear();
         microphoneSelectionDropdown.options.Add(new TMP_Dropdown.OptionData(""));
+        microphoneSelectionDropdown.value = 0;
+
+#if !UNITY_WEBGL
         foreach (var device in Microphone.devices)
         {
             microphoneSelectionDropdown.options.Add(new TMP_Dropdown.OptionData(device));
@@ -41,10 +49,7 @@ public class AudioInputSettingsModal : MonoBehaviour
         {
             microphoneSelectionDropdown.value = Microphone.devices.ToList().IndexOf(AudioInputManager.I.SelectedMicrophone) + 1;
         }
-        else
-        {
-            microphoneSelectionDropdown.value = 0;
-        }
+#endif
 
         microphoneSelectionDropdown.RefreshShownValue();
     }
@@ -60,11 +65,16 @@ public class AudioInputSettingsModal : MonoBehaviour
 
     public void SetActive(bool value)
     {
+#if UNITY_WEBGL
+        gameObject.SetActive(false);
+        return;
+#else
         gameObject.SetActive(value);
         if (value)
         {
             UserInterfaceUtilities.I.SetCursorUnlockState(true);
             PopulateDropdownWithMicOptions();
         }
+#endif
     }
 }

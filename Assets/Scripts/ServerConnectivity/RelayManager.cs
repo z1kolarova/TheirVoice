@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
+using Unity.Services.Multiplayer;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
@@ -93,7 +94,13 @@ public class RelayManager : MonoBehaviour
         {
             JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
 
-            RelayServerData rsd = AllocationUtils.ToRelayServerData(allocation, "dtls");
+            RelayServerData rsd;
+#if UNITY_WEBGL
+            rsd = AllocationUtils.ToRelayServerData(allocation, RelayProtocol.WSS);
+#else
+            rsd = AllocationUtils.ToRelayServerData(allocation, RelayProtocol.Dtls);
+#endif
+            //rsd = AllocationUtils.ToRelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(rsd);
 
             Debug.Log("After joining relay, about to start client.");
