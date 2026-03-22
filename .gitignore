@@ -71,4 +71,11 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
-TestResults/*
+
+# ---------------------------------------------
+# Everything below this are my own added things
+/TestResults/
+
+# Exclude WebBuilds, but include skript for running the WebGL build
+/WebBuilds/*
+!/WebBuilds/serve.js

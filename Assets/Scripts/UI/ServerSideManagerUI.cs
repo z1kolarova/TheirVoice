@@ -114,7 +114,7 @@ public class ServerSideManagerUI : MonoBehaviour
         });
 
         copyLobbyCodeBtn.onClick.AddListener(() => {
-            System.Windows.Forms.Clipboard.SetText(lobbyCodeTMP.text);
+            CrossPlatformUtils.SetTextToClipboard(lobbyCodeTMP.text);
         });
 
         UpdateDisplayedLobbyCode("");
