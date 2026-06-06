@@ -10,11 +10,13 @@ enum AnimationType {
     Walk
 }
 
+[RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(AISensor))]
 public class PasserbyAI : MonoBehaviour
 {
+    private CapsuleCollider _collider;
     private Rigidbody _rb;
     private NavMeshAgent _agent;
     private AISensor _sensor;
@@ -40,6 +42,7 @@ public class PasserbyAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _collider = GetComponent<CapsuleCollider>();
         _rb = GetComponent<Rigidbody>();
         _agent = GetComponent<NavMeshAgent>();
         _sensor = GetComponent<AISensor>();
@@ -128,6 +131,21 @@ public class PasserbyAI : MonoBehaviour
         }
     }
 
+    private void SetPushable(bool pushable) 
+    {
+        //_collider.isTrigger = pushable;
+        _rb.isKinematic = !pushable;
+
+        if (!pushable)
+        {
+            _rb.constraints |= RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+        }
+        else
+        {
+            _rb.constraints &= ~(RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ);
+        }
+    }
+
     private void WanderAround()
     {
         if (tempDestination.IsNullOrBegining() || tempDestination.IsApproximately(_rb.position))
@@ -152,7 +170,7 @@ public class PasserbyAI : MonoBehaviour
         StopAndTurnTowards(gameObject);
     }
 
-    public bool CanBeApproached() => State != PasserbyStates.Leaving && State != PasserbyStates.InConversation;
+    public bool CanBeApproached() => State != PasserbyStates.Leaving && State != PasserbyStates.InConversation && personality.EnrichedText != null;
 
     public void BeApproached(GameObject player)
     {
@@ -164,6 +182,7 @@ public class PasserbyAI : MonoBehaviour
     {
         state = PasserbyStates.Leaving;
         _agent.isStopped = false;
+        SetPushable(true);
         animator.SetTrigger("StartWalking");
     }
 
@@ -197,7 +216,11 @@ public class PasserbyAI : MonoBehaviour
 
     private void StopAndTurnTowards(Vector3 position)
     {
-        _agent.isStopped = true;
+        if (!_agent.isStopped)
+        {
+            _agent.isStopped = true;
+            SetPushable(false);
+        }
 
         Vector3 direction = position - _agent.transform.position;
         direction.y = 0f;
