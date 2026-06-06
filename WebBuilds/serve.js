@@ -14,9 +14,12 @@ http.createServer((req, res) => {
     let filePath = '.' + req.url;
     if (filePath === './') filePath = './index.html';
 
-    // Strip .gz to determine the real content type
+    // Strip .gz / .br to determine the real content type
     const isGzip = filePath.endsWith('.gz');
-    const basePath = isGzip ? filePath.slice(0, -3) : filePath;
+    const isBrotli = filePath.endsWith('.br');
+    const basePath = isGzip ? filePath.slice(0, -3)
+                   : isBrotli ? filePath.slice(0, -3)
+                   : filePath;
     const ext = path.extname(basePath);
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
@@ -25,6 +28,7 @@ http.createServer((req, res) => {
 
         res.setHeader('Content-Type', contentType);
         if (isGzip) res.setHeader('Content-Encoding', 'gzip');
+        if (isBrotli) res.setHeader('Content-Encoding', 'br');
 
         res.writeHead(200);
         res.end(data);
