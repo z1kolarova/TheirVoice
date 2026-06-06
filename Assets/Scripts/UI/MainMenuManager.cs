@@ -39,9 +39,14 @@ public class MainMenuManager : MonoBehaviour
             creditsModal.SetActive(true);
         });
 
+#if UNITY_WEBGL
+        exitButton.enabled = false;
+        exitButton.gameObject.SetActive(false);
+#else
         exitButton.onClick.AddListener(() => {
             ExitSimulator();
         });
+#endif
 
         SetStartButtonInteractable(ClientSideManager.I.HasAllNeededConnections 
             && ClientDataManager.I.Languages?.Count > 0);

@@ -34,6 +34,7 @@ public class ClientSideManager : MonoBehaviour
     private ILobbyEvents lobbyEvents;
     private bool clientAuthenticated = false;
     private bool retryLobbyQuickJoin = false;
+    private bool lobbyReadyToPoll = false;
     private bool waitingForRelayKey = false;
     private bool originalKeyWasNull = false;
 
@@ -57,6 +58,11 @@ public class ClientSideManager : MonoBehaviour
     #region start
     private void Start()
     {
+        NetworkManager.Singleton.OnTransportFailure += HandleTransportFailure;
+        NetworkManager.Singleton.OnClientDisconnectCallback += (clientId) => {
+            Debug.LogWarning($"Netcode disconnect: client {clientId}");
+        };
+
         quickjoinRetryTimer = quickjoinRetryTimerMax;
         relayRetryTimer = relayRetryTimerMax;
 
@@ -71,7 +77,6 @@ public class ClientSideManager : MonoBehaviour
         // 2b) quickjoin works
         // 3) a lobby has been joined, establish relay
 
-        //WILL THIS RESULT IN PLAYER CAPSULE TRYING TO SPAWN INTO MAIN MENU???
         if (!clientAuthenticated)
         {
             clientAuthenticated = await ClientSideManager.I.AuthenticateClient();
@@ -130,7 +135,7 @@ public class ClientSideManager : MonoBehaviour
 
     private void HandleLobbyPolling()
     {
-        if (joinedLobby != null)
+        if (joinedLobby != null && lobbyReadyToPoll)
         {
             lobbyPollTimer -= Time.deltaTime;
             if (lobbyPollTimer < 0f)
@@ -162,6 +167,16 @@ public class ClientSideManager : MonoBehaviour
     {
         try
         {
+            if (joinedLobby == null)
+            {
+                Debug.LogError("joinedLobby was null!");
+                return;
+            }
+            if (LobbyService.Instance == null)
+            {
+                Debug.LogError("LobbyService.Instance was null!");
+                return;
+            }
             joinedLobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
             OnLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = joinedLobby });
         }
@@ -175,6 +190,7 @@ public class ClientSideManager : MonoBehaviour
     #region joining
     public async Task JoinPublicLobbyAndRelay()
     {
+        ConnectionControlUI.I.ShowStartedConnecting();
         Debug.Log("inside JoinLobbyAndRelay");
 
         var lobbyJoined = await TryQuickJoinLobbyAsync();
@@ -189,15 +205,19 @@ public class ClientSideManager : MonoBehaviour
                 waitForRelayJoinTask = WaitForRelayJoin();
             }
             await waitForRelayJoinTask;
+            ConnectionControlUI.I.ShowStoppedConnecting(true, false);
         }
         else
         {
+            ConnectionControlUI.I.ShowStoppedConnecting(false, false);
             lobbyNotFoundModal.SetActive(true);
         }
     }
 
     public async Task JoinPrivateLobbyAndRelay(string lobbyCode)
     {
+        ConnectionControlUI.I.ShowStartedConnecting();
+
         var lobbyJoined = await TryJoinPrivateLobbyByCodeAsync(lobbyCode);
         if (lobbyJoined)
         {
@@ -209,10 +229,12 @@ public class ClientSideManager : MonoBehaviour
                 waitForRelayJoinTask = WaitForRelayJoin();
             }
             await waitForRelayJoinTask;
+            ConnectionControlUI.I.ShowStoppedConnecting(true, true);
         }
         else
         {
             Debug.Log("private lobby join didn't work out either");
+            ConnectionControlUI.I.ShowStoppedConnecting(false, true);
             lobbyNotFoundModal.SetActive(true);
         }
     }
@@ -228,7 +250,8 @@ public class ClientSideManager : MonoBehaviour
             }
             Debug.Log(joinedLobby.Id);
 
-            return await SubscribeToLobbyCallbacksAsync();
+            lobbyReadyToPoll = await SubscribeToLobbyCallbacksAsync();
+            return lobbyReadyToPoll;
         }
         catch (LobbyServiceException e)
         {
@@ -245,6 +268,7 @@ public class ClientSideManager : MonoBehaviour
     {
         try
         {
+            lobbyReadyToPoll = false;
             Debug.Log($"Attempting to join private lobby by code: {lobbyCode}");
             joinedLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode);
             if (joinedLobby == null)
@@ -253,7 +277,8 @@ public class ClientSideManager : MonoBehaviour
             }
             Debug.Log(joinedLobby.Id);
 
-            return await SubscribeToLobbyCallbacksAsync();
+            lobbyReadyToPoll = await SubscribeToLobbyCallbacksAsync();
+            return lobbyReadyToPoll;
         }
         catch (LobbyServiceException e)
         {
@@ -291,6 +316,12 @@ public class ClientSideManager : MonoBehaviour
             Debug.Log(e.ToString());
             return false;
         }
+    }
+    
+    public bool IsConnectedToLobby(out bool privateLobby)
+    {
+        privateLobby = joinedLobby?.IsPrivate == true;
+        return joinedLobby != null;
     }
     #endregion joining
 
@@ -392,16 +423,36 @@ public class ClientSideManager : MonoBehaviour
     #region leaving
     public async Task LeaveLobby()
     {
-        try
+        if (lobbyEvents != null)
         {
-            if (joinedLobby != null)
+            try
+            {
+                await lobbyEvents.UnsubscribeAsync();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.ToString());
+            }
+            finally 
+            { 
+                lobbyEvents = null; 
+            }
+        }
+
+        if (joinedLobby != null)
+        {
+            try
             {
                 await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId);
             }
-        }
-        catch (LobbyServiceException e)
-        {
-            Debug.Log(e.ToString());
+            catch (Exception e)
+            {
+                Debug.LogError(e.ToString());
+            }
+            finally
+            {
+                joinedLobby = null;
+            }
         }
     }
 
@@ -413,9 +464,14 @@ public class ClientSideManager : MonoBehaviour
 
     public async Task DisconectFromEverything()
     {
+        HasAllNeededConnections = false;
         StopAllActivity();
         await LeaveLobby();
         NetworkManager.Singleton.Shutdown();
+        while (NetworkManager.Singleton.ShutdownInProgress || NetworkManager.Singleton.IsListening)
+        {
+            await Task.Yield();
+        }
     }
 
     public async Task DisconnectAndCloseApp()
@@ -423,8 +479,8 @@ public class ClientSideManager : MonoBehaviour
         await DisconectFromEverything();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-#else
-			Application.Quit();
+#elif !UNITY_WEBGL
+        Application.Quit();
 #endif
     }
     #endregion leaving
@@ -446,5 +502,12 @@ public class ClientSideManager : MonoBehaviour
 
         joinedLobby = await LobbyService.Instance.UpdatePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId, clearingUPO);
         joinedLobby = await LobbyService.Instance.UpdatePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId, settingUPO);
+    }
+
+    private async void HandleTransportFailure()
+    {
+        await I.DisconectFromEverything();
+        ConnectionControlUI.I.ShowCurrentConnectionState();
+        I.EstablishNeededConnections();
     }
 }

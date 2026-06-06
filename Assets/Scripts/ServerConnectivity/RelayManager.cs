@@ -96,11 +96,10 @@ public class RelayManager : MonoBehaviour
 
             RelayServerData rsd;
 #if UNITY_WEBGL
-            rsd = AllocationUtils.ToRelayServerData(allocation, RelayProtocol.WSS);
+            rsd = AllocationUtils.ToRelayServerData(allocation, RelayProtocol.WSS); // "wss"
 #else
-            rsd = AllocationUtils.ToRelayServerData(allocation, RelayProtocol.DTLS);
+            rsd = AllocationUtils.ToRelayServerData(allocation, RelayProtocol.DTLS); // "dtls"
 #endif
-            //rsd = AllocationUtils.ToRelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(rsd);
 
             Debug.Log("After joining relay, about to start client.");

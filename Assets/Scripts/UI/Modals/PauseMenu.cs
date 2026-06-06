@@ -41,9 +41,16 @@ public class PauseMenu : MonoBehaviour
             DisconnectEverythingAndReturnToMainMenu();
         });
 
+#if UNITY_WEBGL
+        audioInputSettingsBtn.enabled = false;
+        audioInputSettingsBtn.gameObject.SetActive(false);
+        exitGameBtn.enabled = false;
+        exitGameBtn.gameObject.SetActive(false);
+#else
         exitGameBtn.onClick.AddListener(() => {
             DisconnectAndCloseApp();
         });
+#endif
     }
 
     public void TogglePauseMenu()
