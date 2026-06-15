@@ -1,6 +1,7 @@
 using Assets.Classes;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Services.Authentication;
@@ -23,7 +24,9 @@ public class ClientSideManager : MonoBehaviour
     private float lobbyPollTimer;
 
     private Task lobbyPollTask;
+
     private Task waitForRelayJoinTask;
+    private CancellationTokenSource relayJoinCts;
 
     private float quickjoinRetryTimerMax = 5f;
     private float quickjoinRetryTimer;
@@ -156,7 +159,8 @@ public class ClientSideManager : MonoBehaviour
 
                     if (!waitForRelayJoinTask.IsWaitingForCompletion())
                     {
-                        waitForRelayJoinTask = WaitForRelayJoin();
+                        relayJoinCts = new CancellationTokenSource();
+                        waitForRelayJoinTask = WaitForRelayJoin(relayJoinCts.Token);
                     }
                 }
             }
@@ -190,8 +194,10 @@ public class ClientSideManager : MonoBehaviour
     #region joining
     public async Task JoinPublicLobbyAndRelay()
     {
-        ConnectionControlUI.I.ShowStartedConnecting();
         Debug.Log("inside JoinLobbyAndRelay");
+        ConnectionControlUI.I.ShowStartedConnecting();
+
+        await AbandonCurrentLobby();
 
         var lobbyJoined = await TryQuickJoinLobbyAsync();
         Debug.Log($"lobbyJoined was {lobbyJoined}");
@@ -202,7 +208,8 @@ public class ClientSideManager : MonoBehaviour
 
             if (!waitForRelayJoinTask.IsWaitingForCompletion())
             {
-                waitForRelayJoinTask = WaitForRelayJoin();
+                relayJoinCts = new CancellationTokenSource();
+                waitForRelayJoinTask = WaitForRelayJoin(relayJoinCts.Token);
             }
             await waitForRelayJoinTask;
             ConnectionControlUI.I.ShowStoppedConnecting(true, false);
@@ -218,6 +225,8 @@ public class ClientSideManager : MonoBehaviour
     {
         ConnectionControlUI.I.ShowStartedConnecting();
 
+        await AbandonCurrentLobby();
+
         var lobbyJoined = await TryJoinPrivateLobbyByCodeAsync(lobbyCode);
         if (lobbyJoined)
         {
@@ -226,7 +235,8 @@ public class ClientSideManager : MonoBehaviour
 
             if (!waitForRelayJoinTask.IsWaitingForCompletion())
             {
-                waitForRelayJoinTask = WaitForRelayJoin();
+                relayJoinCts = new CancellationTokenSource();
+                waitForRelayJoinTask = WaitForRelayJoin(relayJoinCts.Token);
             }
             await waitForRelayJoinTask;
             ConnectionControlUI.I.ShowStoppedConnecting(true, true);
@@ -369,7 +379,8 @@ public class ClientSideManager : MonoBehaviour
                     Debug.Log("Calling WaitForRelayJoin another time");
                     if (!waitForRelayJoinTask.IsWaitingForCompletion())
                     {
-                        waitForRelayJoinTask = WaitForRelayJoin();
+                        relayJoinCts = new CancellationTokenSource();
+                        waitForRelayJoinTask = WaitForRelayJoin(relayJoinCts.Token);
                     }
                     await waitForRelayJoinTask;
                 }
@@ -380,7 +391,7 @@ public class ClientSideManager : MonoBehaviour
     #endregion callbacks
 
     #region relay
-    public async Task WaitForRelayJoin()
+    public async Task WaitForRelayJoin(CancellationToken ct)
     {
         try
         {
@@ -394,7 +405,10 @@ public class ClientSideManager : MonoBehaviour
                 if (!originalKeyWasNull)
                 {
                     Debug.Log(originalRelayKey?.Value);
-                    var result = await RelayManager.I.JoinRelayNewWay(originalRelayKey?.Value);
+                    var result = await RelayManager.I.JoinRelayNewWay(originalRelayKey?.Value, ct);
+                    if (ct.IsCancellationRequested)
+                        return;
+
                     Debug.Log(result.ToString());
                     if (result)
                     {
@@ -409,9 +423,15 @@ public class ClientSideManager : MonoBehaviour
                 }
             }
 
+            if (ct.IsCancellationRequested)
+                return;
             waitingForRelayKey = true;
             Debug.Log("About to call TriggerLobbyAction");
             await TriggerLobbyAction(ServerSideManager.TRIGGER_CREATE_RELAY_KEY);
+        }
+        catch (OperationCanceledException)
+        {
+            waitingForRelayKey = false;
         }
         catch (Exception e)
         {
@@ -460,17 +480,29 @@ public class ClientSideManager : MonoBehaviour
     {
         retryLobbyQuickJoin = false;
         waitingForRelayKey = false;
+
+        relayJoinCts?.Cancel();
+        relayJoinCts?.Dispose();
+        relayJoinCts = null;
     }
 
     public async Task DisconectFromEverything()
     {
         HasAllNeededConnections = false;
         StopAllActivity();
-        await LeaveLobby();
+        await I.LeaveLobby();
         NetworkManager.Singleton.Shutdown();
         while (NetworkManager.Singleton.ShutdownInProgress || NetworkManager.Singleton.IsListening)
         {
             await Task.Yield();
+        }
+    }
+
+    public async Task AbandonCurrentLobby()
+    {
+        if (I.IsConnectedToLobby(out _))
+        {
+            await I.DisconectFromEverything();
         }
     }
 

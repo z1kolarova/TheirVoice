@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -88,11 +89,23 @@ public class RelayManager : MonoBehaviour
         }
     }
 
-    public async Task<bool> JoinRelayNewWay(string joinCode)
+    public bool IsRelayCreationInProgress()
+        => creatingTask.IsWaitingForCompletion();
+
+    public async Task<bool> JoinRelayNewWay(string joinCode, CancellationToken ct)
     {
+        if (NetworkManager.Singleton.IsListening)
+        {
+            Debug.LogError("JoinRelayNewWay called while NGO still listening — " +
+                           "old relay was never shut down. Aborting.");
+            return false;
+        }
+
         try
         {
             JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
+            if (ct.IsCancellationRequested)
+                return false;
 
             RelayServerData rsd;
 #if UNITY_WEBGL
@@ -104,7 +117,13 @@ public class RelayManager : MonoBehaviour
 
             Debug.Log("After joining relay, about to start client.");
 
-            return NetworkManager.Singleton.StartClient();
+            bool started = NetworkManager.Singleton.StartClient();
+            if (started && ct.IsCancellationRequested)
+            {
+                NetworkManager.Singleton.Shutdown();
+                return false;
+            }
+            return started;
         }
         catch (RelayServiceException e)
         {

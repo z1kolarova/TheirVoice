@@ -1,4 +1,3 @@
-using Assets.Classes;
 using System;
 using TMPro;
 using Unity.Netcode;
@@ -143,6 +142,7 @@ public class ServerSideManagerUI : MonoBehaviour
         {
             _ssm.OnPlayerJoined += HandlePlayerJoined;
             _ssm.OnPlayerLeft += HandlePlayerLeft;
+            _ssm.OnLobbyRefreshed += HandleLobbyRefreshed;
         }
     }
 
@@ -156,6 +156,7 @@ public class ServerSideManagerUI : MonoBehaviour
         {
             _ssm.OnPlayerJoined -= HandlePlayerJoined;
             _ssm.OnPlayerLeft -= HandlePlayerLeft;
+            _ssm.OnLobbyRefreshed -= HandleLobbyRefreshed;
         }
     }
 
@@ -224,6 +225,11 @@ public class ServerSideManagerUI : MonoBehaviour
     private void HandlePlayerLeft(int playerCount)
     {
         ServerSideManagerUI.I.WriteLineToOutput("players left: " + playerCount.ToString());
+        UpdatePlayerCounter();
+    }
+    private void HandleLobbyRefreshed(int playerCount)
+    {
+        ServerSideManagerUI.I.WriteLineToOutput("refreshed player count: " + playerCount.ToString());
         UpdatePlayerCounter();
     }
 

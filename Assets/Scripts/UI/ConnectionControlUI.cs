@@ -32,7 +32,6 @@ public class ConnectionControlUI : MonoBehaviour
 
     void Start()
     {
-
         serverStatusTMP.text = "";
         codeInputField.text = string.Empty;
 
